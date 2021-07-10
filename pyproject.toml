@@ -7,12 +7,14 @@ authors = ["Trail of Bits <opensource@trailofbits.com>"]
 [tool.poetry.dependencies]
 # 3.10 is for pyside6
 python = ">=3.8,<3.10"
-manticore = {path = "manticore"}
+#manticore = {git = "https://github.com/trailofbits/manticore.git", branch = "master"}
+#manticore = "0.3.6"
 # Keep in sync with what Binja uses...
 # NOTE: 6.1.1 has a bug in type hints
 PySide6 = "6.1.2"
 
 [tool.poetry.dev-dependencies]
+manticore = {path = "./manticore", extras = ["native"], develop = true}
 pytest = "^6"
 black = "21.6b0"
 mypy = "0.910"

@@ -11,3 +11,7 @@ lint:
 
 test:
 	poetry run pytest
+
+reset:
+	rm -f poetry.lock
+	poetry env remove python3

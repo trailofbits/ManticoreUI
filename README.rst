@@ -71,3 +71,8 @@ Updating current dependencies::
 Adding a new dependency can either be through manually editing ``pyproject.toml`` or the following::
 
     $ poetry add <dependency>
+
+To remove everything related to Poetry (in the case you want to start fresh with Poetry again), run the following::
+
+    $ make reset
+    $ make init
