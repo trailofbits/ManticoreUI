@@ -5,10 +5,16 @@ description = "MUI is a Manticore User Interface for Binary Ninja"
 authors = ["Trail of Bits <opensource@trailofbits.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = "^3.8"
+# NOTE: Uncomment below to get an editable install of Manticore in your
+#   environment. Do not push this line if uncommented.
+#manticore = {path = "manticore", extras = ["native"], develop = true}
+# NOTE: Comment the following if you need to edit Manticore. Remember to keep
+#   the `rev` synchronized with the Manticore submodule
+#manticore = {git = "https://github.com/trailofbits/manticore.git", extras = ["native"], rev = "fb2765f440016fea15c71f0c4722004178903877"}
+manticore = {path = "manticore", extras = ["native"], develop = true}
 
 [tool.poetry.dev-dependencies]
-manticore = {path = "./manticore", extras = ["native"], develop = true}
 pytest = "^6"
 black = "21.6b0"
 mypy = "0.910"
