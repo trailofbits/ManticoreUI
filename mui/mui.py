@@ -1,4 +1,5 @@
 import tempfile
+from typing import Set
 
 from binaryninja import (
     PluginCommand,
@@ -12,14 +13,13 @@ from binaryninja import (
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
-from manticore.utils import config
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
 
 
 class ManticoreRunner(BackgroundTaskThread):
-    def __init__(self, find, avoid, view):
+    def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
         BackgroundTaskThread.__init__(self, "Solving with manticore...", True)
         self.find = tuple(find)
         self.avoid = tuple(avoid)
@@ -31,6 +31,7 @@ class ManticoreRunner(BackgroundTaskThread):
         self.binary.flush()
 
     def run(self):
+        """Initializes manticore, adds the necessary hooks, and runs it"""
 
         m = Manticore.linux(self.binary.name, workspace_url="mem:")
 
@@ -52,7 +53,9 @@ class ManticoreRunner(BackgroundTaskThread):
         m.run()
 
 
-def find_instr(bv, addr):
+def find_instr(bv: BinaryView, addr: int):
+    """This command handler adds a given address to the find list and highlights it green in the UI"""
+
     # Highlight the instruction in green
     blocks = bv.get_basic_blocks_at(addr)
     for block in blocks:
@@ -65,7 +68,9 @@ def find_instr(bv, addr):
     bv.session_data.mui_find.add(addr)
 
 
-def avoid_instr(bv, addr):
+def avoid_instr(bv: BinaryView, addr: int):
+    """This command handler adds a given address to the avoid list and highlights it red in the UI"""
+
     # Highlight the instruction in red
     blocks = bv.get_basic_blocks_at(addr)
     for block in blocks:
@@ -78,7 +83,9 @@ def avoid_instr(bv, addr):
     bv.session_data.mui_avoid.add(addr)
 
 
-def solve(bv):
+def solve(bv: BinaryView):
+    """This command handler starts manticore in a background thread"""
+    
     if len(bv.session_data.mui_find) == 0:
         show_message_box(
             "Manticore Solve",
@@ -90,7 +97,7 @@ def solve(bv):
         )
         return
 
-        # Start a solver thread for the path associated with the view
+    # Start a solver thread for the path associated with the view
     s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
     s.start()
 
