@@ -1,13 +1,14 @@
 init:
 	git submodule update --init --recursive
-	poetry install
+	test -d venv || virtualenv venv
+	. venv/bin/activate; pip install -r requirements-dev.txt -r requirements.txt
 
 format:
-	poetry run black .
+	black .
 
 lint:
-	poetry run black --check .
-	poetry run mypy
+	black --check .
+	mypy
 
 test:
-	poetry run pytest
+	pytest

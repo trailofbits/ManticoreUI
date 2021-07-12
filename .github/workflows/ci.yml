@@ -25,22 +25,16 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1.1.6
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
 
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        # the package installation will only be executed when the
+        # requirements-files have changed.
+      - run: pip install -r requirements-dev.txt -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Lint
         run: make lint

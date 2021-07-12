@@ -1,26 +1,3 @@
-[tool.poetry]
-name = "mui"
-version = "0.1.0-beta"
-description = "MUI is a Manticore User Interface for Binary Ninja"
-authors = ["Trail of Bits <opensource@trailofbits.com>"]
-
-[tool.poetry.dependencies]
-# 3.10 is for pyside6
-python = ">=3.8,<3.10"
-manticore = {path = "manticore"}
-# Keep in sync with what Binja uses...
-# NOTE: 6.1.1 has a bug in type hints
-PySide6 = "6.1.2"
-
-[tool.poetry.dev-dependencies]
-pytest = "^6"
-black = "21.6b0"
-mypy = "0.910"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.black]
 line-length = 100
 target-version = ['py38', 'py39']
