@@ -85,7 +85,7 @@ def avoid_instr(bv: BinaryView, addr: int):
 
 def solve(bv: BinaryView):
     """This command handler starts manticore in a background thread"""
-    
+
     if len(bv.session_data.mui_find) == 0:
         show_message_box(
             "Manticore Solve",
