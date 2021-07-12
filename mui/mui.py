@@ -81,7 +81,7 @@ def avoid_instr(bv, addr):
 def solve(bv):
     if len(bv.session_data.mui_find) == 0:
         show_message_box(
-            "Angr Solve",
+            "Manticore Solve",
             "You have not specified a goal instruction.\n\n"
             + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
             + "continue.",
