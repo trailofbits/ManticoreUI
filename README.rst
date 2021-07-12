@@ -35,7 +35,7 @@ Python dependencies are currently managed using ``requirements.txt`` and ``requi
     $ ln -s "$(pwd)/mui" "${HOME}/Library/Application Support/Binary Ninja/plugins/mui"
 
     # For Linux
-    $ ln -s "$(pwd)/mui" "${HOME}/.binaryninja/plugins/mui
+    $ ln -s "$(pwd)/mui" "${HOME}/.binaryninja/plugins/mui"
 
 #. Make sure Binary Ninja knows about our python virtual environment.
 
