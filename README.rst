@@ -18,15 +18,16 @@ Aside from the Python requirements, we require the following:
 
 * Binary Ninja (latest development version) with GUI
 * ``git submodule update --init --recursive`` for Manticore submodule
+* ``virtualenv`` for installing python dependencies
 
 Installation
 ------------
 
-MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against the latest ``dev`` release(s) (``2.4.2898-dev`` at time of writing).
+MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against the latest ``dev`` release(s) (``2.4.2901-dev`` at time of writing).
 
 Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux.
 
-We attempt to use `Poetry <https://python-poetry.org>`_ for managing dependencies and a development environment. See the `Poetry usage guide <https://python-poetry.org/docs/basic-usage/>`_ for more information on how to install dependencies. You can also run ``make init``.
+Python dependencies are currently managed using ``requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up the environment.
 
 #. Make the project available to Binary Ninja by creating a symbolic link to the plugins directory. From within the root of this repo, run the following::
 
@@ -36,13 +37,11 @@ We attempt to use `Poetry <https://python-poetry.org>`_ for managing dependencie
     # For Linux
     $ ln -s "$(pwd)/mui" "${HOME}/.binaryninja/plugins/mui
 
-#. Make sure Binary Ninja knows about our Poetry virtual environment.
+#. Make sure Binary Ninja knows about our python virtual environment.
 
-   #. After setting up the Poetry environment, run ``poetry env info`` and note the paths for the "Virtualenv" and "System" -> "Python".
+   #. Open Binary Ninja's "Preferences" -> "Settings" -> "Python" and ensure the "Python Interpreter" is correctly set to the Python path associated with the current virtual environment. Reference ``venv/pyvenv.cfg`` to find the base path.
 
-   #. Open Binary Ninja's "Preferences" -> "Settings" -> "Python" and ensure the "Python Interpreter" is correctly set to the Python path associated with the Poetry Python interpreter.
-
-   #. Copy and paste the path from Poetry "Virtualenv" into Binary Ninja's "Python Virtual Environment Site-Packages" and add the required ``/lib/python3.<minor_version>/site-packages`` suffix for the site-packages path.
+   #. Copy and paste the absolute path of the MUI project into Binary Ninja's "Python Virtual Environment Site-Packages" and add the required ``/venv/lib/python3.<minor_version>/site-packages`` suffix for the site-packages path.
 
    #. Restart Binary Ninja if necessary.
 
@@ -55,6 +54,10 @@ Installing currently listed dependencies::
     # For Mac (will be similar for Linux)
     $ export PYTHONPATH="/Applications/Binary Ninja.app/Contents/Resources/python:/Applications/Binary Ninja.app/Contents/Resources/python3"
 
+Activating the python virtual environment (do this before running other make commands)::
+
+    $ source venv/bin/activate
+
 Code style and linting can be followed by running the following::
 
     $ make format
@@ -64,10 +67,6 @@ Tests for code without Binary Ninja interaction can be run if you have a headles
 
     $ make test
 
-Updating current dependencies::
+Adding a new dependency can be done by editing ``requirements.txt`` or ``requirements-dev.txt`` and then running the following in the virtual environment::
 
-    $ poetry update
-
-Adding a new dependency can either be through manually editing ``pyproject.toml`` or the following::
-
-    $ poetry add <dependency>
+    $ pip install -r requirements-dev.txt -r requirements.txt
