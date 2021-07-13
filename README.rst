@@ -27,7 +27,7 @@ MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against
 
 Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux.
 
-Python dependencies are currently managed using ``requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up the environment.
+Python dependencies are currently managed using ``requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up a development environment.
 
 #. Make the project available to Binary Ninja by creating a symbolic link to the plugins directory. From within the root of this repo, run the following::
 
