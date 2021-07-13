@@ -37,7 +37,7 @@ Python dependencies are currently managed using ``requirements.txt`` and ``requi
     # For Linux
     $ ln -s "$(pwd)/mui" "${HOME}/.binaryninja/plugins/mui"
 
-#. Make sure Binary Ninja knows about our python virtual environment.
+#. Make sure Binary Ninja knows about our Python virtual environment.
 
    #. Open Binary Ninja's "Preferences" -> "Settings" -> "Python" and ensure the "Python Interpreter" is correctly set to the Python path associated with the current virtual environment. Reference ``venv/pyvenv.cfg`` to find the base path.
 
