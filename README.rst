@@ -56,7 +56,7 @@ Installing currently listed dependencies::
 
 Activating the python virtual environment (do this before running other make commands)::
 
-    $ source venv/bin/activate
+    $ . venv/bin/activate
 
 Code style and linting can be followed by running the following::
 
