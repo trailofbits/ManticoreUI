@@ -18,7 +18,6 @@ Aside from the Python requirements, we require the following:
 
 * Binary Ninja (latest development version) with GUI
 * ``git submodule update --init --recursive`` for Manticore submodule
-* ``virtualenv`` for installing python dependencies
 
 Installation
 ------------
