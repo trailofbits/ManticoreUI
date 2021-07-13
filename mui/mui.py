@@ -25,7 +25,7 @@ class ManticoreRunner(BackgroundTaskThread):
         self.avoid = tuple(avoid)
         self.view = view
 
-        # Write the binary to disk so that the angr API can read it
+        # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
         self.binary.write(view.file.raw.read(0, len(view.file.raw)))
         self.binary.flush()
