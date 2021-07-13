@@ -20,7 +20,7 @@ BinaryView.set_default_session_data("mui_avoid", set())
 
 class ManticoreRunner(BackgroundTaskThread):
     def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
-        BackgroundTaskThread.__init__(self, "Solving with manticore...", True)
+        BackgroundTaskThread.__init__(self, "Solving with Manticore...", True)
         self.find = tuple(find)
         self.avoid = tuple(avoid)
         self.view = view
