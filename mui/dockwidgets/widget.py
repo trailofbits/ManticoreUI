@@ -3,7 +3,7 @@
 import sys
 import traceback
 from enum import Enum
-from typing import Union
+from typing import List, Union
 
 from PySide6.QtWidgets import QWidget
 from binaryninja import BinaryView
@@ -14,7 +14,7 @@ class Widgets(Enum):
     STATE_WIDGET = "Manticore State"
 
 
-mui_dockwidgets = []
+mui_dockwidgets: List[QWidget] = []
 
 
 def create_widget(widget_class, name, parent, data, *args):
