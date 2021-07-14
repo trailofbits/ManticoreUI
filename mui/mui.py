@@ -1,6 +1,8 @@
 import tempfile
-from typing import Set
+from time import sleep
+from typing import Set, Callable, Dict
 
+from PySide6.QtCore import Qt
 from binaryninja import (
     PluginCommand,
     BinaryView,
@@ -11,8 +13,12 @@ from binaryninja import (
     MessageBoxButtonSet,
     MessageBoxIcon,
 )
+from manticore.core.plugin import StateDescriptor
 from manticore.core.state import StateBase
 from manticore.native import Manticore
+
+from mui.dockwidgets import widget
+from mui.dockwidgets.state_widget import StateWidget
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
@@ -33,6 +39,12 @@ class ManticoreRunner(BackgroundTaskThread):
     def run(self):
         """Initializes manticore, adds the necessary hooks, and runs it"""
 
+        # clear state UI
+        state_widget: StateWidget = widget.get_dockwidget(
+            self.view, widget.Widgets.STATE_WIDGET.value
+        )
+        state_widget.notifyStatesChanged({})
+
         m = Manticore.linux(self.binary.name, workspace_url="mem:")
 
         def avoid_f(state: StateBase):
@@ -50,7 +62,32 @@ class ManticoreRunner(BackgroundTaskThread):
         for addr in self.find:
             m.hook(addr)(find_f)
 
+        def run_every(callee: Callable, duration: int = 3) -> Callable:
+            """
+            Returns a function that calls <callee> every <duration> seconds
+            """
+
+            def inner(
+                thread,
+            ):  # Takes `thread` as argument, which is provided by the daemon thread API
+                while thread.manticore.is_running():
+                    # Pass Manticore's state descriptor dict to the callee
+                    callee(thread.manticore.introspect())
+                    sleep(duration)
+
+            return inner
+
+        def update_ui(states: Dict[int, StateDescriptor]):
+            """Update the StateWidget to reflect current progress"""
+            state_widget: StateWidget = widget.get_dockwidget(
+                self.view, widget.Widgets.STATE_WIDGET.value
+            )
+            state_widget.notifyStatesChanged(states)
+
+        m.register_daemon(run_every(update_ui, 1))
         m.run()
+        update_ui(m.introspect())
+        print("Manticore finished")
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -116,4 +153,8 @@ PluginCommand.register(
     "MUI \\ Solve With Manticore",
     "Attempt to solve for a path that satisfies the constraints given",
     solve,
+)
+
+widget.register_dockwidget(
+    StateWidget, widget.Widgets.STATE_WIDGET.value, Qt.RightDockWidgetArea, Qt.Vertical, True
 )
