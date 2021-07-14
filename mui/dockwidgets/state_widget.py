@@ -21,14 +21,14 @@ class StateWidget(QWidget, DockContextHandler):
         self.complete_states = QTreeWidgetItem(None, ["Complete"])
         self.error_states = QTreeWidgetItem(None, ["Errored"])
 
-        state_lists = [
+        self.state_lists = [
             self.active_states,
             self.waiting_states,
             self.complete_states,
             self.error_states,
         ]
-        tree_widget.insertTopLevelItems(0, state_lists)
-        for state_list in state_lists:
+        tree_widget.insertTopLevelItems(0, self.state_lists)
+        for state_list in self.state_lists:
             tree_widget.expandItem(state_list)
 
         layout = QVBoxLayout()
@@ -63,6 +63,9 @@ class StateWidget(QWidget, DockContextHandler):
             item.parent().removeChild(item)
             del self.state_items[removed_state_id]
 
+        # update list counts
+        self._refresh_list_counts()
+
         # update the states reference
         self.states = new_states
 
@@ -84,3 +87,8 @@ class StateWidget(QWidget, DockContextHandler):
                 return QTreeWidgetItem(state_list, [f"State {state.state_id}"])
 
         raise ValueError(f"Unknown status {state.status}")
+
+    def _refresh_list_counts(self):
+        for state_list in self.state_lists:
+            child_count = state_list.childCount()
+            state_list.setText(0, f'{state_list.text(0).split(" ")[0]} ({child_count})')
