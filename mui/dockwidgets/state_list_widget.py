@@ -16,7 +16,7 @@ class StateListWidget(QWidget, DockContextHandler):
 
         tree_widget = QTreeWidget()
         tree_widget.setColumnCount(1)
-        tree_widget.headerItem().setHidden(True)
+        tree_widget.headerItem().setText(0, "State List")
         self.tree_widget = tree_widget
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
@@ -92,6 +92,20 @@ class StateListWidget(QWidget, DockContextHandler):
         raise ValueError(f"Unknown status {state.status}")
 
     def _refresh_list_counts(self):
+        total_count = 0
+
+        # update count for each individual list
         for state_list in self.state_lists:
             child_count = state_list.childCount()
             state_list.setText(0, f'{state_list.text(0).split(" ")[0]} ({child_count})')
+
+            total_count += child_count
+
+        header_item = self.tree_widget.headerItem()
+
+        title_without_count = header_item.text(0)
+        # strip previous count from title
+        if title_without_count[-1] == ")":
+            title_without_count = title_without_count[: title_without_count.rfind("(") - 1]
+
+        header_item.setText(0, f"{title_without_count} ({total_count})")
