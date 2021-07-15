@@ -18,7 +18,7 @@ from manticore.core.state import StateBase
 from manticore.native import Manticore
 
 from mui.dockwidgets import widget
-from mui.dockwidgets.state_widget import StateWidget
+from mui.dockwidgets.state_list_widget import StateListWidget
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
@@ -40,9 +40,7 @@ class ManticoreRunner(BackgroundTaskThread):
         """Initializes manticore, adds the necessary hooks, and runs it"""
 
         # clear state UI
-        state_widget: StateWidget = widget.get_dockwidget(
-            self.view, widget.Widgets.STATE_WIDGET.value
-        )
+        state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
         state_widget.notifyStatesChanged({})
 
         m = Manticore.linux(self.binary.name, workspace_url="mem:")
@@ -79,9 +77,7 @@ class ManticoreRunner(BackgroundTaskThread):
 
         def update_ui(states: Dict[int, StateDescriptor]):
             """Update the StateWidget to reflect current progress"""
-            state_widget: StateWidget = widget.get_dockwidget(
-                self.view, widget.Widgets.STATE_WIDGET.value
-            )
+            state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
             state_widget.notifyStatesChanged(states)
 
         m.register_daemon(run_every(update_ui, 1))
@@ -156,5 +152,5 @@ PluginCommand.register(
 )
 
 widget.register_dockwidget(
-    StateWidget, widget.Widgets.STATE_WIDGET.value, Qt.RightDockWidgetArea, Qt.Vertical, True
+    StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
 )

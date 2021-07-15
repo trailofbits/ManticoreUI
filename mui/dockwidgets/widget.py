@@ -10,10 +10,6 @@ from binaryninja import BinaryView
 from binaryninjaui import DockHandler, DockContextHandler
 
 
-class Widgets(Enum):
-    STATE_WIDGET = "Manticore State"
-
-
 mui_dockwidgets: List[QWidget] = []
 
 

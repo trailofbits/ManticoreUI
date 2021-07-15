@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Final, Optional
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
 from binaryninjaui import DockContextHandler
@@ -6,7 +6,10 @@ from manticore.core.plugin import StateDescriptor
 from manticore.utils.enums import StateStatus
 
 
-class StateWidget(QWidget, DockContextHandler):
+class StateListWidget(QWidget, DockContextHandler):
+
+    NAME: Final[str] = "Manticore State"
+
     def __init__(self, name, parent, data):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
