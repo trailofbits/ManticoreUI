@@ -76,7 +76,7 @@ class ManticoreRunner(BackgroundTaskThread):
             return inner
 
         def update_ui(states: Dict[int, StateDescriptor]):
-            """Update the StateWidget to reflect current progress"""
+            """Updates the StateListWidget to reflect current progress"""
             state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
             state_widget.notifyStatesChanged(states)
 

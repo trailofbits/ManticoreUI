@@ -1,7 +1,8 @@
 from typing import Dict, Final, Optional
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
-from binaryninjaui import DockContextHandler
+from binaryninja import BinaryView
+from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
 from manticore.utils.enums import StateStatus
 
@@ -10,7 +11,7 @@ class StateListWidget(QWidget, DockContextHandler):
 
     NAME: Final[str] = "Manticore State"
 
-    def __init__(self, name, parent, data):
+    def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
 
@@ -49,6 +50,7 @@ class StateListWidget(QWidget, DockContextHandler):
         self.state_items: Dict[int, QTreeWidgetItem] = {}
 
     def notifyStatesChanged(self, new_states: Dict[int, StateDescriptor]):
+        """Updates the UI to reflect new_states, clears everything if an empty dict is provided"""
         old_states = self.states
 
         # add/update new states
@@ -73,6 +75,7 @@ class StateListWidget(QWidget, DockContextHandler):
         self.states = new_states
 
     def _update_item(self, item: QTreeWidgetItem, state: StateDescriptor):
+        """Updates a single item based on its new state"""
         switch_to_list = None
 
         for state_list, status_list in self.state_status_mapping:
@@ -85,6 +88,7 @@ class StateListWidget(QWidget, DockContextHandler):
             switch_to_list.addChild(item)
 
     def _create_item(self, state: StateDescriptor) -> QTreeWidgetItem:
+        """Creates a new item that represents a given state"""
         for state_list, status_list in self.state_status_mapping:
             if state.status in status_list:
                 return QTreeWidgetItem(state_list, [f"State {state.state_id}"])
@@ -92,6 +96,7 @@ class StateListWidget(QWidget, DockContextHandler):
         raise ValueError(f"Unknown status {state.status}")
 
     def _refresh_list_counts(self):
+        """Refreshes all the state counts"""
         total_count = 0
 
         # update count for each individual list

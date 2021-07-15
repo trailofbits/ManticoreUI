@@ -5,15 +5,17 @@ import traceback
 from enum import Enum
 from typing import List, Union
 
+from PySide6.QtCore import Qt, QObject
 from PySide6.QtWidgets import QWidget
 from binaryninja import BinaryView
-from binaryninjaui import DockHandler, DockContextHandler
-
+from binaryninjaui import DockHandler, DockContextHandler, ViewFrame
 
 mui_dockwidgets: List[QWidget] = []
 
 
-def create_widget(widget_class, name, parent, data, *args):
+def create_widget(
+    widget_class: QWidget, name: str, parent: ViewFrame, data: BinaryView, *args
+) -> QWidget:
     # It is imperative this function return *some* value because Shiboken will try to deref what we return
     # If we return nothing (or throw) there will be a null pointer deref (and we won't even get to see why)
     # So in the event of an error or a nothing, return an empty widget that at least stops the crash
@@ -42,7 +44,7 @@ def create_widget(widget_class, name, parent, data, *args):
         return QWidget(parent)
 
 
-def destroy_widget(destroyed, old, data, name):
+def destroy_widget(destroyed: QObject, old: QWidget, data: BinaryView, name: str) -> None:
     # Gotta be careful to delete the correct widget here
     for (bv, widgets) in mui_dockwidgets:
         if bv == data:
@@ -54,7 +56,15 @@ def destroy_widget(destroyed, old, data, name):
                     return
 
 
-def register_dockwidget(widget_class, name, area, orientation, default_visibility, *args):
+def register_dockwidget(
+    widget_class: QWidget,
+    name: str,
+    area: Qt.DockWidgetArea,
+    orientation: Qt.Orientation,
+    default_visibility: bool,
+    *args,
+) -> None:
+    """Registers a new dockwidget"""
     dock_handler = DockHandler.getActiveDockHandler()
 
     # create main debugger controls
@@ -67,7 +77,7 @@ def register_dockwidget(widget_class, name, area, orientation, default_visibilit
     )
 
 
-def get_dockwidget(data: BinaryView, name: str):
+def get_dockwidget(data: BinaryView, name: str) -> QWidget:
     """Returns a named dockwidget associated with a certain BinaryView"""
     for (bv, widgets) in mui_dockwidgets:
         if bv == data:
