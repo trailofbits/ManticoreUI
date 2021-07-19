@@ -1,10 +1,12 @@
 from typing import Dict, Final, Optional
 
+from PySide6 import QtCore
+from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
-from binaryninja import BinaryView
+from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
-from manticore.utils.enums import StateStatus
+from manticore.utils.enums import StateStatus, StateLists
 
 
 class StateListWidget(QWidget, DockContextHandler):
@@ -22,12 +24,14 @@ class StateListWidget(QWidget, DockContextHandler):
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
+        self.forked_states = QTreeWidgetItem(None, ["Forked"])
         self.complete_states = QTreeWidgetItem(None, ["Complete"])
         self.error_states = QTreeWidgetItem(None, ["Errored"])
 
         self.state_lists = [
             self.active_states,
             self.waiting_states,
+            self.forked_states,
             self.complete_states,
             self.error_states,
         ]
@@ -38,13 +42,6 @@ class StateListWidget(QWidget, DockContextHandler):
         layout = QVBoxLayout()
         layout.addWidget(tree_widget)
         self.setLayout(layout)
-
-        self.state_status_mapping = [
-            (self.active_states, [StateStatus.running]),
-            (self.waiting_states, [StateStatus.waiting_for_worker, StateStatus.waiting_for_solver]),
-            (self.complete_states, [StateStatus.stopped]),
-            (self.error_states, [StateStatus.destroyed]),
-        ]
 
         self.states: Dict[int, StateDescriptor] = {}
         self.state_items: Dict[int, QTreeWidgetItem] = {}
@@ -74,26 +71,37 @@ class StateListWidget(QWidget, DockContextHandler):
         # update the states reference
         self.states = new_states
 
+    def _get_state_list(self, state: StateDescriptor) -> QTreeWidgetItem:
+        """Get the corresponding state list for a given state"""
+
+        if state.status == StateStatus.running:
+            return self.active_states
+        elif state.status in [StateStatus.waiting_for_worker, StateStatus.waiting_for_solver]:
+            return self.waiting_states
+        elif state.status == StateStatus.destroyed:
+            return self.forked_states
+        elif state.status == StateStatus.stopped:
+            # Only want killed states in the errored list
+            if state.state_list == StateLists.killed:
+                return self.error_states
+            else:
+                return self.complete_states
+        else:
+            raise ValueError(f"Unknown status {state.status}")
+
     def _update_item(self, item: QTreeWidgetItem, state: StateDescriptor):
         """Updates a single item based on its new state"""
-        switch_to_list = None
+        switch_to_list = self._get_state_list(state)
 
-        for state_list, status_list in self.state_status_mapping:
-            if state.status in status_list and item.parent() is not state_list:
-                switch_to_list = state_list
-                break
-
-        if switch_to_list is not None:
+        if switch_to_list is not item.parent():
             item.parent().removeChild(item)
             switch_to_list.addChild(item)
 
     def _create_item(self, state: StateDescriptor) -> QTreeWidgetItem:
         """Creates a new item that represents a given state"""
-        for state_list, status_list in self.state_status_mapping:
-            if state.status in status_list:
-                return QTreeWidgetItem(state_list, [f"State {state.state_id}"])
 
-        raise ValueError(f"Unknown status {state.status}")
+        parent = self._get_state_list(state)
+        return QTreeWidgetItem(parent, [f"State {state.state_id}"])
 
     def _refresh_list_counts(self):
         """Refreshes all the state counts"""
