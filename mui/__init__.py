@@ -20,5 +20,4 @@ if venv_path != "":
     if venv_bin_path not in os.environ["PATH"]:
         os.environ["PATH"] = f'{os.environ["PATH"]}:{venv_bin_path}'
 
-from . import welcome
 from . import mui
