@@ -17,10 +17,13 @@ class StateListWidget(QWidget, DockContextHandler):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
 
+        self.bv = data
+
         tree_widget = QTreeWidget()
         tree_widget.setColumnCount(1)
         tree_widget.headerItem().setText(0, "State List")
         self.tree_widget = tree_widget
+        tree_widget.itemDoubleClicked.connect(self.onClick)
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
@@ -45,6 +48,30 @@ class StateListWidget(QWidget, DockContextHandler):
 
         self.states: Dict[int, StateDescriptor] = {}
         self.state_items: Dict[int, QTreeWidgetItem] = {}
+
+    @Slot(QTreeWidgetItem, int)
+    def onClick(self, item: QTreeWidgetItem, col: int):
+        """Jump to the current PC of a given state when double clicked"""
+
+        # do nothing on non-state items
+        if item in self.state_lists:
+            return
+
+        item_id = int(item.text(0).split(" ")[-1])
+        state = self.states[item_id]
+
+        if isinstance(state.pc, int):
+            self.bv.navigate(self.bv.view, state.pc)
+        elif isinstance(state.last_pc, int):
+            # use last_pc as a fallback
+            self.bv.navigate(self.bv.view, state.last_pc)
+        else:
+            show_message_box(
+                "[MUI] No instruction information available",
+                f"State {item_id} doesn't contain any instruction information.",
+                MessageBoxButtonSet.OKButtonSet,
+                MessageBoxIcon.ErrorIcon,
+            )
 
     def notifyStatesChanged(self, new_states: Dict[int, StateDescriptor]):
         """Updates the UI to reflect new_states, clears everything if an empty dict is provided"""

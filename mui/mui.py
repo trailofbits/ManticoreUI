@@ -19,6 +19,7 @@ from manticore.native import Manticore
 
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
+from mui.introspect_plugin import MUIIntrospectionPlugin
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
@@ -43,7 +44,9 @@ class ManticoreRunner(BackgroundTaskThread):
         state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
         state_widget.notifyStatesChanged({})
 
-        m = Manticore.linux(self.binary.name, workspace_url="mem:")
+        m = Manticore.linux(
+            self.binary.name, workspace_url="mem:", introspection_plugin_type=MUIIntrospectionPlugin
+        )
 
         def avoid_f(state: StateBase):
             state.abandon()
