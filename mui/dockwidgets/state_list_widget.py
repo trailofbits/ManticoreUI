@@ -1,7 +1,7 @@
 from typing import Dict, Final, Optional
 
 from PySide6 import QtCore
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
 from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
 from binaryninjaui import DockContextHandler, ViewFrame
@@ -12,6 +12,9 @@ from manticore.utils.enums import StateStatus, StateLists
 class StateListWidget(QWidget, DockContextHandler):
 
     NAME: Final[str] = "Manticore State"
+
+    # role used to store state id on qt items
+    STATE_ID_ROLE: Final[int] = Qt.UserRole
 
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
@@ -53,11 +56,12 @@ class StateListWidget(QWidget, DockContextHandler):
     def onClick(self, item: QTreeWidgetItem, col: int):
         """Jump to the current PC of a given state when double clicked"""
 
+        item_id = item.data(0, StateListWidget.STATE_ID_ROLE)
+
         # do nothing on non-state items
-        if item in self.state_lists:
+        if item_id is None:
             return
 
-        item_id = int(item.text(0).split(" ")[-1])
         state = self.states[item_id]
 
         if isinstance(state.pc, int):
@@ -128,7 +132,9 @@ class StateListWidget(QWidget, DockContextHandler):
         """Creates a new item that represents a given state"""
 
         parent = self._get_state_list(state)
-        return QTreeWidgetItem(parent, [f"State {state.state_id}"])
+        item = QTreeWidgetItem(parent, [f"State {state.state_id}"])
+        item.setData(0, StateListWidget.STATE_ID_ROLE, state.state_id)
+        return item
 
     def _refresh_list_counts(self):
         """Refreshes all the state counts"""
