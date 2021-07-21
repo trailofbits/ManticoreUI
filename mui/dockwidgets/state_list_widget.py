@@ -13,6 +13,9 @@ class StateListWidget(QWidget, DockContextHandler):
 
     NAME: Final[str] = "Manticore State"
 
+    # column used for state name
+    STATE_NAME_COLUMN: Final[int] = 0
+
     # role used to store state id on qt items
     STATE_ID_ROLE: Final[int] = Qt.UserRole
 
@@ -56,7 +59,7 @@ class StateListWidget(QWidget, DockContextHandler):
     def onClick(self, item: QTreeWidgetItem, col: int):
         """Jump to the current PC of a given state when double clicked"""
 
-        item_id = item.data(0, StateListWidget.STATE_ID_ROLE)
+        item_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
 
         # do nothing on non-state items
         if item_id is None:
@@ -133,7 +136,9 @@ class StateListWidget(QWidget, DockContextHandler):
 
         parent = self._get_state_list(state)
         item = QTreeWidgetItem(parent, [f"State {state.state_id}"])
-        item.setData(0, StateListWidget.STATE_ID_ROLE, state.state_id)
+        item.setData(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE, state.state_id
+        )
         return item
 
     def _refresh_list_counts(self):
