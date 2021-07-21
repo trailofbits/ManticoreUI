@@ -20,7 +20,6 @@ class MUIIntrospectionPlugin(IntrospectionAPIPlugin):
         state = self.manticore._load(state_id)
         self._force_update_state_descriptor(state)
 
-
     def _force_update_state_descriptor(self, state: StateBase):
         """Force a given state to update its information, which can include the current PC, etc.
         Calling _update_state_descriptor directly may become an issue if specific state implementations
