@@ -1,7 +1,7 @@
 from typing import Dict, Final, Optional
 
 from PySide6 import QtCore
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
 from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
 from binaryninjaui import DockContextHandler, ViewFrame
@@ -13,14 +13,23 @@ class StateListWidget(QWidget, DockContextHandler):
 
     NAME: Final[str] = "Manticore State"
 
+    # column used for state name
+    STATE_NAME_COLUMN: Final[int] = 0
+
+    # role used to store state id on qt items
+    STATE_ID_ROLE: Final[int] = Qt.UserRole
+
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
+
+        self.bv = data
 
         tree_widget = QTreeWidget()
         tree_widget.setColumnCount(1)
         tree_widget.headerItem().setText(0, "State List")
         self.tree_widget = tree_widget
+        tree_widget.itemDoubleClicked.connect(self.onClick)
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
@@ -45,6 +54,31 @@ class StateListWidget(QWidget, DockContextHandler):
 
         self.states: Dict[int, StateDescriptor] = {}
         self.state_items: Dict[int, QTreeWidgetItem] = {}
+
+    @Slot(QTreeWidgetItem, int)
+    def onClick(self, item: QTreeWidgetItem, col: int):
+        """Jump to the current PC of a given state when double clicked"""
+
+        item_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
+
+        # do nothing on non-state items
+        if item_id is None:
+            return
+
+        state = self.states[item_id]
+
+        if isinstance(state.pc, int):
+            self.bv.navigate(self.bv.view, state.pc)
+        elif isinstance(state.last_pc, int):
+            # use last_pc as a fallback
+            self.bv.navigate(self.bv.view, state.last_pc)
+        else:
+            show_message_box(
+                "[MUI] No instruction information available",
+                f"State {item_id} doesn't contain any instruction information.",
+                MessageBoxButtonSet.OKButtonSet,
+                MessageBoxIcon.ErrorIcon,
+            )
 
     def notifyStatesChanged(self, new_states: Dict[int, StateDescriptor]):
         """Updates the UI to reflect new_states, clears everything if an empty dict is provided"""
@@ -101,7 +135,11 @@ class StateListWidget(QWidget, DockContextHandler):
         """Creates a new item that represents a given state"""
 
         parent = self._get_state_list(state)
-        return QTreeWidgetItem(parent, [f"State {state.state_id}"])
+        item = QTreeWidgetItem(parent, [f"State {state.state_id}"])
+        item.setData(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE, state.state_id
+        )
+        return item
 
     def _refresh_list_counts(self):
         """Refreshes all the state counts"""
