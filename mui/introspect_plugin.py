@@ -14,11 +14,12 @@ class MUIIntrospectionPlugin(IntrospectionAPIPlugin):
     def will_fork_state_callback(self, state: StateBase, expression, solutions, policy):
         self._force_update_state_descriptor(state)
 
-    def will_terminate_state_callback(self, state: StateBase, ex: Exception):
+    def will_transition_state_callback(
+        self, state_id: int, from_list: StateLists, to_list: StateLists
+    ):
+        state = self.manticore._load(state_id)
         self._force_update_state_descriptor(state)
 
-    def will_kill_state_callback(self, state: StateBase, ex: Exception):
-        self._force_update_state_descriptor(state)
 
     def _force_update_state_descriptor(self, state: StateBase):
         """Force a given state to update its information, which can include the current PC, etc.
