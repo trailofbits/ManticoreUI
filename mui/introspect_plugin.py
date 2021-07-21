@@ -11,6 +11,13 @@ class MUIIntrospectionPlugin(IntrospectionAPIPlugin):
     def name(self) -> str:
         return "MUIIntrospectionPlugin"
 
+    def create_state(self, state_id: int):
+        # Override create_state to force a state update right after creation.
+        # This is helpful when retrieving info from a state yet to execute.
+        super().create_state(state_id)
+        state = self.manticore._load(state_id)
+        self._force_update_state_descriptor(state)
+
     def will_fork_state_callback(self, state: StateBase, expression, solutions, policy):
         self._force_update_state_descriptor(state)
 
