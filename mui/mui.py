@@ -58,7 +58,10 @@ class ManticoreRunner(BackgroundTaskThread):
             bufs = state.solve_one_n_batched(state.input_symbols)
             for symbol, buf in zip(state.input_symbols, bufs):
                 print(f"{symbol.name}: {buf!r}\n")
-            m.kill()
+
+            with m.locked_context() as context:
+                m.kill()
+            state.abandon()
 
         for addr in self.find:
             m.hook(addr)(find_f)
