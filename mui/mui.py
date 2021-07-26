@@ -3,6 +3,7 @@ from time import sleep
 from typing import Set, Callable, Dict
 
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog
 from binaryninja import (
     PluginCommand,
     BinaryView,
@@ -13,11 +14,13 @@ from binaryninja import (
     MessageBoxButtonSet,
     MessageBoxIcon,
 )
+from binaryninjaui import DockHandler
 from manticore.core.plugin import StateDescriptor
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
 from mui.dockwidgets import widget
+from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
 
@@ -44,8 +47,15 @@ class ManticoreRunner(BackgroundTaskThread):
         state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
         state_widget.notifyStatesChanged({})
 
+        run_args = self.view.session_data.mui_run_args
+
         m = Manticore.linux(
-            self.binary.name, workspace_url="mem:", introspection_plugin_type=MUIIntrospectionPlugin
+            self.binary.name,
+            workspace_url=run_args["workspace_url"],
+            argv=run_args["argv"],
+            stdin_size=run_args["stdin_size"],
+            concrete_start=run_args["concrete_start"],
+            introspection_plugin_type=MUIIntrospectionPlugin,
         )
 
         def avoid_f(state: StateBase):
@@ -136,9 +146,13 @@ def solve(bv: BinaryView):
         )
         return
 
-    # Start a solver thread for the path associated with the view
-    s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
-    s.start()
+    dialog = RunDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    result: QDialog.DialogCode = dialog.exec()
+
+    if result == QDialog.Accepted:
+        # Start a solver thread for the path associated with the view
+        s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
+        s.start()
 
 
 PluginCommand.register_for_address(
