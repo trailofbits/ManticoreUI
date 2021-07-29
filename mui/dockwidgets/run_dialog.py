@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QCheckBox,
     QFormLayout,
+    QFileDialog,
 )
 from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
 from binaryninjaui import UIContext
@@ -25,7 +26,7 @@ class RunDialog(QDialog):
         QDialog.__init__(self, parent)
 
         self.setWindowTitle("Run Manticore")
-        self.setMinimumSize(UIContext.getScaledWindowSize(400, 130))
+        self.setMinimumSize(UIContext.getScaledWindowSize(600, 130))
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         layout = QVBoxLayout()
@@ -38,7 +39,13 @@ class RunDialog(QDialog):
         self.concrete_start_entry = QLineEdit(self)
         self.stdin_size_entry = QLineEdit(self)
         self.argv_entry = QLineEdit(self)
+
         self.workspace_url_entry = QLineEdit(self)
+        self.workspace_url_button = QPushButton("Select...", self)
+        workspace_url_layout = QHBoxLayout()
+        workspace_url_layout.addWidget(self.workspace_url_entry)
+        workspace_url_layout.addWidget(self.workspace_url_button)
+        self.workspace_url_button.clicked.connect(lambda: self._select_workspace_url())
 
         self.formLayout = QFormLayout()
         self.formLayout.addRow(
@@ -46,7 +53,7 @@ class RunDialog(QDialog):
         )
         self.formLayout.addRow("Symbolic stdin size to use", self.stdin_size_entry)
         self.formLayout.addRow("Program arguments (use + as a wildcard)", self.argv_entry)
-        self.formLayout.addRow("Workspace URL", self.workspace_url_entry)
+        self.formLayout.addRow("Workspace URL", workspace_url_layout)
 
         self.stdin_size_entry.setText("256")
         self.workspace_url_entry.setText("mem:")
@@ -77,6 +84,11 @@ class RunDialog(QDialog):
         self.setLayout(layout)
 
         self.accepted.connect(lambda: self.apply())
+
+    def _select_workspace_url(self):
+        file_url = QFileDialog.getExistingDirectory(self, "Select Workspace Directory")
+        if file_url != "":
+            self.workspace_url_entry.setText(file_url)
 
     def apply(self):
         try:
