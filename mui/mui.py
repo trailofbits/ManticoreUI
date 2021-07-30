@@ -55,8 +55,14 @@ class ManticoreRunner(BackgroundTaskThread):
             argv=run_args["argv"],
             stdin_size=run_args["stdin_size"],
             concrete_start=run_args["concrete_start"],
+            env=run_args["env"],
             introspection_plugin_type=MUIIntrospectionPlugin,
         )
+
+        @m.init
+        def init(state):
+            for file in run_args["symbolic_files"]:
+                state.platform.add_symbolic_file(file)
 
         def avoid_f(state: StateBase):
             state.abandon()
