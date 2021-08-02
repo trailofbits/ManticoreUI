@@ -52,7 +52,7 @@ class ManticoreRunner(BackgroundTaskThread):
         m = Manticore.linux(
             self.binary.name,
             workspace_url=run_args["workspace_url"],
-            argv=run_args["argv"],
+            argv=run_args["argv"].copy(),
             stdin_size=run_args["stdin_size"],
             concrete_start=run_args["concrete_start"],
             envp=run_args["env"],
