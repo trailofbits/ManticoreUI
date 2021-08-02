@@ -59,6 +59,27 @@ class ListWidget(QWidget):
 
         self.row_layout.addLayout(row)
 
+    def set_rows(self, values: List[str]):
+        """Sets the rows to given values. Adds and removes rows when needed"""
+
+        values_len = len(values)
+        curr_row_count = len(self.row_layout.children())
+
+        # adjust row count
+        if values_len > curr_row_count:
+            for _ in range(values_len - curr_row_count):
+                self.add_row()
+        elif values_len < curr_row_count:
+            for _ in range(curr_row_count - values_len):
+                last_row = self.row_layout.children()[-1]
+                last_row.itemAt(1).widget().click()
+
+        # set values
+        idx = 0
+        for row in self.row_layout.children():
+            row.itemAt(0).widget().setText(values[idx])
+            idx += 1
+
     def get_results(self) -> List[str]:
         "Get all non-empty row inputs as a string array"
         output = []
@@ -146,10 +167,35 @@ class RunDialog(QDialog):
 
         self.accepted.connect(lambda: self.apply())
 
+        self._try_restore_options()
+
     def _select_workspace_url(self):
         file_url = QFileDialog.getExistingDirectory(self, "Select Workspace Directory")
         if file_url != "":
             self.workspace_url_entry.setText(file_url)
+
+    def _try_restore_options(self):
+        """Try restoring run options if they are set before"""
+
+        run_args = self.bv.session_data.mui_run_args
+
+        if "argv" in run_args:
+            self.argv_entry.setText(shlex.join(run_args["argv"]))
+
+        if "concrete_start" in run_args:
+            self.concrete_start_entry.setText(run_args["concrete_start"])
+
+        if "stdin_size" in run_args:
+            self.stdin_size_entry.setText(str(run_args["stdin_size"]))
+
+        if "workspace_url" in run_args:
+            self.workspace_url_entry.setText(run_args["workspace_url"])
+
+        if "env" in run_args:
+            self.env_entry.set_rows([f"{key}={val}" for key, val in run_args["env"].items()])
+
+        if "symbolic_files" in run_args:
+            self.symbolic_files_entry.set_rows(run_args["symbolic_files"])
 
     def apply(self):
         try:
