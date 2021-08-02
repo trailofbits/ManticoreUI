@@ -55,7 +55,7 @@ class ManticoreRunner(BackgroundTaskThread):
             argv=run_args["argv"],
             stdin_size=run_args["stdin_size"],
             concrete_start=run_args["concrete_start"],
-            env=run_args["env"],
+            envp=run_args["env"],
             introspection_plugin_type=MUIIntrospectionPlugin,
         )
 
