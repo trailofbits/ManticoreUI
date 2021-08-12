@@ -126,6 +126,7 @@ class ManticoreRunner(BackgroundTaskThread):
         m.run()
         update_ui(m.introspect())
         print("Manticore finished")
+        bv.session_data.mui_is_running = False
 
 
 def find_instr(bv: BinaryView, addr: int):
