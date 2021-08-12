@@ -28,6 +28,7 @@ from mui.introspect_plugin import MUIIntrospectionPlugin
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
+BinaryView.set_default_session_data("mui_is_running", False)
 
 
 class ManticoreRunner(BackgroundTaskThread):
@@ -112,6 +113,16 @@ class ManticoreRunner(BackgroundTaskThread):
             state_widget.notifyStatesChanged(states)
 
         m.register_daemon(run_every(update_ui, 1))
+
+        def check_termination(_):
+            """Check if the user wants to termninate manticore"""
+            if bv.session_data.mui_is_running == False:
+                print("Manticore terminated by user!")
+                with m.locked_context() as context:
+                    m.kill()
+
+        m.register_daemon(run_every(check_termination, 1))
+
         m.run()
         update_ui(m.introspect())
         print("Manticore finished")
@@ -132,6 +143,19 @@ def find_instr(bv: BinaryView, addr: int):
     bv.session_data.mui_find.add(addr)
 
 
+def rm_find_instr(bv: BinaryView, addr: int):
+    """This command handler removes a given address from the find list and undoes the highlights"""
+
+    # Remove instruction highlight
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
+        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+
+    # Remove the instruction to the list associated with the current view
+    bv.session_data.mui_find.remove(addr)
+
+
 def avoid_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the avoid list and highlights it red in the UI"""
 
@@ -145,6 +169,19 @@ def avoid_instr(bv: BinaryView, addr: int):
 
     # Add the instruction to the list associated with the current view
     bv.session_data.mui_avoid.add(addr)
+
+
+def rm_avoid_instr(bv: BinaryView, addr: int):
+    """This command handler removes a given address from the avoid list and undoes the highlights"""
+
+    # Remove instruction highlight
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
+        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+
+    # Remove the instruction to the list associated with the current view
+    bv.session_data.mui_avoid.remove(addr)
 
 
 def solve(bv: BinaryView):
@@ -166,24 +203,66 @@ def solve(bv: BinaryView):
 
     if result == QDialog.Accepted:
         # Start a solver thread for the path associated with the view
+        bv.session_data.mui_is_running = True
         s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
         s.start()
+
+
+def stop_manticore(bv: BinaryView):
+    """Stops the current running manticore instance"""
+    bv.session_data.mui_is_running = False
+
+
+def avoid_instr_is_valid(bv: BinaryView, addr: int):
+    """checks if avoid_instr is valid for a given address"""
+    return addr not in bv.session_data.mui_avoid
+
+
+def find_instr_is_valid(bv: BinaryView, addr: int):
+    """checks if find_instr is valid for a given address"""
+    return addr not in bv.session_data.mui_find
+
+
+def solve_is_valid(bv: BinaryView):
+    """checks if solve is valid for a given binary view"""
+    return not bv.session_data.mui_is_running
 
 
 PluginCommand.register_for_address(
     "MUI \\ Find Path to This Instruction",
     "When solving, find a path that gets to this instruction",
     find_instr,
+    find_instr_is_valid,
+)
+PluginCommand.register_for_address(
+    "MUI \\ Remove Instruction from Find List",
+    "When solving, DO NOT find paths that reach this instruction",
+    rm_find_instr,
+    lambda bv, addr: not find_instr_is_valid(bv, addr),
 )
 PluginCommand.register_for_address(
     "MUI \\ Avoid This Instruction",
     "When solving, avoid paths that reach this instruction",
     avoid_instr,
+    avoid_instr_is_valid,
+)
+PluginCommand.register_for_address(
+    "MUI \\ Remove Instruction from Avoid List",
+    "When solving, DO NOT avoid paths that reach this instruction",
+    rm_avoid_instr,
+    lambda bv, addr: not avoid_instr_is_valid(bv, addr),
 )
 PluginCommand.register(
     "MUI \\ Solve With Manticore",
     "Attempt to solve for a path that satisfies the constraints given",
     solve,
+    solve_is_valid,
+)
+PluginCommand.register(
+    "MUI \\ Stop Manticore",
+    "Stop the running manticore instance",
+    stop_manticore,
+    lambda bv: not solve_is_valid(bv),
 )
 
 widget.register_dockwidget(
