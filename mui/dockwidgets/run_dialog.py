@@ -16,7 +16,14 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QLayout,
 )
-from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
+from binaryninja import (
+    BinaryView,
+    show_message_box,
+    MessageBoxButtonSet,
+    MessageBoxIcon,
+    Settings,
+    SettingsScope,
+)
 from binaryninjaui import UIContext
 
 
@@ -94,8 +101,6 @@ class RunDialog(QDialog):
     def __init__(self, parent: QWidget, data: BinaryView):
         self.bv = data
 
-        self.bv.set_default_session_data("mui_run_args", {})
-
         QDialog.__init__(self, parent)
 
         self.setWindowTitle("Run Manticore")
@@ -132,9 +137,6 @@ class RunDialog(QDialog):
         self.form_layout.addRow("Workspace URL", workspace_url_layout)
         self.form_layout.addRow("Add environment variables", self.env_entry)
         self.form_layout.addRow("Specify symbolic input file", self.symbolic_files_entry)
-
-        self.stdin_size_entry.setText("256")
-        self.workspace_url_entry.setText("mem:")
 
         self.concrete_start_entry.editingFinished.connect(lambda: self.apply())
         self.stdin_size_entry.editingFinished.connect(lambda: self.apply())
@@ -177,38 +179,61 @@ class RunDialog(QDialog):
     def _try_restore_options(self):
         """Try restoring run options if they are set before"""
 
-        run_args = self.bv.session_data.mui_run_args
+        settings = Settings()
+        prefix = "mui.run."
 
-        if "argv" in run_args:
-            self.argv_entry.setText(shlex.join(run_args["argv"]))
-
-        if "concrete_start" in run_args:
-            self.concrete_start_entry.setText(run_args["concrete_start"])
-
-        if "stdin_size" in run_args:
-            self.stdin_size_entry.setText(str(run_args["stdin_size"]))
-
-        if "workspace_url" in run_args:
-            self.workspace_url_entry.setText(run_args["workspace_url"])
-
-        if "env" in run_args:
-            self.env_entry.set_rows([f"{key}={val}" for key, val in run_args["env"].items()])
-
-        if "symbolic_files" in run_args:
-            self.symbolic_files_entry.set_rows(run_args["symbolic_files"])
+        self.argv_entry.setText(shlex.join(settings.get_string_list(f"{prefix}argv", self.bv)))
+        self.concrete_start_entry.setText(settings.get_string(f"{prefix}concreteStart", self.bv))
+        self.stdin_size_entry.setText(str(settings.get_integer(f"{prefix}stdinSize", self.bv)))
+        self.workspace_url_entry.setText(settings.get_string(f"{prefix}workspaceURL", self.bv))
+        self.env_entry.set_rows(settings.get_string_list(f"{prefix}env", self.bv))
+        self.symbolic_files_entry.set_rows(
+            settings.get_string_list(f"{prefix}symbolicFiles", self.bv)
+        )
+        # [f"{key}={val}" for key, val in run_args["env"].items()]
 
     def apply(self):
         try:
-            self.bv.session_data.mui_run_args["argv"] = shlex.split(self.argv_entry.text())
-            self.bv.session_data.mui_run_args["concrete_start"] = self.concrete_start_entry.text()
-            self.bv.session_data.mui_run_args["stdin_size"] = int(self.stdin_size_entry.text())
-            self.bv.session_data.mui_run_args["workspace_url"] = self.workspace_url_entry.text()
-            self.bv.session_data.mui_run_args["env"] = {
-                key: val for key, val in [env.split("=") for env in self.env_entry.get_results()]
-            }
-            self.bv.session_data.mui_run_args[
-                "symbolic_files"
-            ] = self.symbolic_files_entry.get_results()
+            settings = Settings()
+            prefix = "mui.run."
+
+            settings.set_string_list(
+                f"{prefix}argv",
+                shlex.split(self.argv_entry.text()),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            settings.set_string(
+                f"{prefix}concreteStart",
+                self.concrete_start_entry.text(),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            settings.set_integer(
+                f"{prefix}stdinSize",
+                int(self.stdin_size_entry.text()),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            settings.set_string(
+                f"{prefix}workspaceURL",
+                self.workspace_url_entry.text(),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            settings.set_string_list(
+                f"{prefix}env",
+                self.env_entry.get_results(),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            settings.set_string_list(
+                f"{prefix}symbolicFiles",
+                self.symbolic_files_entry.get_results(),
+                view=self.bv,
+                scope=SettingsScope.SettingsResourceScope,
+            )
+            #  = {key: val for key, val in [env.split("=") for env in }
 
             self.acceptButton.setEnabled(True)
         except Exception as e:

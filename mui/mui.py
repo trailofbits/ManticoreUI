@@ -1,3 +1,4 @@
+import json
 import tempfile
 from time import sleep
 from typing import Set, Callable, Dict
@@ -13,6 +14,7 @@ from binaryninja import (
     show_message_box,
     MessageBoxButtonSet,
     MessageBoxIcon,
+    Settings,
 )
 from binaryninjaui import DockHandler
 from manticore.core.plugin import StateDescriptor
@@ -47,21 +49,28 @@ class ManticoreRunner(BackgroundTaskThread):
         state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
         state_widget.notifyStatesChanged({})
 
-        run_args = self.view.session_data.mui_run_args
+        settings = Settings()
+        prefix = "mui.run."
+        bv = self.view
 
         m = Manticore.linux(
             self.binary.name,
-            workspace_url=run_args["workspace_url"],
-            argv=run_args["argv"].copy(),
-            stdin_size=run_args["stdin_size"],
-            concrete_start=run_args["concrete_start"],
-            envp=run_args["env"],
+            workspace_url=settings.get_string(f"{prefix}workspaceURL", bv),
+            argv=settings.get_string_list(f"{prefix}argv", bv).copy(),
+            stdin_size=settings.get_integer(f"{prefix}stdinSize", bv),
+            concrete_start=settings.get_string(f"{prefix}concreteStart", bv),
+            envp={
+                key: val
+                for key, val in [
+                    env.split("=") for env in settings.get_string_list(f"{prefix}env", bv)
+                ]
+            },
             introspection_plugin_type=MUIIntrospectionPlugin,
         )
 
         @m.init
         def init(state):
-            for file in run_args["symbolic_files"]:
+            for file in settings.get_string_list(f"{prefix}symbolicFiles", bv):
                 state.platform.add_symbolic_file(file)
 
         def avoid_f(state: StateBase):
@@ -180,3 +189,81 @@ PluginCommand.register(
 widget.register_dockwidget(
     StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
 )
+
+settings = Settings()
+if not settings.contains("mui.run_argv"):
+    settings.register_group("mui", "MUI Settings")
+    settings.register_setting(
+        "mui.run.argv",
+        json.dumps(
+            {
+                "title": "Argument variables",
+                "description": "Argv to use for manticore",
+                "type": "array",
+                "elementType": "string",
+                "default": [],
+            }
+        ),
+    )
+
+    settings.register_setting(
+        "mui.run.workspaceURL",
+        json.dumps(
+            {
+                "title": "Workspace URL",
+                "description": "Workspace URL to use for manticore",
+                "type": "string",
+                "default": "mem:",
+            }
+        ),
+    )
+
+    settings.register_setting(
+        "mui.run.stdinSize",
+        json.dumps(
+            {
+                "title": "Stdin Size",
+                "description": "Stdin size to use for manticore",
+                "type": "number",
+                "default": 256,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        "mui.run.concreteStart",
+        json.dumps(
+            {
+                "title": "Concrete Start",
+                "description": "Initial concrete data for the input symbolic buffer",
+                "type": "string",
+                "default": "",
+            }
+        ),
+    )
+
+    settings.register_setting(
+        "mui.run.env",
+        json.dumps(
+            {
+                "title": "Environment Variables",
+                "description": "Environment variables for manticore",
+                "type": "array",
+                "elementType": "string",
+                "default": [],
+            }
+        ),
+    )
+
+    settings.register_setting(
+        "mui.run.symbolicFiles",
+        json.dumps(
+            {
+                "title": "Symbolic Files",
+                "description": "Symbolic files for manticore",
+                "type": "array",
+                "elementType": "string",
+                "default": [],
+            }
+        ),
+    )
