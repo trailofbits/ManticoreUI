@@ -23,12 +23,15 @@ from manticore.native import Manticore
 
 from mui.dockwidgets import widget
 from mui.dockwidgets.run_dialog import RunDialog
+from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
+from mui.utils import MUIState
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
 BinaryView.set_default_session_data("mui_is_running", False)
+BinaryView.set_default_session_data("mui_state", None)
 
 
 class ManticoreRunner(BackgroundTaskThread):
@@ -46,13 +49,18 @@ class ManticoreRunner(BackgroundTaskThread):
     def run(self):
         """Initializes manticore, adds the necessary hooks, and runs it"""
 
-        # clear state UI
+        bv = self.view
+
+        # set up state and clear UI
+        bv.session_data.mui_state = MUIState(bv)
+
         state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
-        state_widget.notifyStatesChanged({})
+        state_widget.listen_to(bv.session_data.mui_state)
+
+        bv.session_data.mui_state.notify_states_changed({})
 
         settings = Settings()
         prefix = "mui.run."
-        bv = self.view
 
         m = Manticore.linux(
             self.binary.name,
@@ -107,12 +115,7 @@ class ManticoreRunner(BackgroundTaskThread):
 
             return inner
 
-        def update_ui(states: Dict[int, StateDescriptor]):
-            """Updates the StateListWidget to reflect current progress"""
-            state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
-            state_widget.notifyStatesChanged(states)
-
-        m.register_daemon(run_every(update_ui, 1))
+        m.register_daemon(run_every(bv.session_data.mui_state.notify_states_changed, 1))
 
         def check_termination(_):
             """Check if the user wants to termninate manticore"""
@@ -124,7 +127,7 @@ class ManticoreRunner(BackgroundTaskThread):
         m.register_daemon(run_every(check_termination, 1))
 
         m.run()
-        update_ui(m.introspect())
+        bv.session_data.mui_state.notify_states_changed(m.introspect())
         print("Manticore finished")
         bv.session_data.mui_is_running = False
 
@@ -268,6 +271,10 @@ PluginCommand.register(
 
 widget.register_dockwidget(
     StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
+)
+
+widget.register_dockwidget(
+    StateGraphWidget, StateGraphWidget.NAME, Qt.TopDockWidgetArea, Qt.Vertical, True
 )
 
 settings = Settings()
