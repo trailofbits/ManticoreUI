@@ -232,7 +232,6 @@ class RunDialog(QDialog):
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
-            #  = {key: val for key, val in [env.split("=") for env in }
 
             self.acceptButton.setEnabled(True)
         except Exception as e:
