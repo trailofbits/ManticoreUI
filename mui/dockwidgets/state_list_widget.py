@@ -3,10 +3,14 @@ from typing import Dict, Final, Optional
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
-from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
+from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
 from manticore.utils.enums import StateStatus, StateLists
+
+from mui.dockwidgets import widget
+from mui.dockwidgets.state_graph_widget import StateGraphWidget
+from mui.utils import MUIState
 
 
 class StateListWidget(QWidget, DockContextHandler):
@@ -29,7 +33,7 @@ class StateListWidget(QWidget, DockContextHandler):
         tree_widget.setColumnCount(1)
         tree_widget.headerItem().setText(0, "State List")
         self.tree_widget = tree_widget
-        tree_widget.itemDoubleClicked.connect(self.onClick)
+        tree_widget.itemDoubleClicked.connect(self.on_click)
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
@@ -52,11 +56,10 @@ class StateListWidget(QWidget, DockContextHandler):
         layout.addWidget(tree_widget)
         self.setLayout(layout)
 
-        self.states: Dict[int, StateDescriptor] = {}
         self.state_items: Dict[int, QTreeWidgetItem] = {}
 
     @Slot(QTreeWidgetItem, int)
-    def onClick(self, item: QTreeWidgetItem, col: int):
+    def on_click(self, item: QTreeWidgetItem, col: int):
         """Jump to the current PC of a given state when double clicked"""
 
         item_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
@@ -65,25 +68,20 @@ class StateListWidget(QWidget, DockContextHandler):
         if item_id is None:
             return
 
-        state = self.states[item_id]
+        # print(self.bv.session_data.mui_state.get_state(item_id))
+        graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
+        graph_widget.update_graph(item_id)
 
-        if isinstance(state.pc, int):
-            self.bv.navigate(self.bv.view, state.pc)
-        elif isinstance(state.last_pc, int):
-            # use last_pc as a fallback
-            self.bv.navigate(self.bv.view, state.last_pc)
-        else:
-            show_message_box(
-                "[MUI] No instruction information available",
-                f"State {item_id} doesn't contain any instruction information.",
-                MessageBoxButtonSet.OKButtonSet,
-                MessageBoxIcon.ErrorIcon,
-            )
+        self.bv.session_data.mui_state.navigate_to_state(item_id)
 
-    def notifyStatesChanged(self, new_states: Dict[int, StateDescriptor]):
+    def listen_to(self, mui_state: MUIState):
+        """Register this widget with a MUI State object and set up event listeners"""
+        mui_state.on_state_change(self.on_state_change)
+
+    def on_state_change(
+        self, old_states: Dict[int, StateDescriptor], new_states: Dict[int, StateDescriptor]
+    ):
         """Updates the UI to reflect new_states, clears everything if an empty dict is provided"""
-        old_states = self.states
-
         # add/update new states
         for state_id, state in new_states.items():
             if state_id in self.state_items:
@@ -101,9 +99,6 @@ class StateListWidget(QWidget, DockContextHandler):
 
         # update list counts
         self._refresh_list_counts()
-
-        # update the states reference
-        self.states = new_states
 
     def _get_state_list(self, state: StateDescriptor) -> QTreeWidgetItem:
         """Get the corresponding state list for a given state"""
