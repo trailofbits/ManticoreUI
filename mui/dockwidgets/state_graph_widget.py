@@ -95,6 +95,5 @@ class MUIFlowGraphWidget(FlowGraphWidget):
 
         if node is not None:
             state_id = int(str(node.lines[0]).split(" ")[-1])
-            print(state_id)
 
             self.bv.session_data.mui_state.navigate_to_state(state_id)
