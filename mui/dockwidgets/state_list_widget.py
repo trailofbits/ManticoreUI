@@ -68,7 +68,7 @@ class StateListWidget(QWidget, DockContextHandler):
         if item_id is None:
             return
 
-        print(self.bv.session_data.mui_state.get_state(item_id))
+        # print(self.bv.session_data.mui_state.get_state(item_id))
         graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
         graph_widget.update_graph(item_id)
 
