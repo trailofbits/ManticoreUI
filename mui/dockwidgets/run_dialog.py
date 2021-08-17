@@ -32,7 +32,7 @@ class ListWidget(QWidget):
         self,
         parent: QWidget = None,
         initial_row_count: int = 0,
-        validate_fun: Callable = lambda: None,
+        validate_fun: Callable[[], None] = lambda: None,
     ):
         QWidget.__init__(self, parent)
         self.validate_fun = validate_fun
