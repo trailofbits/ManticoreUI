@@ -20,7 +20,6 @@ class StateGraphWidget(QWidget, DockContextHandler):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
 
-        print(bv)
         self.bv = bv
 
         vlayout = QVBoxLayout()
