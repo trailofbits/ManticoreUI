@@ -52,10 +52,13 @@ class ManticoreRunner(BackgroundTaskThread):
         bv = self.view
 
         # set up state and clear UI
-        bv.session_data.mui_state = MUIState(bv)
+        state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
+
+        if bv.session_data.mui_state is None:
+            bv.session_data.mui_state = MUIState(bv)
+            state_widget.listen_to(bv.session_data.mui_state)
 
         state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
-        state_widget.listen_to(bv.session_data.mui_state)
 
         bv.session_data.mui_state.notify_states_changed({})
 
