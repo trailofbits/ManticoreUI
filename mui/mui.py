@@ -21,6 +21,7 @@ from manticore.core.plugin import StateDescriptor
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
+from mui.constants import BINJA_SETTINGS_GROUP, BINJA_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
@@ -61,18 +62,18 @@ class ManticoreRunner(BackgroundTaskThread):
         bv.session_data.mui_state.notify_states_changed({})
 
         settings = Settings()
-        prefix = "mui.run."
 
         m = Manticore.linux(
             self.binary.name,
-            workspace_url=settings.get_string(f"{prefix}workspaceURL", bv),
-            argv=settings.get_string_list(f"{prefix}argv", bv).copy(),
-            stdin_size=settings.get_integer(f"{prefix}stdinSize", bv),
-            concrete_start=settings.get_string(f"{prefix}concreteStart", bv),
+            workspace_url=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", bv),
+            argv=settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", bv).copy(),
+            stdin_size=settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", bv),
+            concrete_start=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", bv),
             envp={
                 key: val
                 for key, val in [
-                    env.split("=") for env in settings.get_string_list(f"{prefix}env", bv)
+                    env.split("=")
+                    for env in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", bv)
                 ]
             },
             introspection_plugin_type=MUIIntrospectionPlugin,
@@ -80,7 +81,7 @@ class ManticoreRunner(BackgroundTaskThread):
 
         @m.init
         def init(state):
-            for file in settings.get_string_list(f"{prefix}symbolicFiles", bv):
+            for file in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", bv):
                 state.platform.add_symbolic_file(file)
 
         def avoid_f(state: StateBase):
@@ -279,10 +280,10 @@ widget.register_dockwidget(
 )
 
 settings = Settings()
-if not settings.contains("mui.run_argv"):
-    settings.register_group("mui", "MUI Settings")
+if not settings.contains(f"{BINJA_RUN_SETTINGS_PREFIX}argv"):
+    settings.register_group(BINJA_SETTINGS_GROUP, "MUI Settings")
     settings.register_setting(
-        "mui.run.argv",
+        f"{BINJA_RUN_SETTINGS_PREFIX}argv",
         json.dumps(
             {
                 "title": "Argument variables",
@@ -295,7 +296,7 @@ if not settings.contains("mui.run_argv"):
     )
 
     settings.register_setting(
-        "mui.run.workspaceURL",
+        f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL",
         json.dumps(
             {
                 "title": "Workspace URL",
@@ -307,7 +308,7 @@ if not settings.contains("mui.run_argv"):
     )
 
     settings.register_setting(
-        "mui.run.stdinSize",
+        f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize",
         json.dumps(
             {
                 "title": "Stdin Size",
@@ -319,7 +320,7 @@ if not settings.contains("mui.run_argv"):
     )
 
     settings.register_setting(
-        "mui.run.concreteStart",
+        f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart",
         json.dumps(
             {
                 "title": "Concrete Start",
@@ -331,7 +332,7 @@ if not settings.contains("mui.run_argv"):
     )
 
     settings.register_setting(
-        "mui.run.env",
+        f"{BINJA_RUN_SETTINGS_PREFIX}env",
         json.dumps(
             {
                 "title": "Environment Variables",
@@ -344,7 +345,7 @@ if not settings.contains("mui.run_argv"):
     )
 
     settings.register_setting(
-        "mui.run.symbolicFiles",
+        f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles",
         json.dumps(
             {
                 "title": "Symbolic Files",

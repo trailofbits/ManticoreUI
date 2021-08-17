@@ -26,6 +26,8 @@ from binaryninja import (
 )
 from binaryninjaui import UIContext
 
+from mui.constants import BINJA_RUN_SETTINGS_PREFIX
+
 
 class ListWidget(QWidget):
     def __init__(
@@ -180,54 +182,62 @@ class RunDialog(QDialog):
         """Try restoring run options if they are set before"""
 
         settings = Settings()
-        prefix = "mui.run."
 
-        self.argv_entry.setText(shlex.join(settings.get_string_list(f"{prefix}argv", self.bv)))
-        self.concrete_start_entry.setText(settings.get_string(f"{prefix}concreteStart", self.bv))
-        self.stdin_size_entry.setText(str(settings.get_integer(f"{prefix}stdinSize", self.bv)))
-        self.workspace_url_entry.setText(settings.get_string(f"{prefix}workspaceURL", self.bv))
-        self.env_entry.set_rows(settings.get_string_list(f"{prefix}env", self.bv))
+        self.argv_entry.setText(
+            shlex.join(settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", self.bv))
+        )
+        self.concrete_start_entry.setText(
+            settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", self.bv)
+        )
+        self.stdin_size_entry.setText(
+            str(settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", self.bv))
+        )
+        self.workspace_url_entry.setText(
+            settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", self.bv)
+        )
+        self.env_entry.set_rows(
+            settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", self.bv)
+        )
         self.symbolic_files_entry.set_rows(
-            settings.get_string_list(f"{prefix}symbolicFiles", self.bv)
+            settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", self.bv)
         )
 
     def apply(self):
         try:
             settings = Settings()
-            prefix = "mui.run."
 
             settings.set_string_list(
-                f"{prefix}argv",
+                f"{BINJA_RUN_SETTINGS_PREFIX}argv",
                 shlex.split(self.argv_entry.text()),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
             settings.set_string(
-                f"{prefix}concreteStart",
+                f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart",
                 self.concrete_start_entry.text(),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
             settings.set_integer(
-                f"{prefix}stdinSize",
+                f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize",
                 int(self.stdin_size_entry.text()),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
             settings.set_string(
-                f"{prefix}workspaceURL",
+                f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL",
                 self.workspace_url_entry.text(),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
             settings.set_string_list(
-                f"{prefix}env",
+                f"{BINJA_RUN_SETTINGS_PREFIX}env",
                 self.env_entry.get_results(),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
             )
             settings.set_string_list(
-                f"{prefix}symbolicFiles",
+                f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles",
                 self.symbolic_files_entry.get_results(),
                 view=self.bv,
                 scope=SettingsScope.SettingsResourceScope,
