@@ -190,7 +190,6 @@ class RunDialog(QDialog):
         self.symbolic_files_entry.set_rows(
             settings.get_string_list(f"{prefix}symbolicFiles", self.bv)
         )
-        # [f"{key}={val}" for key, val in run_args["env"].items()]
 
     def apply(self):
         try:
