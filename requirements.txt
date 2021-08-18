@@ -1,1 +1,2 @@
 -e './manticore[native]'
+pygments>=2.7.0,<2.9.0
