@@ -23,6 +23,7 @@ from manticore.native import Manticore
 
 from mui.constants import BINJA_SETTINGS_GROUP, BINJA_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
+from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
@@ -31,6 +32,7 @@ from mui.utils import MUIState
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
+BinaryView.set_default_session_data("mui_custom_hooks", dict())
 BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 
@@ -102,6 +104,9 @@ class ManticoreRunner(BackgroundTaskThread):
         for addr in self.find:
             m.hook(addr)(find_f)
 
+        for addr, func in bv.session_data.mui_custom_hooks.items():
+            exec(func, {"addr": addr, "bv": bv, "m": m})
+
         def run_every(callee: Callable, duration: int = 3) -> Callable:
             """
             Returns a function that calls <callee> every <duration> seconds
@@ -134,16 +139,27 @@ class ManticoreRunner(BackgroundTaskThread):
         bv.session_data.mui_is_running = False
 
 
+def highlight_instr(bv: BinaryView, addr: int, color: HighlightStandardColor) -> None:
+    """Highlight instruction at a given address"""
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(color, alpha=128))
+        block.function.set_auto_instr_highlight(addr, color)
+
+
+def clear_highlight(bv: BinaryView, addr: int) -> None:
+    """Remove instruction highlight"""
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
+        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+
+
 def find_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the find list and highlights it green in the UI"""
 
     # Highlight the instruction in green
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(
-            HighlightColor(HighlightStandardColor.GreenHighlightColor, alpha=128)
-        )
-        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.GreenHighlightColor)
+    highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
 
     # Add the instruction to the list associated with the current view
     bv.session_data.mui_find.add(addr)
@@ -153,10 +169,7 @@ def rm_find_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the find list and undoes the highlights"""
 
     # Remove instruction highlight
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
-        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+    clear_highlight(bv, addr)
 
     # Remove the instruction to the list associated with the current view
     bv.session_data.mui_find.remove(addr)
@@ -166,12 +179,7 @@ def avoid_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the avoid list and highlights it red in the UI"""
 
     # Highlight the instruction in red
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(
-            HighlightColor(HighlightStandardColor.RedHighlightColor, alpha=128)
-        )
-        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.RedHighlightColor)
+    highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
 
     # Add the instruction to the list associated with the current view
     bv.session_data.mui_avoid.add(addr)
@@ -181,10 +189,7 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the avoid list and undoes the highlights"""
 
     # Remove instruction highlight
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
-        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+    clear_highlight(bv, addr)
 
     # Remove the instruction to the list associated with the current view
     bv.session_data.mui_avoid.remove(addr)
@@ -193,10 +198,10 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
 def solve(bv: BinaryView):
     """This command handler starts manticore in a background thread"""
 
-    if len(bv.session_data.mui_find) == 0:
+    if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
         show_message_box(
             "Manticore Solve",
-            "You have not specified a goal instruction.\n\n"
+            "You have not specified a goal instruction or custom hook.\n\n"
             + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
             + "continue.",
             MessageBoxButtonSet.OKButtonSet,
@@ -212,6 +217,28 @@ def solve(bv: BinaryView):
         bv.session_data.mui_is_running = True
         s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
         s.start()
+
+
+def edit_custom_hook(bv: BinaryView, addr: int):
+    dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
+
+    if addr in bv.session_data.mui_custom_hooks:
+        dialog.set_text(bv.session_data.mui_custom_hooks[addr])
+
+    result: QDialog.DialogCode = dialog.exec()
+
+    if result == QDialog.Accepted:
+
+        if len(dialog.text()) == 0:
+            # delete the hook if empty input is provided
+            if addr in bv.session_data.mui_custom_hooks:
+                clear_highlight(bv, addr)
+                del bv.session_data.mui_custom_hooks[addr]
+
+        else:
+            # add/edit the hook if input is non-empty
+            highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
+            bv.session_data.mui_custom_hooks[addr] = dialog.text()
 
 
 def stop_manticore(bv: BinaryView):
@@ -269,6 +296,9 @@ PluginCommand.register(
     "Stop the running manticore instance",
     stop_manticore,
     lambda bv: not solve_is_valid(bv),
+)
+PluginCommand.register_for_address(
+    "MUI \\ Add/Edit Custom Hook", "Add/edit a custom hook at the current address", edit_custom_hook
 )
 
 widget.register_dockwidget(
