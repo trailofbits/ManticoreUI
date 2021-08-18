@@ -15,7 +15,7 @@ class CodeDialog(QDialog):
 
         QDialog.__init__(self, parent)
 
-        self.setWindowTitle("Run Manticore")
+        self.setWindowTitle("Custom Hook")
         self.setMinimumSize(UIContext.getScaledWindowSize(600, 130))
         self.setAttribute(Qt.WA_DeleteOnClose)
 
