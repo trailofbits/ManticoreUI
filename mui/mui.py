@@ -21,14 +21,19 @@ from manticore.core.plugin import StateDescriptor
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
-from mui.constants import BINJA_SETTINGS_GROUP, BINJA_RUN_SETTINGS_PREFIX
+from mui.constants import (
+    BINJA_HOOK_SETTINGS_PREFIX,
+    BINJA_SETTINGS_GROUP,
+    BINJA_RUN_SETTINGS_PREFIX,
+)
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
-from mui.utils import MUIState
+from mui.notification import UINotification
+from mui.utils import MUIState, highlight_instr, clear_highlight
 
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
@@ -52,107 +57,95 @@ class ManticoreRunner(BackgroundTaskThread):
     def run(self):
         """Initializes manticore, adds the necessary hooks, and runs it"""
 
-        bv = self.view
+        try:
+            bv = self.view
 
-        # set up state and clear UI
-        state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
+            # set up state and clear UI
+            state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
 
-        if bv.session_data.mui_state is None:
-            bv.session_data.mui_state = MUIState(bv)
-            state_widget.listen_to(bv.session_data.mui_state)
+            if bv.session_data.mui_state is None:
+                bv.session_data.mui_state = MUIState(bv)
+                state_widget.listen_to(bv.session_data.mui_state)
 
-        bv.session_data.mui_state.notify_states_changed({})
+            bv.session_data.mui_state.notify_states_changed({})
 
-        settings = Settings()
+            settings = Settings()
 
-        m = Manticore.linux(
-            self.binary.name,
-            workspace_url=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", bv),
-            argv=settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", bv).copy(),
-            stdin_size=settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", bv),
-            concrete_start=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", bv),
-            envp={
-                key: val
-                for key, val in [
-                    env.split("=")
-                    for env in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", bv)
-                ]
-            },
-            introspection_plugin_type=MUIIntrospectionPlugin,
-        )
+            m = Manticore.linux(
+                self.binary.name,
+                workspace_url=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", bv),
+                argv=settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", bv).copy(),
+                stdin_size=settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", bv),
+                concrete_start=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", bv),
+                envp={
+                    key: val
+                    for key, val in [
+                        env.split("=")
+                        for env in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", bv)
+                    ]
+                },
+                introspection_plugin_type=MUIIntrospectionPlugin,
+            )
 
-        @m.init
-        def init(state):
-            for file in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", bv):
-                state.platform.add_symbolic_file(file)
+            @m.init
+            def init(state):
+                for file in settings.get_string_list(
+                    f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", bv
+                ):
+                    state.platform.add_symbolic_file(file)
 
-        def avoid_f(state: StateBase):
-            state.abandon()
+            def avoid_f(state: StateBase):
+                state.abandon()
 
-        for addr in self.avoid:
-            m.hook(addr)(avoid_f)
+            for addr in self.avoid:
+                m.hook(addr)(avoid_f)
 
-        def find_f(state: StateBase):
-            bufs = state.solve_one_n_batched(state.input_symbols)
-            for symbol, buf in zip(state.input_symbols, bufs):
-                print(f"{symbol.name}: {buf!r}\n")
+            def find_f(state: StateBase):
+                bufs = state.solve_one_n_batched(state.input_symbols)
+                for symbol, buf in zip(state.input_symbols, bufs):
+                    print(f"{symbol.name}: {buf!r}\n")
 
-            with m.locked_context() as context:
-                m.kill()
-            state.abandon()
-
-        for addr in self.find:
-            m.hook(addr)(find_f)
-
-        for addr, func in bv.session_data.mui_custom_hooks.items():
-            exec(func, {"addr": addr, "bv": bv, "m": m})
-
-        def run_every(callee: Callable, duration: int = 3) -> Callable:
-            """
-            Returns a function that calls <callee> every <duration> seconds
-            """
-
-            def inner(
-                thread,
-            ):  # Takes `thread` as argument, which is provided by the daemon thread API
-                while thread.manticore.is_running():
-                    # Pass Manticore's state descriptor dict to the callee
-                    callee(thread.manticore.introspect())
-                    sleep(duration)
-
-            return inner
-
-        m.register_daemon(run_every(bv.session_data.mui_state.notify_states_changed, 1))
-
-        def check_termination(_):
-            """Check if the user wants to termninate manticore"""
-            if bv.session_data.mui_is_running == False:
-                print("Manticore terminated by user!")
                 with m.locked_context() as context:
                     m.kill()
+                state.abandon()
 
-        m.register_daemon(run_every(check_termination, 1))
+            for addr in self.find:
+                m.hook(addr)(find_f)
 
-        m.run()
-        bv.session_data.mui_state.notify_states_changed(m.introspect())
-        print("Manticore finished")
-        bv.session_data.mui_is_running = False
+            for addr, func in bv.session_data.mui_custom_hooks.items():
+                exec(func, {"addr": addr, "bv": bv, "m": m})
 
+            def run_every(callee: Callable, duration: int = 3) -> Callable:
+                """
+                Returns a function that calls <callee> every <duration> seconds
+                """
 
-def highlight_instr(bv: BinaryView, addr: int, color: HighlightStandardColor) -> None:
-    """Highlight instruction at a given address"""
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(HighlightColor(color, alpha=128))
-        block.function.set_auto_instr_highlight(addr, color)
+                def inner(
+                    thread,
+                ):  # Takes `thread` as argument, which is provided by the daemon thread API
+                    while thread.manticore.is_running():
+                        # Pass Manticore's state descriptor dict to the callee
+                        callee(thread.manticore.introspect())
+                        sleep(duration)
 
+                return inner
 
-def clear_highlight(bv: BinaryView, addr: int) -> None:
-    """Remove instruction highlight"""
-    blocks = bv.get_basic_blocks_at(addr)
-    for block in blocks:
-        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
-        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+            m.register_daemon(run_every(bv.session_data.mui_state.notify_states_changed, 1))
+
+            def check_termination(_):
+                """Check if the user wants to termninate manticore"""
+                if bv.session_data.mui_is_running == False:
+                    print("Manticore terminated by user!")
+                    with m.locked_context() as context:
+                        m.kill()
+
+            m.register_daemon(run_every(check_termination, 1))
+
+            m.run()
+            bv.session_data.mui_state.notify_states_changed(m.introspect())
+            print("Manticore finished")
+        finally:
+            bv.session_data.mui_is_running = False
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -386,3 +379,43 @@ if not settings.contains(f"{BINJA_RUN_SETTINGS_PREFIX}argv"):
             }
         ),
     )
+
+    settings.register_setting(
+        f"{BINJA_HOOK_SETTINGS_PREFIX}avoid",
+        json.dumps(
+            {
+                "title": "Avoid Hooks",
+                "description": "Addresses to attach avoid hooks",
+                "type": "string",
+                "default": json.dumps([]),
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_HOOK_SETTINGS_PREFIX}find",
+        json.dumps(
+            {
+                "title": "Find Hooks",
+                "description": "Addresses to attach find hooks",
+                "type": "string",
+                "default": json.dumps([]),
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
+        json.dumps(
+            {
+                "title": "Custom Hooks",
+                "description": "Addresses and python code for custom hooks",
+                "type": "string",
+                "default": json.dumps({}),
+            }
+        ),
+    )
+
+
+# Register as a global so it doesn't get destructed
+notif = UINotification()
