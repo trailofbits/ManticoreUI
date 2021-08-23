@@ -1,5 +1,12 @@
 import typing
-from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
+from binaryninja import (
+    BinaryView,
+    show_message_box,
+    MessageBoxButtonSet,
+    MessageBoxIcon,
+    HighlightStandardColor,
+    HighlightColor,
+)
 from manticore.core.plugin import StateDescriptor
 
 
@@ -66,3 +73,19 @@ class MUIState:
             callback(old_states, new_states)
 
         self.states = new_states
+
+
+def highlight_instr(bv: BinaryView, addr: int, color: HighlightStandardColor) -> None:
+    """Highlight instruction at a given address"""
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(color, alpha=128))
+        block.function.set_auto_instr_highlight(addr, color)
+
+
+def clear_highlight(bv: BinaryView, addr: int) -> None:
+    """Remove instruction highlight"""
+    blocks = bv.get_basic_blocks_at(addr)
+    for block in blocks:
+        block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
+        block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
