@@ -1,5 +1,10 @@
 import json
+import logging
+import os
+import string
 import tempfile
+import random
+from pathlib import Path, PosixPath
 from time import sleep
 from typing import Set, Callable, Dict
 
@@ -15,10 +20,24 @@ from binaryninja import (
     MessageBoxButtonSet,
     MessageBoxIcon,
     Settings,
+    get_open_filename_input,
+    BinaryViewType,
+    Architecture,
 )
-from binaryninjaui import DockHandler
-from manticore.core.plugin import StateDescriptor
+from binaryninja.interaction import show_report_collection, ReportCollection, PlainTextReport
+from binaryninjaui import DockHandler, UIContext
+from crytic_compile import CryticCompile
+from manticore import ManticoreEVM
+from manticore.core.plugin import StateDescriptor, Profiler
 from manticore.core.state import StateBase
+from manticore.ethereum.cli import ethereum_main
+from manticore.ethereum.plugins import (
+    SkipRevertBasicBlocks,
+    KeepOnlyIfStorageChanges,
+    VerboseTrace,
+    LoopDepthLimiter,
+    FilterFunctions,
+)
 from manticore.native import Manticore
 
 from mui.constants import (
@@ -40,6 +59,101 @@ BinaryView.set_default_session_data("mui_avoid", set())
 BinaryView.set_default_session_data("mui_custom_hooks", dict())
 BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
+BinaryView.set_default_session_data("mui_evm_source", None)
+
+
+class ManticoreEVMRunner(BackgroundTaskThread):
+    def __init__(self, source_file: Path, bv: BinaryView):
+        BackgroundTaskThread.__init__(self, "Solving with Manticore EVM...", True)
+        self.source_file: Path = source_file
+        self.bv: BinaryView = bv
+
+    def run(self):
+        """Analyzes the evm contract with manticore"""
+
+        random_dir_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        workspace_path = str(
+            Path(
+                self.source_file.parent.resolve(),
+                random_dir_name,
+            )
+        )
+        m = ManticoreEVM(workspace_url=workspace_path)
+
+        options = {
+            "contract_name": None,
+            "txlimit": None,
+            "txnocoverage": False,
+            "txnoether": False,
+            "txaccount": "attacker",
+            "txpreconstrain": False,
+            "no_testcases": False,
+            "only_alive_testcases": True,
+            "skip_reverts": False,
+            "explore_balance": False,
+            "verbose_trace": False,
+            "limit_loops": False,
+            "profile": False,
+            "avoid_constant": True,
+        }
+
+        if options["skip_reverts"]:
+            m.register_plugin(SkipRevertBasicBlocks())
+
+        if options["explore_balance"]:
+            m.register_plugin(KeepOnlyIfStorageChanges())
+
+        if options["verbose_trace"]:
+            m.register_plugin(VerboseTrace())
+
+        if options["limit_loops"]:
+            m.register_plugin(LoopDepthLimiter())
+
+        # for detector in choose_detectors(args):
+        #     m.register_detector(detector())
+
+        if options["profile"]:
+            profiler = Profiler()
+            m.register_plugin(profiler)
+
+        if options["avoid_constant"]:
+            # avoid all human level tx that has no effect on the storage
+            filter_nohuman_constants = FilterFunctions(
+                regexp=r".*", depth="human", mutability="constant", include=False
+            )
+            m.register_plugin(filter_nohuman_constants)
+
+        if m.plugins:
+            print(f'Registered plugins: {", ".join(d.name for d in m.plugins.values())}')
+
+        print("Beginning analysis")
+
+        m.multi_tx_analysis(
+            str(self.source_file),
+            contract_name=options["contract_name"],
+            tx_limit=options["txlimit"],
+            tx_use_coverage=not options["txnocoverage"],
+            tx_send_ether=not options["txnoether"],
+            tx_account=options["txaccount"],
+            tx_preconstrain=options["txpreconstrain"],
+            compile_args={},
+        )
+
+        print("finalizing...")
+        if not options["no_testcases"]:
+            m.finalize(only_alive_states=options["only_alive_testcases"])
+        else:
+            m.kill()
+
+        print("finished")
+
+        collection = ReportCollection()
+        for file in sorted(
+            [x for x in Path(workspace_path).iterdir() if x.is_file() and x.name[-4:] != ".pkl"]
+        ):
+            with open(file) as f:
+                collection.append(PlainTextReport(file.name, f.read()))
+        show_report_collection("results", collection)
 
 
 class ManticoreRunner(BackgroundTaskThread):
@@ -191,25 +305,35 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
 def solve(bv: BinaryView):
     """This command handler starts manticore in a background thread"""
 
-    if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
-        show_message_box(
-            "Manticore Solve",
-            "You have not specified a goal instruction or custom hook.\n\n"
-            + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
-            + "continue.",
-            MessageBoxButtonSet.OKButtonSet,
-            MessageBoxIcon.ErrorIcon,
-        )
-        return
-
-    dialog = RunDialog(DockHandler.getActiveDockHandler().parent(), bv)
-    result: QDialog.DialogCode = dialog.exec()
-
-    if result == QDialog.Accepted:
-        # Start a solver thread for the path associated with the view
+    if (
+        "EVM" in [x.name for x in list(Architecture)]
+        and bv.arch == Architecture["EVM"]
+        and bv.session_data["mui_evm_source"] is not None
+    ):
+        print("hello")
         bv.session_data.mui_is_running = True
-        s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
+        s = ManticoreEVMRunner(bv.session_data.mui_evm_source, bv)
         s.start()
+    else:
+        if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
+            show_message_box(
+                "Manticore Solve",
+                "You have not specified a goal instruction or custom hook.\n\n"
+                + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
+                + "continue.",
+                MessageBoxButtonSet.OKButtonSet,
+                MessageBoxIcon.ErrorIcon,
+            )
+            return
+
+        dialog = RunDialog(DockHandler.getActiveDockHandler().parent(), bv)
+        result: QDialog.DialogCode = dialog.exec()
+
+        if result == QDialog.Accepted:
+            # Start a solver thread for the path associated with the view
+            bv.session_data.mui_is_running = True
+            s = ManticoreRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
+            s.start()
 
 
 def edit_custom_hook(bv: BinaryView, addr: int):
@@ -232,6 +356,39 @@ def edit_custom_hook(bv: BinaryView, addr: int):
             # add/edit the hook if input is non-empty
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
             bv.session_data.mui_custom_hooks[addr] = dialog.text()
+
+
+def load_evm(bv: BinaryView):
+    filename = get_open_filename_input("filename:", "*.sol").decode()
+    if filename is None:
+        return
+
+    print(filename)
+    filename = Path(filename)
+
+    os.chdir(filename.parent.resolve())
+    output = CryticCompile(filename.name)
+
+    for compilation_unit in output.compilation_units.values():
+        for name in compilation_unit.contracts_names:
+            print(f"Contract {compilation_unit}")
+            print(compilation_unit.bytecode_init(name))
+            print(compilation_unit.bytecode_runtime(name))
+            srcmap_runtime = compilation_unit.srcmap_runtime(name)
+            print(srcmap_runtime)
+            with tempfile.NamedTemporaryFile("w+b", suffix=".evm") as temp:
+                temp.write(bytes.fromhex(compilation_unit.bytecode_runtime(name)))
+                temp.flush()
+
+                # b = BinaryViewType['EVM'].open(temp.name)
+                ctx = UIContext.activeContext()
+                ctx.openFilename(temp.name)
+                bv = ctx.getCurrentViewFrame().getCurrentBinaryView()
+
+                print(bv)
+                bv.session_data["mui_evm_source"] = filename
+
+    print(output)
 
 
 def stop_manticore(bv: BinaryView):
@@ -292,6 +449,10 @@ PluginCommand.register(
 )
 PluginCommand.register_for_address(
     "MUI \\ Add/Edit Custom Hook", "Add/edit a custom hook at the current address", edit_custom_hook
+)
+
+PluginCommand.register(
+    "MUI \\ Load Ethereum Contract", "Load a solidity ethereum contract", load_evm
 )
 
 widget.register_dockwidget(
