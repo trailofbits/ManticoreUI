@@ -1,12 +1,9 @@
 import json
-import logging
 import os
-import string
 import tempfile
-import random
-from pathlib import Path, PosixPath
+from pathlib import Path
 from time import sleep
-from typing import Set, Callable, Dict
+from typing import Set, Callable
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog
@@ -15,35 +12,23 @@ from binaryninja import (
     BinaryView,
     BackgroundTaskThread,
     HighlightStandardColor,
-    HighlightColor,
     show_message_box,
     MessageBoxButtonSet,
     MessageBoxIcon,
     Settings,
     get_open_filename_input,
-    BinaryViewType,
     Architecture,
 )
-from binaryninja.interaction import show_report_collection, ReportCollection, PlainTextReport
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
-from manticore import ManticoreEVM
-from manticore.core.plugin import StateDescriptor, Profiler
 from manticore.core.state import StateBase
-from manticore.ethereum.cli import ethereum_main
-from manticore.ethereum.plugins import (
-    SkipRevertBasicBlocks,
-    KeepOnlyIfStorageChanges,
-    VerboseTrace,
-    LoopDepthLimiter,
-    FilterFunctions,
-)
 from manticore.native import Manticore
 
 from mui.constants import (
     BINJA_HOOK_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
     BINJA_RUN_SETTINGS_PREFIX,
+    BINJA_EVM_RUN_SETTINGS_PREFIX,
 )
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
@@ -51,6 +36,7 @@ from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
+from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.notification import UINotification
 from mui.utils import MUIState, highlight_instr, clear_highlight
 
@@ -60,100 +46,6 @@ BinaryView.set_default_session_data("mui_custom_hooks", dict())
 BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
-
-
-class ManticoreEVMRunner(BackgroundTaskThread):
-    def __init__(self, source_file: Path, bv: BinaryView):
-        BackgroundTaskThread.__init__(self, "Solving with Manticore EVM...", True)
-        self.source_file: Path = source_file
-        self.bv: BinaryView = bv
-
-    def run(self):
-        """Analyzes the evm contract with manticore"""
-
-        random_dir_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        workspace_path = str(
-            Path(
-                self.source_file.parent.resolve(),
-                random_dir_name,
-            )
-        )
-        m = ManticoreEVM(workspace_url=workspace_path)
-
-        options = {
-            "contract_name": None,
-            "txlimit": None,
-            "txnocoverage": False,
-            "txnoether": False,
-            "txaccount": "attacker",
-            "txpreconstrain": False,
-            "no_testcases": False,
-            "only_alive_testcases": True,
-            "skip_reverts": False,
-            "explore_balance": False,
-            "verbose_trace": False,
-            "limit_loops": False,
-            "profile": False,
-            "avoid_constant": True,
-        }
-
-        if options["skip_reverts"]:
-            m.register_plugin(SkipRevertBasicBlocks())
-
-        if options["explore_balance"]:
-            m.register_plugin(KeepOnlyIfStorageChanges())
-
-        if options["verbose_trace"]:
-            m.register_plugin(VerboseTrace())
-
-        if options["limit_loops"]:
-            m.register_plugin(LoopDepthLimiter())
-
-        # for detector in choose_detectors(args):
-        #     m.register_detector(detector())
-
-        if options["profile"]:
-            profiler = Profiler()
-            m.register_plugin(profiler)
-
-        if options["avoid_constant"]:
-            # avoid all human level tx that has no effect on the storage
-            filter_nohuman_constants = FilterFunctions(
-                regexp=r".*", depth="human", mutability="constant", include=False
-            )
-            m.register_plugin(filter_nohuman_constants)
-
-        if m.plugins:
-            print(f'Registered plugins: {", ".join(d.name for d in m.plugins.values())}')
-
-        print("Beginning analysis")
-
-        m.multi_tx_analysis(
-            str(self.source_file),
-            contract_name=options["contract_name"],
-            tx_limit=options["txlimit"],
-            tx_use_coverage=not options["txnocoverage"],
-            tx_send_ether=not options["txnoether"],
-            tx_account=options["txaccount"],
-            tx_preconstrain=options["txpreconstrain"],
-            compile_args={},
-        )
-
-        print("finalizing...")
-        if not options["no_testcases"]:
-            m.finalize(only_alive_states=options["only_alive_testcases"])
-        else:
-            m.kill()
-
-        print("finished")
-
-        collection = ReportCollection()
-        for file in sorted(
-            [x for x in Path(workspace_path).iterdir() if x.is_file() and x.name[-4:] != ".pkl"]
-        ):
-            with open(file) as f:
-                collection.append(PlainTextReport(file.name, f.read()))
-        show_report_collection("results", collection)
 
 
 class ManticoreRunner(BackgroundTaskThread):
@@ -577,6 +469,214 @@ if not settings.contains(f"{BINJA_RUN_SETTINGS_PREFIX}argv"):
         ),
     )
 
+    # EVM run settings
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}contract_name",
+        json.dumps(
+            {
+                "title": "contract_name",
+                "description": "The target contract name defined in the source code",
+                "type": "string",
+                "default": "",
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txlimit",
+        json.dumps(
+            {
+                "title": "txlimit",
+                "description": "Maximum number of symbolic transactions to run (negative integer means no limit)",
+                "type": "number",
+                "default": -1,
+                "minValue": -2147483648,
+                "maxValue": 2147483647,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}thorough_mode",
+        json.dumps(
+            {
+                "title": "thorough_mode",
+                "description": "Configure Manticore for more exhaustive exploration. Evaluate gas, generate testcases for dead states, explore constant functions, and run a small suite of detectors.",
+                "type": "boolean",
+                "default": True,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}exclude_all",
+        json.dumps(
+            {
+                "title": "exclude_all",
+                "description": "Excludes all detectors",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}detectors_to_exclude",
+        json.dumps(
+            {
+                "title": "detectors_to_exclude",
+                "description": "List of detectors that should be excluded",
+                "type": "array",
+                "elementType": "string",
+                "default": [],
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txnocoverage",
+        json.dumps(
+            {
+                "title": "txnocoverage",
+                "description": "Do not use coverage as stopping criteria",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txnoether",
+        json.dumps(
+            {
+                "title": "txnoether",
+                "description": "Do not attempt to send ether to contract",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txaccount",
+        json.dumps(
+            {
+                "title": "txaccount",
+                "description": 'Account used as caller in the symbolic transactions, either "attacker" or "owner" or "combo1" (uses both)',
+                "type": "string",
+                "default": "attacker",
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txpreconstrain",
+        json.dumps(
+            {
+                "title": "txpreconstrain",
+                "description": "Constrain human transactions to avoid exceptions in the contract function dispatcher",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}no_testcases",
+        json.dumps(
+            {
+                "title": "no_testcases",
+                "description": "Do not generate testcases for discovered states when analysis finishes",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}only_alive_testcases",
+        json.dumps(
+            {
+                "title": "only_alive_testcases",
+                "description": "Do not generate testcases for invalid/throwing states when analysis finishes",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}skip_reverts",
+        json.dumps(
+            {
+                "title": "skip_reverts",
+                "description": "Skip REVERTs",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}explore_balance",
+        json.dumps(
+            {
+                "title": "explore_balance",
+                "description": "Discard all transactions that results in states where the underlying EVM storage did not change",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}verbose_trace",
+        json.dumps(
+            {
+                "title": "verbose_trace",
+                "description": "Dump an extra verbose trace for each state",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}limit_loops",
+        json.dumps(
+            {
+                "title": "limit_loops",
+                "description": "Limit loops depth",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}profile",
+        json.dumps(
+            {
+                "title": "profile",
+                "description": "Use profiler",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
+
+    settings.register_setting(
+        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}avoid_constant",
+        json.dumps(
+            {
+                "title": "avoid_constant",
+                "description": "Avoid exploring constant functions for human transactions",
+                "type": "boolean",
+                "default": False,
+            }
+        ),
+    )
 
 # Register as a global so it doesn't get destructed
 notif = UINotification()
