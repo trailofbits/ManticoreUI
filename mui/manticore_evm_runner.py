@@ -93,17 +93,12 @@ class ManticoreEVMRunner(BackgroundTaskThread):
         """Analyzes the evm contract with manticore"""
 
         try:
-            random_dir_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            workspace_path = str(
-                Path(
-                    self.source_file.parent.resolve(),
-                    random_dir_name,
-                )
-            )
-            m = ManticoreEVM(workspace_url=workspace_path)
-            print(config.get_group("core").mprocessing)
             settings = Settings()
             options = {}
+
+            options["workspace_url"] = settings.get_string(
+                f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url", self.bv
+            )
 
             options["contract_name"] = settings.get_string(
                 f"{BINJA_EVM_RUN_SETTINGS_PREFIX}contract_name", self.bv
@@ -149,8 +144,9 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 consts_evm = config.get_group("evm")
                 consts_evm.oog = "ignore"
                 options["skip_reverts"] = True
-
+            print(options)
             # initialize manticore with the various options
+            m = ManticoreEVM(workspace_url=options["workspace_url"])
 
             if options["skip_reverts"]:
                 m.register_plugin(SkipRevertBasicBlocks())
@@ -204,7 +200,11 @@ class ManticoreEVMRunner(BackgroundTaskThread):
 
             collection = ReportCollection()
             for file in sorted(
-                [x for x in Path(workspace_path).iterdir() if x.is_file() and x.name[-4:] != ".pkl"]
+                [
+                    x
+                    for x in Path(options["workspace_url"]).iterdir()
+                    if x.is_file() and x.name[-4:] != ".pkl"
+                ]
             ):
                 with open(file) as f:
                     collection.append(PlainTextReport(file.name, f.read()))
