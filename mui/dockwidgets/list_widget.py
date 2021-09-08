@@ -1,17 +1,19 @@
-from typing import Callable, List
+from typing import Callable, List, Optional
 
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit, QComboBox
 
 
 class ListWidget(QWidget):
     def __init__(
         self,
         parent: QWidget = None,
+        possible_values: Optional[List[str]] = None,
         initial_row_count: int = 0,
         validate_fun: Callable[[], None] = lambda: None,
     ):
         QWidget.__init__(self, parent)
         self.validate_fun = validate_fun
+        self.possible_values = possible_values
 
         self.row_layout = QVBoxLayout()
 
@@ -31,14 +33,23 @@ class ListWidget(QWidget):
 
     def add_row(self):
         """Adds a new row to the current widget"""
-        row = QHBoxLayout()
-        line_edit = QLineEdit()
-        line_edit.editingFinished.connect(lambda: self.validate_fun())
+
+        if self.possible_values is None:
+            input = QLineEdit()
+            input.editingFinished.connect(lambda: self.validate_fun())
+        else:
+            input = QComboBox()
+            input.addItems(self.possible_values)
+            input.currentIndexChanged.connect(lambda: self.validate_fun())
+
         btn = QPushButton("-")
-        row.addWidget(line_edit)
+        btn.setMaximumWidth(20)
+
+        row = QHBoxLayout()
+        row.addWidget(input)
         row.addWidget(btn)
 
-        btn.clicked.connect(lambda: [x.setParent(None) for x in [line_edit, btn, row]])
+        btn.clicked.connect(lambda: [x.setParent(None) for x in [input, btn, row]])
 
         self.row_layout.addLayout(row)
 
@@ -60,14 +71,22 @@ class ListWidget(QWidget):
         # set values
         idx = 0
         for row in self.row_layout.children():
-            row.itemAt(0).widget().setText(values[idx])
+            if self.possible_values is None:
+                row.itemAt(0).widget().setText(values[idx])
+            else:
+                if values[idx] in self.possible_values:
+                    row.itemAt(0).widget().setCurrentIndex(self.possible_values.index(values[idx]))
             idx += 1
 
     def get_results(self) -> List[str]:
         "Get all non-empty row inputs as a string array"
         output = []
         for row in self.row_layout.children():
-            text = row.itemAt(0).widget().text()
+            if self.possible_values is None:
+                text = row.itemAt(0).widget().text()
+            else:
+                text = row.itemAt(0).widget().currentText()
+
             if text != "":
                 output.append(text)
         return output
