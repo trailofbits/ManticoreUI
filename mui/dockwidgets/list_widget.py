@@ -49,7 +49,7 @@ class ListWidget(QWidget):
         row.addWidget(input)
         row.addWidget(btn)
 
-        btn.clicked.connect(lambda: [x.setParent(None) for x in [input, btn, row]])
+        btn.clicked.connect(lambda: [x.deleteLater() for x in [input, btn, row]])
 
         self.row_layout.addLayout(row)
 
