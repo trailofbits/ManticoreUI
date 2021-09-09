@@ -4,7 +4,7 @@ from typing import Final, Dict, Any, List, Tuple
 from binaryninja import Settings
 
 from mui.constants import (
-    BINJA_RUN_SETTINGS_PREFIX,
+    BINJA_NATIVE_RUN_SETTINGS_PREFIX,
     BINJA_HOOK_SETTINGS_PREFIX,
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
@@ -26,10 +26,28 @@ class MUISettings:
     #     }
     # }
     SETTINGS: Final[Dict[str, Dict[str, Tuple[Dict[str, Any], Dict[str, Any]]]]] = {
-        BINJA_RUN_SETTINGS_PREFIX: {
+        BINJA_NATIVE_RUN_SETTINGS_PREFIX: {
+            "concreteStart": (
+                {
+                    "title": "Concrete Start",
+                    "description": "Initial concrete data for the input symbolic buffer",
+                    "type": "string",
+                    "default": "",
+                },
+                {},
+            ),
+            "stdinSize": (
+                {
+                    "title": "Stdin Size",
+                    "description": "Stdin size to use for manticore",
+                    "type": "number",
+                    "default": 256,
+                },
+                {},
+            ),
             "argv": (
                 {
-                    "title": "Argument variables",
+                    "title": "Program arguments (use + as a wildcard)",
                     "description": "Argv to use for manticore",
                     "type": "array",
                     "elementType": "string",
@@ -48,24 +66,6 @@ class MUISettings:
                     "is_dir_path": True,
                 },
             ),
-            "stdinSize": (
-                {
-                    "title": "Stdin Size",
-                    "description": "Stdin size to use for manticore",
-                    "type": "number",
-                    "default": 256,
-                },
-                {},
-            ),
-            "concreteStart": (
-                {
-                    "title": "Concrete Start",
-                    "description": "Initial concrete data for the input symbolic buffer",
-                    "type": "string",
-                    "default": "",
-                },
-                {},
-            ),
             "env": (
                 {
                     "title": "Environment Variables",
@@ -78,8 +78,8 @@ class MUISettings:
             ),
             "symbolicFiles": (
                 {
-                    "title": "Symbolic Files",
-                    "description": "Symbolic files for manticore",
+                    "title": "Symbolic Input Files",
+                    "description": "Symbolic input files for manticore",
                     "type": "array",
                     "elementType": "string",
                     "default": [],
@@ -309,7 +309,7 @@ class MUISettings:
     }
 
     PREFIXES: Final[List[str]] = [
-        BINJA_RUN_SETTINGS_PREFIX,
+        BINJA_NATIVE_RUN_SETTINGS_PREFIX,
         BINJA_HOOK_SETTINGS_PREFIX,
         BINJA_EVM_RUN_SETTINGS_PREFIX,
     ]

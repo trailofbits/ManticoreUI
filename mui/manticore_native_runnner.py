@@ -6,7 +6,7 @@ from binaryninja import BackgroundTaskThread, Settings, BinaryView
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
-from mui.constants import BINJA_RUN_SETTINGS_PREFIX
+from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
@@ -44,15 +44,21 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
             m = Manticore.linux(
                 self.binary.name,
-                workspace_url=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", bv),
-                argv=settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", bv).copy(),
-                stdin_size=settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", bv),
-                concrete_start=settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", bv),
+                workspace_url=settings.get_string(
+                    f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}workspaceURL", bv
+                ),
+                argv=settings.get_string_list(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}argv", bv).copy(),
+                stdin_size=settings.get_integer(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}stdinSize", bv),
+                concrete_start=settings.get_string(
+                    f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}concreteStart", bv
+                ),
                 envp={
                     key: val
                     for key, val in [
                         env.split("=")
-                        for env in settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", bv)
+                        for env in settings.get_string_list(
+                            f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}env", bv
+                        )
                     ]
                 },
                 introspection_plugin_type=MUIIntrospectionPlugin,
@@ -61,7 +67,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             @m.init
             def init(state):
                 for file in settings.get_string_list(
-                    f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", bv
+                    f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}symbolicFiles", bv
                 ):
                     state.platform.add_symbolic_file(file)
 

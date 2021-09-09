@@ -1,4 +1,4 @@
-from typing import Dict, List, Final
+from typing import Dict
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -23,36 +23,20 @@ from binaryninja import (
 )
 from binaryninjaui import UIContext
 
-from mui.constants import BINJA_EVM_RUN_SETTINGS_PREFIX
 from mui.dockwidgets.list_widget import ListWidget
 from mui.settings import MUISettings
 
 
-class EVMRunDialog(QDialog):
-    bool_options: Final[List[str]] = [
-        "txnocoverage",
-        "txnoether",
-        "txpreconstrain",
-        "no_testcases",
-        "only_alive_testcases",
-        "skip_reverts",
-        "explore_balance",
-        "verbose_trace",
-        "limit_loops",
-        "profile",
-        "avoid_constant",
-        "thorough_mode",
-        "exclude_all",
-    ]
-
-    def __init__(self, parent: QWidget, data: BinaryView):
+class RunDialog(QDialog):
+    def __init__(self, parent: QWidget, data: BinaryView, prefix: str):
         self.bv = data
         self.entries: Dict[str, QWidget] = {}
         self.initialized = False
+        self.prefix = prefix
 
         QDialog.__init__(self, parent)
 
-        self.setWindowTitle("Run Manticore (EVM)")
+        self.setWindowTitle("Run Manticore")
         self.setMinimumSize(UIContext.getScaledWindowSize(600, 130))
         self.setAttribute(Qt.WA_DeleteOnClose)
 
@@ -65,7 +49,7 @@ class EVMRunDialog(QDialog):
 
         form_wrapper = QWidget()
         self.form_layout = QFormLayout(form_wrapper)
-        for name, (prop, extra) in MUISettings.SETTINGS[BINJA_EVM_RUN_SETTINGS_PREFIX].items():
+        for name, (prop, extra) in MUISettings.SETTINGS[prefix].items():
             title = prop["title"]
             label = QLabel(title)
             label.setToolTip(prop["description"])
@@ -149,10 +133,9 @@ class EVMRunDialog(QDialog):
         """Try restoring run options if they are set before"""
 
         settings = Settings()
-        prefix = BINJA_EVM_RUN_SETTINGS_PREFIX
-        for name, (prop, extra) in MUISettings.SETTINGS[prefix].items():
+        for name, (prop, extra) in MUISettings.SETTINGS[self.prefix].items():
             if prop["type"] == "string":
-                value = settings.get_string(f"{prefix}{name}", self.bv)
+                value = settings.get_string(f"{self.prefix}{name}", self.bv)
                 print(f"{name} {value}")
 
                 if "possible_values" in extra:
@@ -162,16 +145,19 @@ class EVMRunDialog(QDialog):
                     self.entries[name].setText(value)
             elif prop["type"] == "number":
                 # get_integer can only be used for positive integers, so using get_double as a workaround
-                value = int(settings.get_double(f"{prefix}{name}", self.bv))
+                value = int(settings.get_double(f"{self.prefix}{name}", self.bv))
 
                 self.entries[name].setText(str(value))
 
             elif prop["type"] == "array":
-                self.entries[name].set_rows(settings.get_string_list(f"{prefix}{name}", self.bv))
+                self.entries[name].set_rows(
+                    settings.get_string_list(f"{self.prefix}{name}", self.bv)
+                )
             elif prop["type"] == "boolean":
-                self.entries[name].setChecked(settings.get_bool(f"{prefix}{name}", self.bv))
+                self.entries[name].setChecked(settings.get_bool(f"{self.prefix}{name}", self.bv))
 
     def apply(self):
+        """Validate inputs and save them to settings"""
 
         # Do not want this function to be called when restoring options during init
         if not self.initialized:
@@ -179,8 +165,7 @@ class EVMRunDialog(QDialog):
 
         try:
             settings = Settings()
-            prefix = BINJA_EVM_RUN_SETTINGS_PREFIX
-            for name, (prop, extra) in MUISettings.SETTINGS[prefix].items():
+            for name, (prop, extra) in MUISettings.SETTINGS[self.prefix].items():
                 if prop["type"] == "string":
 
                     if "possible_values" in extra:
@@ -189,7 +174,7 @@ class EVMRunDialog(QDialog):
                         value = self.entries[name].text()
 
                     settings.set_string(
-                        f"{prefix}{name}",
+                        f"{self.prefix}{name}",
                         value,
                         view=self.bv,
                         scope=SettingsScope.SettingsResourceScope,
@@ -198,7 +183,7 @@ class EVMRunDialog(QDialog):
 
                     # set_integer can only be used for positive integers, so using set_double as a workaround
                     settings.set_double(
-                        f"{prefix}{name}",
+                        f"{self.prefix}{name}",
                         int(self.entries[name].text()),
                         view=self.bv,
                         scope=SettingsScope.SettingsResourceScope,
@@ -206,14 +191,14 @@ class EVMRunDialog(QDialog):
 
                 elif prop["type"] == "array":
                     settings.set_string_list(
-                        f"{prefix}{name}",
+                        f"{self.prefix}{name}",
                         self.entries[name].get_results(),
                         view=self.bv,
                         scope=SettingsScope.SettingsResourceScope,
                     )
                 elif prop["type"] == "boolean":
                     settings.set_bool(
-                        f"{prefix}{name}",
+                        f"{self.prefix}{name}",
                         self.entries[name].isChecked(),
                         view=self.bv,
                         scope=SettingsScope.SettingsResourceScope,

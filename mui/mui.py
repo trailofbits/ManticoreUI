@@ -23,11 +23,11 @@ from crytic_compile import CryticCompile
 
 from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
+    BINJA_NATIVE_RUN_SETTINGS_PREFIX,
 )
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
-from mui.dockwidgets.evm_run_dialog import EVMRunDialog
-from mui.dockwidgets.native_run_dialog import NativeRunDialog
+from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.manticore_evm_runner import ManticoreEVMRunner
@@ -113,7 +113,9 @@ def solve(bv: BinaryView):
                 scope=SettingsScope.SettingsResourceScope,
             )
 
-        dialog = EVMRunDialog(DockHandler.getActiveDockHandler().parent(), bv)
+        dialog = RunDialog(
+            DockHandler.getActiveDockHandler().parent(), bv, BINJA_EVM_RUN_SETTINGS_PREFIX
+        )
 
         if dialog.exec() == QDialog.Accepted:
             bv.session_data.mui_is_running = True
@@ -132,7 +134,9 @@ def solve(bv: BinaryView):
             )
             return
 
-        dialog = NativeRunDialog(DockHandler.getActiveDockHandler().parent(), bv)
+        dialog = RunDialog(
+            DockHandler.getActiveDockHandler().parent(), bv, BINJA_NATIVE_RUN_SETTINGS_PREFIX
+        )
 
         if dialog.exec() == QDialog.Accepted:
             # Start a solver thread for the path associated with the view
