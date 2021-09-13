@@ -9,7 +9,7 @@ MUI
 
 With the Manticore User Interface (MUI) project, we provide a graphical user interface plugin for `Binary Ninja <https://binary.ninja/>`_ to allow users to easily interact with and view progress of the `Manticore symbolic execution engine <https://github.com/trailofbits/manticore>`_ for analysis of smart contracts and native binaries.
 
-❗ATTENTION❗ This project is under active development and may be unstable or unusable. Notably, EVM is yet to be supported.
+❗ATTENTION❗ This project is under active development and may be unstable or unusable.
 
 Requirements
 ------------
@@ -24,7 +24,7 @@ Installation
 
 MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against the latest ``dev`` release(s) (``2.4.2901-dev`` at time of writing).
 
-Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux.
+Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux, and it requires the installation of `ethersplay <https://github.com/crytic/ethersplay>`_.
 
 Python dependencies are currently managed using ``requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up a development environment.
 
@@ -114,4 +114,32 @@ And the following widgets are available:
 .. image:: ./screenshots/custom_hook.png
     :align: center
     :alt: Custom Hook Dialog
+
+Usage (EVM)
+--------------
+
+EVM support is currently a bit limited, and MUI only supports the same feature set as the manticore CLI tool. Available commands include:
+
+- Load Ethereum Contract
+- Solve With Manticore / Stop Manticore
+
+And the following views are implemented:
+
+- EVM Run Dialog
+
+    The run dialog is shown when you invoke the ``Solve with Manticore`` command. It allows you to configure the various manticore options, and the changes will be saved to the ``bndb`` file.
+
+.. image:: ./screenshots/evm_run_dialog.png
+    :align: center
+    :alt: EVM Run Dialog
+
+
+
+- Run Report
+
+    The report page shows the result of a manticore execution. It displays all the files produced using the Binary Ninja UI.
+
+.. image:: ./screenshots/evm_run_report.png
+    :align: center
+    :alt: Run Report
 
