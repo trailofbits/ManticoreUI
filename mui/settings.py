@@ -22,6 +22,7 @@ class MUISettings:
     #             additional properties for UI display, etc
     #             possible_values - changes a line input to a dropdown
     #             is_dir_path     - adds a directory selection button
+    #             is_file_path    - adds a file selection button
     #             allow_repeats   - allow the same item to be selected more than once in an array view
     #         })
     #     }

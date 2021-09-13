@@ -54,11 +54,29 @@ class RunDialog(QDialog):
             label = QLabel(title)
             label.setToolTip(prop["description"])
             if "is_dir_path" in extra and extra["is_dir_path"]:
-
                 entry = QLineEdit()
                 entry.editingFinished.connect(lambda: self.apply())
                 button = QPushButton("Select...")
-                button.clicked.connect(lambda: self._select_dir(title, entry))
+
+                # the default parameter here is used for reference capture
+                button.clicked.connect(
+                    lambda _=None, entry=entry: self._select_path(title, entry, select_dir=True)
+                )
+
+                item = QHBoxLayout()
+                item.addWidget(entry)
+                item.addWidget(button)
+
+                self.entries[name] = entry
+            elif "is_file_path" in extra and extra["is_file_path"]:
+                entry = QLineEdit()
+                entry.editingFinished.connect(lambda: self.apply())
+                button = QPushButton("Select...")
+
+                # the default parameter here is used for reference capture
+                button.clicked.connect(
+                    lambda _=None, entry=entry: self._select_path(title, entry, select_dir=False)
+                )
 
                 item = QHBoxLayout()
                 item.addWidget(entry)
@@ -125,10 +143,15 @@ class RunDialog(QDialog):
         self._try_restore_options()
         self.initialized = True
 
-    def _select_dir(self, name: str, widget: QLineEdit):
-        file_url = QFileDialog.getExistingDirectory(self, f"Select {name} Directory")
-        if file_url != "":
-            widget.setText(file_url)
+    def _select_path(self, name: str, widget: QLineEdit, select_dir: bool = True):
+        print(select_dir)
+        if select_dir:
+            selected_url = QFileDialog.getExistingDirectory(self, f"Select {name} Directory")
+        else:
+            selected_url = QFileDialog.getOpenFileName(self, f"Select {name} File")[0]
+        print(selected_url)
+        if selected_url != "":
+            widget.setText(selected_url)
 
     def _try_restore_options(self):
         """Try restoring run options if they are set before"""
