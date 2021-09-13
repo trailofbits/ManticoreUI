@@ -9,6 +9,7 @@ from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
 )
+from mui.utils import get_default_solc_path
 
 
 class MUISettings:
@@ -119,6 +120,17 @@ class MUISettings:
             ),
         },
         BINJA_EVM_RUN_SETTINGS_PREFIX: {
+            "solc_path": (
+                {
+                    "title": "solc path",
+                    "description": "Location of the solc binary",
+                    "type": "string",
+                    "default": get_default_solc_path(),
+                },
+                {
+                    "is_file_path": True,
+                },
+            ),
             "workspace_url": (
                 {
                     "title": "workspace_url",

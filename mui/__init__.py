@@ -20,9 +20,4 @@ if venv_path != "":
     if venv_bin_path not in os.environ["PATH"]:
         os.environ["PATH"] = f'{os.environ["PATH"]}:{venv_bin_path}'
 
-# Adding ~/.local/bin to path so solc can be used by crytic-compile
-local_bin_path = Path(os.path.expanduser("~"), ".local/bin").resolve()
-if local_bin_path.is_dir() and str(local_bin_path) not in os.environ["PATH"]:
-    os.environ["PATH"] = f'{os.environ["PATH"]}:{str(local_bin_path)}'
-
 from . import mui

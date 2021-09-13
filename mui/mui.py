@@ -176,7 +176,10 @@ def load_evm(bv: BinaryView):
     filename = Path(filename)
 
     os.chdir(filename.parent.resolve())
-    output = CryticCompile(filename.name)
+    output = CryticCompile(
+        filename.name,
+        solc_solcs_bin=settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}solc_path", bv),
+    )
 
     for compilation_unit in output.compilation_units.values():
         for name in compilation_unit.contracts_names:

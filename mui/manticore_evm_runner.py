@@ -113,6 +113,10 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 f"{BINJA_EVM_RUN_SETTINGS_PREFIX}detectors_to_exclude", self.bv
             )
 
+            options["solc_path"] = settings.get_string(
+                f"{BINJA_EVM_RUN_SETTINGS_PREFIX}solc_path", self.bv
+            )
+
             for bool_option in [
                 "txnocoverage",
                 "txnoether",
@@ -187,7 +191,7 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 tx_send_ether=not options["txnoether"],
                 tx_account=options["txaccount"],
                 tx_preconstrain=options["txpreconstrain"],
-                compile_args={},
+                compile_args={"solc_solcs_bin": options["solc_path"]},
             )
 
             print("finalizing...")
