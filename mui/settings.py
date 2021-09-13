@@ -22,6 +22,7 @@ class MUISettings:
     #             additional properties for UI display, etc
     #             possible_values - changes a line input to a dropdown
     #             is_dir_path     - adds a directory selection button
+    #             allow_repeats   - allow the same item to be selected more than once in an array view
     #         })
     #     }
     # }
@@ -173,19 +174,20 @@ class MUISettings:
                 },
                 {
                     "possible_values": [
+                        "delegatecall",
+                        "env-instr",
+                        "ext-call-leak",
                         "invalid",
+                        "lockdrop",
                         "overflow",
-                        "uninitialized-storage",
-                        "uninitialized-memory",
                         "reentrancy",
                         "reentrancy-adv",
-                        "unused-return",
                         "suicidal",
-                        "delegatecall",
-                        "ext-call-leak",
-                        "env-instr",
-                        "lockdrop",
+                        "uninitialized-memory",
+                        "uninitialized-storage",
+                        "unused-return",
                     ],
+                    "allow_repeats": False,
                 },
             ),
             "exclude_all": (

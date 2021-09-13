@@ -86,6 +86,7 @@ class RunDialog(QDialog):
                     possible_values=extra["possible_values"]
                     if "possible_values" in extra
                     else None,
+                    allow_repeats=extra["allow_repeats"] if "allow_repeats" in extra else True,
                 )
                 self.entries[name] = item
             else:

@@ -1,5 +1,6 @@
 from typing import Callable, List, Optional
 
+from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit, QComboBox
 
 
@@ -8,12 +9,14 @@ class ListWidget(QWidget):
         self,
         parent: QWidget = None,
         possible_values: Optional[List[str]] = None,
+        allow_repeats: bool = True,
         initial_row_count: int = 0,
         validate_fun: Callable[[], None] = lambda: None,
     ):
         QWidget.__init__(self, parent)
         self.validate_fun = validate_fun
         self.possible_values = possible_values
+        self.allow_repeats = allow_repeats
 
         self.row_layout = QVBoxLayout()
 
@@ -39,8 +42,13 @@ class ListWidget(QWidget):
             input.editingFinished.connect(lambda: self.validate_fun())
         else:
             input = QComboBox()
-            input.addItems(self.possible_values)
-            input.currentIndexChanged.connect(lambda: self.validate_fun())
+
+            if self.allow_repeats:
+                input.addItems(self.possible_values)
+            else:
+                input.addItems(sorted(set(self.possible_values) - set(self.get_results())))
+
+            input.currentIndexChanged.connect(self._on_index_change)
 
         btn = QPushButton("-")
         btn.setMaximumWidth(20)
@@ -49,9 +57,51 @@ class ListWidget(QWidget):
         row.addWidget(input)
         row.addWidget(btn)
 
-        btn.clicked.connect(lambda: [x.deleteLater() for x in [input, btn, row]])
+        btn.clicked.connect(lambda: self._on_remove_row([input, btn, row]))
 
         self.row_layout.addLayout(row)
+
+        if not self.allow_repeats:
+            self._remove_repeats()
+
+    def _on_remove_row(self, elements_to_remove: List[QObject]):
+        """Remove a row from the list"""
+
+        for x in elements_to_remove:
+            x.setParent(None)
+            x.deleteLater()
+
+        if not self.allow_repeats:
+            self._remove_repeats()
+
+    def _on_index_change(self):
+        """Handle index change"""
+
+        self.validate_fun()
+
+        if not self.allow_repeats:
+            self._remove_repeats()
+
+    def _remove_repeats(self):
+        """Update the available options for each row to prevent repeats"""
+
+        assert self.possible_values is not None
+        assert not self.allow_repeats
+
+        not_selected = set(self.possible_values) - set(self.get_results())
+        for row in self.row_layout.children():
+            combobox: QComboBox = row.itemAt(0).widget()
+            curr_text = combobox.currentText()
+
+            # need to disable the event listener temporarily in order to
+            # prevent the same method being called recursively
+            combobox.currentIndexChanged.disconnect(self._on_index_change)
+
+            combobox.clear()
+            combobox.addItems(sorted(not_selected | {curr_text}))
+            combobox.setCurrentIndex(combobox.findText(curr_text))
+
+            combobox.currentIndexChanged.connect(self._on_index_change)
 
     def set_rows(self, values: List[str]):
         """Sets the rows to given values. Adds and removes rows when needed"""
