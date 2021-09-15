@@ -1,5 +1,4 @@
-import shlex
-from typing import List, Callable
+from typing import Dict
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -10,98 +9,30 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QLineEdit,
-    QCheckBox,
     QFormLayout,
     QFileDialog,
     QScrollArea,
-    QLayout,
+    QCheckBox,
+    QComboBox,
 )
 from binaryninja import (
     BinaryView,
     show_message_box,
-    MessageBoxButtonSet,
-    MessageBoxIcon,
     Settings,
     SettingsScope,
 )
 from binaryninjaui import UIContext
 
-from mui.constants import BINJA_RUN_SETTINGS_PREFIX
-
-
-class ListWidget(QWidget):
-    def __init__(
-        self,
-        parent: QWidget = None,
-        initial_row_count: int = 0,
-        validate_fun: Callable[[], None] = lambda: None,
-    ):
-        QWidget.__init__(self, parent)
-        self.validate_fun = validate_fun
-
-        self.row_layout = QVBoxLayout()
-
-        for i in range(initial_row_count):
-            self.add_row()
-
-        add_btn = QPushButton("+")
-        add_btn.clicked.connect(lambda: self.add_row())
-
-        layout = QVBoxLayout()
-        layout.addLayout(self.row_layout)
-        layout.addWidget(add_btn)
-
-        layout.setContentsMargins(0, 0, 0, 0)
-
-        self.setLayout(layout)
-
-    def add_row(self):
-        """Adds a new row to the current widget"""
-        row = QHBoxLayout()
-        line_edit = QLineEdit()
-        line_edit.editingFinished.connect(lambda: self.validate_fun())
-        btn = QPushButton("-")
-        row.addWidget(line_edit)
-        row.addWidget(btn)
-
-        btn.clicked.connect(lambda: [x.setParent(None) for x in [line_edit, btn, row]])
-
-        self.row_layout.addLayout(row)
-
-    def set_rows(self, values: List[str]):
-        """Sets the rows to given values. Adds and removes rows when needed"""
-
-        values_len = len(values)
-        curr_row_count = len(self.row_layout.children())
-
-        # adjust row count
-        if values_len > curr_row_count:
-            for _ in range(values_len - curr_row_count):
-                self.add_row()
-        elif values_len < curr_row_count:
-            for _ in range(curr_row_count - values_len):
-                last_row = self.row_layout.children()[-1]
-                last_row.itemAt(1).widget().click()
-
-        # set values
-        idx = 0
-        for row in self.row_layout.children():
-            row.itemAt(0).widget().setText(values[idx])
-            idx += 1
-
-    def get_results(self) -> List[str]:
-        "Get all non-empty row inputs as a string array"
-        output = []
-        for row in self.row_layout.children():
-            text = row.itemAt(0).widget().text()
-            if text != "":
-                output.append(text)
-        return output
+from mui.dockwidgets.list_widget import ListWidget
+from mui.settings import MUISettings
 
 
 class RunDialog(QDialog):
-    def __init__(self, parent: QWidget, data: BinaryView):
+    def __init__(self, parent: QWidget, data: BinaryView, prefix: str):
         self.bv = data
+        self.entries: Dict[str, QWidget] = {}
+        self.initialized = False
+        self.prefix = prefix
 
         QDialog.__init__(self, parent)
 
@@ -116,35 +47,73 @@ class RunDialog(QDialog):
         titleLayout.setContentsMargins(0, 0, 0, 0)
         titleLayout.addWidget(titleLabel)
 
-        self.concrete_start_entry = QLineEdit()
-        self.stdin_size_entry = QLineEdit()
-        self.argv_entry = QLineEdit()
-
-        self.workspace_url_entry = QLineEdit()
-        self.workspace_url_button = QPushButton("Select...")
-        workspace_url_layout = QHBoxLayout()
-        workspace_url_layout.addWidget(self.workspace_url_entry)
-        workspace_url_layout.addWidget(self.workspace_url_button)
-
-        self.env_entry = ListWidget(validate_fun=lambda: self.apply())
-        self.symbolic_files_entry = ListWidget(validate_fun=lambda: self.apply())
-
         form_wrapper = QWidget()
         self.form_layout = QFormLayout(form_wrapper)
-        self.form_layout.addRow(
-            "Concrete stdin to use before symbolic input", self.concrete_start_entry
-        )
-        self.form_layout.addRow("Symbolic stdin size to use", self.stdin_size_entry)
-        self.form_layout.addRow("Program arguments (use + as a wildcard)", self.argv_entry)
-        self.form_layout.addRow("Workspace URL", workspace_url_layout)
-        self.form_layout.addRow("Add environment variables", self.env_entry)
-        self.form_layout.addRow("Specify symbolic input file", self.symbolic_files_entry)
+        for name, (prop, extra) in MUISettings.SETTINGS[prefix].items():
+            title = prop["title"]
+            label = QLabel(title)
+            label.setToolTip(prop["description"])
+            if "is_dir_path" in extra and extra["is_dir_path"]:
+                entry = QLineEdit()
+                entry.editingFinished.connect(lambda: self.apply())
+                button = QPushButton("Select...")
 
-        self.concrete_start_entry.editingFinished.connect(lambda: self.apply())
-        self.stdin_size_entry.editingFinished.connect(lambda: self.apply())
-        self.argv_entry.editingFinished.connect(lambda: self.apply())
-        self.workspace_url_entry.editingFinished.connect(lambda: self.apply())
-        self.workspace_url_button.clicked.connect(lambda: self._select_workspace_url())
+                # the default parameter here is used for reference capture
+                button.clicked.connect(
+                    lambda _=None, entry=entry: self._select_path(title, entry, select_dir=True)
+                )
+
+                item = QHBoxLayout()
+                item.addWidget(entry)
+                item.addWidget(button)
+
+                self.entries[name] = entry
+            elif "is_file_path" in extra and extra["is_file_path"]:
+                entry = QLineEdit()
+                entry.editingFinished.connect(lambda: self.apply())
+                button = QPushButton("Select...")
+
+                # the default parameter here is used for reference capture
+                button.clicked.connect(
+                    lambda _=None, entry=entry: self._select_path(title, entry, select_dir=False)
+                )
+
+                item = QHBoxLayout()
+                item.addWidget(entry)
+                item.addWidget(button)
+
+                self.entries[name] = entry
+            elif prop["type"] in ["string", "number"]:
+
+                if "possible_values" in extra:
+                    item = QComboBox()
+                    item.addItems([str(val) for val in extra["possible_values"]])
+                    item.currentIndexChanged.connect(lambda: self.apply())
+                else:
+                    item = QLineEdit()
+                    item.editingFinished.connect(lambda: self.apply())
+
+                self.entries[name] = item
+            elif prop["type"] == "boolean":
+                item = QCheckBox()
+                item.stateChanged.connect(lambda: self.apply())
+                self.entries[name] = item
+            elif prop["type"] == "array":
+                item = ListWidget(
+                    validate_fun=lambda: self.apply(),
+                    possible_values=extra["possible_values"]
+                    if "possible_values" in extra
+                    else None,
+                    allow_repeats=extra["allow_repeats"] if "allow_repeats" in extra else True,
+                )
+                self.entries[name] = item
+            else:
+                show_message_box(
+                    "Error",
+                    f"[ERROR] Cannot create input row for {name} with the type {prop['type']}",
+                )
+                item = QLabel("...")
+            self.form_layout.addRow(label, item)
 
         buttonLayout = QHBoxLayout()
         self.cancelButton = QPushButton("Cancel")
@@ -172,76 +141,89 @@ class RunDialog(QDialog):
         self.accepted.connect(lambda: self.apply())
 
         self._try_restore_options()
+        self.initialized = True
 
-    def _select_workspace_url(self):
-        file_url = QFileDialog.getExistingDirectory(self, "Select Workspace Directory")
-        if file_url != "":
-            self.workspace_url_entry.setText(file_url)
+    def _select_path(self, name: str, widget: QLineEdit, select_dir: bool = True):
+        if select_dir:
+            selected_url = QFileDialog.getExistingDirectory(self, f"Select {name} Directory")
+        else:
+            selected_url = QFileDialog.getOpenFileName(self, f"Select {name} File")[0]
+        if selected_url != "":
+            widget.setText(selected_url)
 
     def _try_restore_options(self):
         """Try restoring run options if they are set before"""
 
         settings = Settings()
+        for name, (prop, extra) in MUISettings.SETTINGS[self.prefix].items():
+            if prop["type"] == "string":
+                value = settings.get_string(f"{self.prefix}{name}", self.bv)
 
-        self.argv_entry.setText(
-            shlex.join(settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}argv", self.bv))
-        )
-        self.concrete_start_entry.setText(
-            settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart", self.bv)
-        )
-        self.stdin_size_entry.setText(
-            str(settings.get_integer(f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize", self.bv))
-        )
-        self.workspace_url_entry.setText(
-            settings.get_string(f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL", self.bv)
-        )
-        self.env_entry.set_rows(
-            settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}env", self.bv)
-        )
-        self.symbolic_files_entry.set_rows(
-            settings.get_string_list(f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles", self.bv)
-        )
+                if "possible_values" in extra:
+                    if value in extra["possible_values"]:
+                        self.entries[name].setCurrentIndex(extra["possible_values"].index(value))
+                else:
+                    self.entries[name].setText(value)
+            elif prop["type"] == "number":
+                # get_integer can only be used for positive integers, so using get_double as a workaround
+                value = int(settings.get_double(f"{self.prefix}{name}", self.bv))
+
+                self.entries[name].setText(str(value))
+
+            elif prop["type"] == "array":
+                self.entries[name].set_rows(
+                    settings.get_string_list(f"{self.prefix}{name}", self.bv)
+                )
+            elif prop["type"] == "boolean":
+                self.entries[name].setChecked(settings.get_bool(f"{self.prefix}{name}", self.bv))
 
     def apply(self):
+        """Validate inputs and save them to settings"""
+
+        # Do not want this function to be called when restoring options during init
+        if not self.initialized:
+            return
+
         try:
             settings = Settings()
+            for name, (prop, extra) in MUISettings.SETTINGS[self.prefix].items():
+                if prop["type"] == "string":
 
-            settings.set_string_list(
-                f"{BINJA_RUN_SETTINGS_PREFIX}argv",
-                shlex.split(self.argv_entry.text()),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
-            settings.set_string(
-                f"{BINJA_RUN_SETTINGS_PREFIX}concreteStart",
-                self.concrete_start_entry.text(),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
-            settings.set_integer(
-                f"{BINJA_RUN_SETTINGS_PREFIX}stdinSize",
-                int(self.stdin_size_entry.text()),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
-            settings.set_string(
-                f"{BINJA_RUN_SETTINGS_PREFIX}workspaceURL",
-                self.workspace_url_entry.text(),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
-            settings.set_string_list(
-                f"{BINJA_RUN_SETTINGS_PREFIX}env",
-                self.env_entry.get_results(),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
-            settings.set_string_list(
-                f"{BINJA_RUN_SETTINGS_PREFIX}symbolicFiles",
-                self.symbolic_files_entry.get_results(),
-                view=self.bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
+                    if "possible_values" in extra:
+                        value = self.entries[name].currentText()
+                    else:
+                        value = self.entries[name].text()
+
+                    settings.set_string(
+                        f"{self.prefix}{name}",
+                        value,
+                        view=self.bv,
+                        scope=SettingsScope.SettingsResourceScope,
+                    )
+                elif prop["type"] == "number":
+
+                    # set_integer can only be used for positive integers, so using set_double as a workaround
+                    settings.set_double(
+                        f"{self.prefix}{name}",
+                        int(self.entries[name].text()),
+                        view=self.bv,
+                        scope=SettingsScope.SettingsResourceScope,
+                    )
+
+                elif prop["type"] == "array":
+                    settings.set_string_list(
+                        f"{self.prefix}{name}",
+                        self.entries[name].get_results(),
+                        view=self.bv,
+                        scope=SettingsScope.SettingsResourceScope,
+                    )
+                elif prop["type"] == "boolean":
+                    settings.set_bool(
+                        f"{self.prefix}{name}",
+                        self.entries[name].isChecked(),
+                        view=self.bv,
+                        scope=SettingsScope.SettingsResourceScope,
+                    )
 
             self.acceptButton.setEnabled(True)
         except Exception as e:

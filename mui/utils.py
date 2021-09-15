@@ -1,4 +1,7 @@
+import os
 import typing
+from pathlib import Path
+
 from binaryninja import (
     BinaryView,
     show_message_box,
@@ -89,3 +92,16 @@ def clear_highlight(bv: BinaryView, addr: int) -> None:
     for block in blocks:
         block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))
         block.function.set_auto_instr_highlight(addr, HighlightStandardColor.NoHighlightColor)
+
+
+def get_default_solc_path():
+    """Attempt to find the path for the solc binary"""
+
+    possible_paths = [Path(x) for x in os.environ["PATH"].split(":")]
+    possible_paths.extend([Path(os.path.expanduser("~"), ".local/bin").resolve()])
+
+    for path in possible_paths:
+        if Path(path, "solc").is_file():
+            return str(Path(path, "solc"))
+
+    return ""
