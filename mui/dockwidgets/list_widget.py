@@ -129,7 +129,7 @@ class ListWidget(QWidget):
             idx += 1
 
     def get_results(self) -> List[str]:
-        "Get all non-empty row inputs as a string array"
+        """Get all non-empty row inputs as a string array"""
         output = []
         for row in self.row_layout.children():
             if self.possible_values is None:
