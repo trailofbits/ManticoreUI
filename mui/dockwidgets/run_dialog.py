@@ -144,12 +144,10 @@ class RunDialog(QDialog):
         self.initialized = True
 
     def _select_path(self, name: str, widget: QLineEdit, select_dir: bool = True):
-        print(select_dir)
         if select_dir:
             selected_url = QFileDialog.getExistingDirectory(self, f"Select {name} Directory")
         else:
             selected_url = QFileDialog.getOpenFileName(self, f"Select {name} File")[0]
-        print(selected_url)
         if selected_url != "":
             widget.setText(selected_url)
 
@@ -160,7 +158,6 @@ class RunDialog(QDialog):
         for name, (prop, extra) in MUISettings.SETTINGS[self.prefix].items():
             if prop["type"] == "string":
                 value = settings.get_string(f"{self.prefix}{name}", self.bv)
-                print(f"{name} {value}")
 
                 if "possible_values" in extra:
                     if value in extra["possible_values"]:

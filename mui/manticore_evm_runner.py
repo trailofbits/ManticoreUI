@@ -148,7 +148,7 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 consts_evm = config.get_group("evm")
                 consts_evm.oog = "ignore"
                 options["skip_reverts"] = True
-            print(options)
+
             # initialize manticore with the various options
             m = ManticoreEVM(workspace_url=options["workspace_url"])
 

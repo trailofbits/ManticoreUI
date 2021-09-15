@@ -99,7 +99,7 @@ def get_default_solc_path():
 
     possible_paths = [Path(x) for x in os.environ["PATH"].split(":")]
     possible_paths.extend([Path(os.path.expanduser("~"), ".local/bin").resolve()])
-    print(possible_paths)
+
     for path in possible_paths:
         if Path(path, "solc").is_file():
             return str(Path(path, "solc"))

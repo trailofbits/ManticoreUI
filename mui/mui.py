@@ -172,7 +172,6 @@ def load_evm(bv: BinaryView):
     if filename is None:
         return
 
-    print(filename)
     filename = Path(filename)
 
     os.chdir(filename.parent.resolve())
@@ -187,7 +186,7 @@ def load_evm(bv: BinaryView):
             print(compilation_unit.bytecode_init(name))
             print(compilation_unit.bytecode_runtime(name))
             srcmap_runtime = compilation_unit.srcmap_runtime(name)
-            print(srcmap_runtime)
+
             with tempfile.NamedTemporaryFile("w+b", suffix=".evm") as temp:
                 temp.write(bytes.fromhex(compilation_unit.bytecode_runtime(name)))
                 temp.flush()
@@ -197,10 +196,7 @@ def load_evm(bv: BinaryView):
                 ctx.openFilename(temp.name)
                 bv = ctx.getCurrentViewFrame().getCurrentBinaryView()
 
-                print(bv)
                 bv.session_data["mui_evm_source"] = filename
-
-    print(output)
 
 
 def stop_manticore(bv: BinaryView):
