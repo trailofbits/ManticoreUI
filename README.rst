@@ -118,7 +118,7 @@ And the following widgets are available:
 Usage (EVM)
 --------------
 
-EVM support is currently a bit limited. MUI EVM only supports the same feature set as the `Manticore CLI tool <https://github.com/trailofbits/manticore>`. Available commands include:
+EVM support is currently a bit limited. MUI EVM only supports the same feature set as the `Manticore CLI tool <https://github.com/trailofbits/manticore>`_. Available commands include:
 
 - Load Ethereum Contract
 - Solve With Manticore / Stop Manticore
