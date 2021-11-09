@@ -32,10 +32,13 @@ class MUIIntrospectionPlugin(IntrospectionAPIPlugin):
         Calling _update_state_descriptor directly may become an issue if specific state implementations
         start to require additional arguments for this method."""
         with self.locked_context("manticore_state", dict) as context:
-            state._update_state_descriptor(
-                context.setdefault(state.id, StateDescriptor(state_id=state.id)),
-            )
-            context[state.id].last_intermittent_update = datetime.now()
+            try:
+                state._update_state_descriptor(
+                    context.setdefault(state.id, StateDescriptor(state_id=state.id)),
+                )
+                context[state.id].last_intermittent_update = datetime.now()
+            except:
+                print(f"error updated state descriptor for state {state.id}")
 
     def did_terminate_worker_callback(self, worker_id: int):
         print(f"worker exits (id: {worker_id})")

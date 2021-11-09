@@ -38,13 +38,21 @@ class MUIState:
         if state is None:
             return None
 
-        if isinstance(state.pc, int):
-            return state.pc
-        elif isinstance(state.last_pc, int):
-            # use last_pc as a fallback
-            return state.last_pc
+        if is_evm(self.bv):
+            # get evm addr
+            if state.pc is not None and isinstance(state.pc[-1], int):
+                return state.pc[-1]
+            else:
+                return None
         else:
-            return None
+            # get native addr
+            if isinstance(state.pc, int):
+                return state.pc
+            elif isinstance(state.last_pc, int):
+                # use last_pc as a fallback
+                return state.last_pc
+            else:
+                return None
 
     def navigate_to_state(self, state_id: int) -> None:
         """Navigate to the current instruction of a given state"""

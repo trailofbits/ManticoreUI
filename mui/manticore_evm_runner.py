@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import Set, Dict, List, Any
+from time import sleep
+from typing import Set, Dict, List, Any, Callable
 
 import pyevmasm as pyevmasm
 from binaryninja import (
@@ -37,6 +38,10 @@ from manticore.ethereum.plugins import (
 )
 from manticore.utils import config
 from mui.constants import BINJA_EVM_RUN_SETTINGS_PREFIX
+from mui.dockwidgets import widget
+from mui.dockwidgets.state_list_widget import StateListWidget
+from mui.introspect_plugin import MUIIntrospectionPlugin
+from mui.utils import MUIState
 
 
 class HookPlugin(Plugin):
@@ -163,6 +168,15 @@ class ManticoreEVMRunner(BackgroundTaskThread):
         """Analyzes the evm contract with manticore"""
 
         try:
+
+            # set up state and clear UI
+            if self.bv.session_data.mui_state is None:
+                state_widget: StateListWidget = widget.get_dockwidget(self.bv, StateListWidget.NAME)
+                self.bv.session_data.mui_state = MUIState(self.bv)
+                state_widget.listen_to(self.bv.session_data.mui_state)
+
+            self.bv.session_data.mui_state.notify_states_changed({})
+
             settings = Settings()
             options = {}
 
@@ -220,7 +234,10 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 options["skip_reverts"] = True
 
             # initialize manticore with the various options
-            m = ManticoreEVM(workspace_url=options["workspace_url"])
+            m = ManticoreEVM(
+                workspace_url=options["workspace_url"],
+                introspection_plugin_type=MUIIntrospectionPlugin,
+            )
 
             if options["skip_reverts"]:
                 m.register_plugin(SkipRevertBasicBlocks())
@@ -261,6 +278,23 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 )
             )
 
+            def run_every(callee: Callable, duration: int = 3) -> Callable:
+                """
+                Returns a function that calls <callee> every <duration> seconds
+                """
+
+                def inner(
+                    thread,
+                ):  # Takes `thread` as argument, which is provided by the daemon thread API
+                    while thread.manticore.is_running():
+                        # Pass Manticore's state descriptor dict to the callee
+                        callee(thread.manticore.introspect())
+                        sleep(duration)
+
+                return inner
+
+            m.register_daemon(run_every(self.bv.session_data.mui_state.notify_states_changed, 1))
+
             print("Beginning analysis")
 
             m.multi_tx_analysis(
@@ -273,6 +307,8 @@ class ManticoreEVMRunner(BackgroundTaskThread):
                 tx_preconstrain=options["txpreconstrain"],
                 compile_args={"solc_solcs_bin": options["solc_path"]},
             )
+
+            self.bv.session_data.mui_state.notify_states_changed(m.introspect())
 
             print("finalizing...")
             if not options["no_testcases"]:
