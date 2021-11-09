@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QWidget, QDialog, QVBoxLayout, QHBoxLayout, QPushB
 from binaryninja import BinaryView
 from binaryninjaui import UIContext
 
+from mui import utils
 from mui.dockwidgets.QCodeEditor import QCodeEditor, Pylighter
 
 
@@ -22,17 +23,28 @@ class CodeDialog(QDialog):
         layout = QVBoxLayout()
 
         self.editor = QCodeEditor(SyntaxHighlighter=Pylighter, delimeter="    ")
-        self.editor.setPlainText(
-            "\n".join(
-                [
-                    "global bv,m,addr",
-                    "def hook(state):",
-                    "    print('custom hook reached')",
-                    "    print(bv)",
-                    "m.hook(addr)(hook)",
-                ]
+        if utils.is_evm(data):
+            self.editor.setPlainText(
+                "\n".join(
+                    [
+                        "global bv,m,addr,state",
+                        "# code here will be executed when the custom hook is reached",
+                        "print(f'custom hook reached at {hex(addr)}')",
+                    ]
+                )
             )
-        )
+        else:
+            self.editor.setPlainText(
+                "\n".join(
+                    [
+                        "global bv,m,addr",
+                        "def hook(state):",
+                        "    print('custom hook reached')",
+                        "    print(bv)",
+                        "m.hook(addr)(hook)",
+                    ]
+                )
+            )
 
         buttonLayout = QHBoxLayout()
         self.cancelButton = QPushButton("Cancel")

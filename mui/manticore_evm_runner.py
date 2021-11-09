@@ -1,7 +1,7 @@
-import random
-import string
 from pathlib import Path
+from typing import Set, Dict, List, Any
 
+import pyevmasm as pyevmasm
 from binaryninja import (
     BackgroundTaskThread,
     BinaryView,
@@ -10,8 +10,9 @@ from binaryninja import (
     PlainTextReport,
     show_report_collection,
 )
+
 from manticore import ManticoreEVM
-from manticore.core.plugin import Profiler
+from manticore.core.plugin import Profiler, Plugin
 from manticore.ethereum import (
     DetectInvalid,
     DetectIntegerOverflow,
@@ -25,6 +26,7 @@ from manticore.ethereum import (
     DetectExternalCallAndLeak,
     DetectEnvInstruction,
     DetectManipulableBalance,
+    State,
 )
 from manticore.ethereum.plugins import (
     LoopDepthLimiter,
@@ -34,8 +36,76 @@ from manticore.ethereum.plugins import (
     FilterFunctions,
 )
 from manticore.utils import config
-
 from mui.constants import BINJA_EVM_RUN_SETTINGS_PREFIX
+
+
+class HookPlugin(Plugin):
+    """Adds hook functionality to ManticoreEVM via a plugin"""
+
+    def __init__(
+        self,
+        find_hooks: Set[int],
+        avoid_hooks: Set[int],
+        custom_hooks: Dict[int, str],
+        m: ManticoreEVM,
+        bv: BinaryView,
+    ) -> None:
+        super().__init__()
+        self.find_hooks = tuple(find_hooks)
+        self.avoid_hooks = tuple(avoid_hooks)
+        self.custom_hooks = custom_hooks
+        self.m = m
+        self.bv = bv
+
+    def _find_callback(self, state: State, pc: int) -> None:
+        print("find cb called")
+
+        # find the depth 0 human tx
+        for idx in range(len(state.platform._callstack) - 1, -1, -1):
+            tx, _, _, _, _ = state.platform._callstack[idx]
+            if tx.depth == 0:
+                human_tx = tx
+                break
+        else:
+            raise RuntimeError("No human tx found by find hook")
+
+        print(state.solve_one_n_batched(human_tx.data))
+
+        # add the ongoing tx to the list of transactions so the generated testcase contains it
+        human_tx.set_result("STOP", used_gas=-1)
+        state.platform._transactions.append(human_tx)
+
+        # generate a special testcase for this hook in the workspace
+        self.m.generate_testcase(state, name=f"find_hook_{hex(pc)}")
+
+        # terminate manticore
+        with self.m.locked_context() as context:
+            self.m.kill()
+
+        state.abandon()
+
+    def _avoid_callback(self, state: State) -> None:
+        print("avoid cb called")
+        state.abandon()
+
+    def will_evm_execute_instruction_callback(
+        self, state: State, instruction: pyevmasm.evmasm.Instruction, arguments: List[Any]
+    ) -> None:
+        at_init = state.platform.current_transaction.sort == "CREATE"
+        pc: int = instruction.pc
+
+        # currently do not support hooks during creation
+        if not at_init:
+            if pc in self.find_hooks:
+                self._find_callback(state, pc)
+
+            if pc in self.avoid_hooks:
+                self._avoid_callback(state)
+
+            if pc in self.custom_hooks:
+                exec(
+                    self.custom_hooks[pc], {"addr": pc, "bv": self.bv, "m": self.m, "state": state}
+                )
 
 
 def get_detectors_classes():
@@ -180,6 +250,16 @@ class ManticoreEVMRunner(BackgroundTaskThread):
 
             if m.plugins:
                 print(f'Registered plugins: {", ".join(d.name for d in m.plugins.values())}')
+
+            m.register_plugin(
+                HookPlugin(
+                    self.bv.session_data.mui_find,
+                    self.bv.session_data.mui_avoid,
+                    self.bv.session_data.mui_custom_hooks,
+                    m,
+                    self.bv,
+                )
+            )
 
             print("Beginning analysis")
 

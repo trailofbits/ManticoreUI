@@ -15,12 +15,12 @@ from binaryninja import (
     MessageBoxIcon,
     Settings,
     get_open_filename_input,
-    Architecture,
     SettingsScope,
 )
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
 
+from mui import utils
 from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_NATIVE_RUN_SETTINGS_PREFIX,
@@ -89,11 +89,7 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
 def solve(bv: BinaryView):
     """This command handler starts manticore in a background thread"""
 
-    if (
-        "EVM" in [x.name for x in list(Architecture)]
-        and bv.arch == Architecture["EVM"]
-        and bv.session_data.mui_evm_source is not None
-    ):
+    if utils.is_evm(bv):
         # set default workspace url
 
         workspace_url = settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url", bv)
@@ -168,7 +164,7 @@ def edit_custom_hook(bv: BinaryView, addr: int):
 
 
 def load_evm(bv: BinaryView):
-    filename = get_open_filename_input("filename:", "*.sol").decode()
+    filename = get_open_filename_input("filename:")
     if filename is None:
         return
 

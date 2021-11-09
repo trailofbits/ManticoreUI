@@ -9,6 +9,7 @@ from binaryninja import (
     MessageBoxIcon,
     HighlightStandardColor,
     HighlightColor,
+    Architecture,
 )
 from manticore.core.plugin import StateDescriptor
 
@@ -105,3 +106,13 @@ def get_default_solc_path():
             return str(Path(path, "solc"))
 
     return ""
+
+
+def is_evm(bv: BinaryView) -> bool:
+    """Check if the current project arch is EVM"""
+
+    return (
+        "EVM" in [x.name for x in list(Architecture)]
+        and bv.arch == Architecture["EVM"]
+        and bv.session_data.mui_evm_source is not None
+    )
