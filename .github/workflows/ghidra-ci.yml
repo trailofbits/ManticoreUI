@@ -1,0 +1,48 @@
+name: ghidra-ci
+on:
+  pull_request:
+    paths:
+      - 'plugins/ghidra/**'
+    branches:
+      - '*'
+  push:
+    paths:
+      - 'plugins/ghidra/**'
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: 'Install tools'
+        run: |
+          # just command runner https://github.com/casey/just#pre-built-binaries
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "${HOME}/.local/bin"
+
+      - name: 'Setup Ghidra'
+        run: |
+          wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.1.1_build/ghidra_10.1.1_PUBLIC_20211221.zip --output-document=ghidra.zip
+          unzip ghidra.zip
+          echo "GHIDRA_INSTALL_DIR=$(pwd)/ghidra_10.1.1_PUBLIC" >> $GITHUB_ENV
+
+      - name: 'Lint MUI'
+        run: just --justfile plugins/ghidra/justfile lint
+
+      - name: Cleanup Gradle Cache
+        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
