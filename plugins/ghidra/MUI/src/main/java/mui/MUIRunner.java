@@ -3,6 +3,10 @@ package mui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
@@ -23,11 +27,11 @@ public class MUIRunner {
 		isTerminated = true;
 	}
 
-	public void callProc(String[] manticoreArgs) {
+	public void callProc(String[] command) {
 
 		stopButton.setEnabled(true);
 		logArea.append(
-			"Command: " + String.join(" ", manticoreArgs) + System.lineSeparator() +
+			"Command: " + String.join(" ", command) + System.lineSeparator() +
 				System.lineSeparator());
 
 		SwingWorker sw =
@@ -36,7 +40,7 @@ public class MUIRunner {
 
 				@Override
 				protected Object doInBackground() throws Exception {
-					ProcessBuilder pb = new ProcessBuilder(manticoreArgs);
+					ProcessBuilder pb = new ProcessBuilder(command);
 					try {
 						Process p = pb.start();
 						BufferedReader reader =
