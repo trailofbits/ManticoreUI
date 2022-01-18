@@ -3,14 +3,18 @@ MUI support for Ghidra. This is primarily a prototype repository. See the main [
 
 # Usage
 
-At its present form, MUI-Ghidra manifests as two Ghidra components named `MUI` and `MUI Log`. You may open these components via `Window -> MUI/MUI Log`.
+At its present form, MUI-Ghidra manifests as two Ghidra components named `MUI Setup` and `MUI Log`. 
 
-![image](https://user-images.githubusercontent.com/29654756/146400647-2bf2d4fa-8991-4835-8b55-7f3c8d04557d.png)
+1. To run manticore on the current binary, open the `MUI Setup` component via `MUI -> Run Manticore` in the menu.
+![image](https://user-images.githubusercontent.com/29654756/149530110-616c19c0-24b0-4371-ada8-f149a21c2cea.png)
+2. Fill in manticore and program arguments in the `MUI Setup` component, and click the `Run` Button.
+![image](https://user-images.githubusercontent.com/29654756/149530250-a1c38cef-da37-46aa-819e-f54f50edcad1.png)
+3. View log output via the `MUI Log` component which will be visible on `Run`. Alternatively, you can open the Log manually via `MUI -> Show MUI Log` in the menu. 
 
 ### MUI
-- The `MUI` component allows you to specify `manticore` args and run the command
-- A workspace name (`tmpMUI`) and the program path should be pre-filled for you
-- Click `Run` to execute the manticore command with your desired args
+- The `MUI Setup` component allows you to specify key `manticore` arguments
+- You may add additional arguments in the `Extra Manticore Arguments` field at the bottom of the panel
+- Click `Run` to execute the manticore command with your desired arguments
 
 ### MUI Log
 - At present, `stdout` from `manticore` is output to the log

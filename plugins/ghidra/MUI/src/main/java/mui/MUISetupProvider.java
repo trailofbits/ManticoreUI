@@ -36,8 +36,8 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		buildFormPanel();
 		buildMainPanel();
 		setTitle("MUI Setup");
-		setDefaultWindowPosition(WindowPosition.WINDOW);
-		setVisible(true);
+		setDefaultWindowPosition(WindowPosition.RIGHT);
+		setVisible(false);
 	}
 
 	private void setLogProvider(MUILogProvider log) {
@@ -179,6 +179,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					logProvider.setVisible(true);
 					if (manticoreExePath.length() == 0) {
 						logProvider.noManticoreBinary();
 					}
