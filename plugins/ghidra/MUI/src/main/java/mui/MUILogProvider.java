@@ -6,7 +6,8 @@ import ghidra.framework.plugintool.PluginTool;
 import ghidra.util.Msg;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.io.IOException;
+import java.net.Socket;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -21,9 +22,11 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 	private JPanel logPanel;
 	private JTabbedPane logTabPane;
+	private int defPort;
 
 	public MUILogProvider(PluginTool tool, String name) {
 		super(tool, name, name);
+		defPort = 3214;
 		buildLogPanel();
 		setTitle("MUI Log");
 		setDefaultWindowPosition(WindowPosition.BOTTOM);
@@ -44,7 +47,8 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		MUILogContentComponent newTabContent = new MUILogContentComponent();
 
 		newTabContent.MUIInstance
-				.callProc(buildCommand(manticoreExePath, programPath, formOptions, moreArgs));
+				.callProc(buildCommand("manticore", programPath, formOptions, moreArgs), defPort);
+
 		logTabPane.add(
 			ZonedDateTime.now(ZoneId.systemDefault())
 					.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
@@ -52,8 +56,9 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		logTabPane.setTabComponentAt(
 			logTabPane.getTabCount() - 1, new MUILogTabComponent(logTabPane, this));
 		logTabPane.setSelectedIndex(logTabPane.getTabCount() - 1);
-
+		MUIStateListProvider.changeRunner(newTabContent.MUIInstance);
 		newTabContent.requestFocusInWindow();
+
 	}
 
 	public String[] buildCommand(String manticoreExePath, String programPath,
@@ -72,10 +77,39 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 		f_command.addAll(Arrays.asList(parseCommand(moreArgs)));
 
+		defPort = 3214;
+		while (!portAvailable(defPort)) {
+			defPort += 2;
+		}
+
+		f_command.add("--core.PORT");
+		f_command.add(Integer.toString(defPort));
+
 		f_command.add(programPath);
 		f_command.addAll(Arrays.asList(argv));
 		Msg.info(this, f_command.get(0));
 		return f_command.toArray(String[]::new);
+	}
+
+	private boolean portAvailable(int port) {
+		Socket s = null;
+		try {
+			s = new Socket("localhost", port);
+			return false;
+		}
+		catch (IOException e) {
+			return true;
+		}
+		finally {
+			if (s != null) {
+				try {
+					s.close();
+				}
+				catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 
 	public String[] parseCommand(String string) {

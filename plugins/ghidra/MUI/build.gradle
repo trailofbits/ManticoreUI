@@ -31,6 +31,8 @@
 
 plugins {
     id "com.diffplug.spotless" version "6.1.0"
+    id "com.google.protobuf" version "0.8.18"
+    id "java"
 }
 
 //----------------------START "DO NOT MODIFY" SECTION------------------------------
@@ -58,6 +60,13 @@ repositories {
 dependencies {
     // Any external dependencies added here will automatically be copied to the lib/ directory when
     // this extension is built.
+}
+
+protobuf {
+    generatedFilesBaseDir = "$projectDir/src"
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
 }
 
 // The following installation helpers were copied from
@@ -127,6 +136,7 @@ spotless {
     }
     java {
         target 'src/*/java/**/*.java', 'ghidra_scripts/*.java'
+        targetExclude('src/main/java/mserialize/**/*.java')
         // The Ghidra formatting file was taken from Ghidra 10.1.1 located in
         // eclipse/GhidraEclipseFormatter.xml Ghidra repo
         eclipse().configFile('GhidraEclipseFormatter.xml')

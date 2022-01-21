@@ -3,13 +3,19 @@ MUI support for Ghidra. This is primarily a prototype repository. See the main [
 
 # Usage
 
-At its present form, MUI-Ghidra manifests as two Ghidra components named `MUI Setup` and `MUI Log`. 
+At its present form, MUI-Ghidra manifests as three Ghidra components named `MUI Setup` (used to specify args and run Manticore), `MUI Log`, and `MUI State List` (which display Manticore output). 
 
 1. To run manticore on the current binary, open the `MUI Setup` component via `MUI -> Run Manticore` in the menu.
 ![image](https://user-images.githubusercontent.com/29654756/149530110-616c19c0-24b0-4371-ada8-f149a21c2cea.png)
+
 2. Fill in manticore and program arguments in the `MUI Setup` component, and click the `Run` Button.
 ![image](https://user-images.githubusercontent.com/29654756/149530250-a1c38cef-da37-46aa-819e-f54f50edcad1.png)
-3. View log output via the `MUI Log` component which will be visible on `Run`. Alternatively, you can open the Log manually via `MUI -> Show MUI Log` in the menu. 
+
+3. View log message output and a list of states and their statuses via the `MUI Log`/`MUI State List` components which will be visible on `Run`. Alternatively, you can open the components manually via `MUI -> Show Log / Show State List` in the menu. 
+
+![image](https://user-images.githubusercontent.com/29654756/149968899-ab9b5970-0e24-462f-8c5a-2861aa3ed3ad.png)
+![image](https://user-images.githubusercontent.com/29654756/149969392-4a111c5f-8cf0-45aa-93e5-e0a23ac0a869.png)
+
 
 ### MUI
 - The `MUI Setup` component allows you to specify key `manticore` arguments
@@ -42,3 +48,5 @@ GHIDRA_INSTALL_DIR=<path_to_ghidra_directory> gradle
 2. Install the [GhidraDev plugin](https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraBuild/EclipsePlugins/GhidraDev/GhidraDevPlugin/GhidraDev_README.html) in Eclipse
 3. Import the project via `File -> Import -> General -> Projects from Folder or Archive`
 4. Link your installation of Ghidra via `GhidraDev -> Link Ghidra`. The necessary `.project` and `.pydevproject` files will be generated for Eclipse.
+5. Format your code with the included `MUI/GhidraEclipseFormatter.xml` (taken from upstream Ghidra) by running `just format` with the tool [just](https://github.com/casey/just).
+6. When you first build the plugin, a protobuf compiler binary will generate the `StateOuterClass.java` file used for Manticore message & state list deserialization.

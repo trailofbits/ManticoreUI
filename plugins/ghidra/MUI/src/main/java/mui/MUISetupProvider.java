@@ -25,23 +25,30 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	private String manticoreExePath;
 
 	private MUILogProvider logProvider;
+	private MUIStateListProvider stateListProvider;
 
 	private JPanel formPanel;
 
 	private HashMap<String, JTextField> formOptions;
 
-	public MUISetupProvider(PluginTool tool, String name, MUILogProvider log) {
+	public MUISetupProvider(PluginTool tool, String name, MUILogProvider log,
+			MUIStateListProvider stateList) {
 		super(tool, name, name);
 		setLogProvider(log);
+		setStateListProvider(stateList);
 		buildFormPanel();
 		buildMainPanel();
 		setTitle("MUI Setup");
-		setDefaultWindowPosition(WindowPosition.RIGHT);
+		setDefaultWindowPosition(WindowPosition.WINDOW);
 		setVisible(false);
 	}
 
 	private void setLogProvider(MUILogProvider log) {
 		logProvider = log;
+	}
+
+	private void setStateListProvider(MUIStateListProvider stateList) {
+		stateListProvider = stateList;
 	}
 
 	private void buildFormPanel() throws UnsupportedOperationException {
@@ -180,6 +187,8 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					logProvider.setVisible(true);
+					stateListProvider.setVisible(true);
+
 					if (manticoreExePath.length() == 0) {
 						logProvider.noManticoreBinary();
 					}

@@ -13,7 +13,7 @@ import resources.ResourceManager;
 
 public class MUILogContentComponent extends JPanel {
 
-	public MUIRunner MUIInstance;
+	public ManticoreRunner MUIInstance;
 
 	public JTextArea logArea;
 	public JButton stopButton;
@@ -26,7 +26,7 @@ public class MUILogContentComponent extends JPanel {
 		stopButton = new JButton();
 
 		buildLogArea();
-		MUIInstance = new MUIRunner(logArea, stopButton);
+		MUIInstance = new ManticoreRunner(logArea, stopButton);
 		buildToolBar();
 	}
 
