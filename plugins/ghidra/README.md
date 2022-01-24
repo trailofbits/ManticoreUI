@@ -6,10 +6,14 @@ MUI support for Ghidra. This is primarily a prototype repository. See the main [
 At its present form, MUI-Ghidra manifests as three Ghidra components named `MUI Setup` (used to specify args and run Manticore), `MUI Log`, and `MUI State List` (which display Manticore output). 
 
 1. To run manticore on the current binary, open the `MUI Setup` component via `MUI -> Run Manticore` in the menu.
-![image](https://user-images.githubusercontent.com/29654756/149530110-616c19c0-24b0-4371-ada8-f149a21c2cea.png)
 
-2. Fill in manticore and program arguments in the `MUI Setup` component, and click the `Run` Button.
-![image](https://user-images.githubusercontent.com/29654756/149530250-a1c38cef-da37-46aa-819e-f54f50edcad1.png)
+![image](https://user-images.githubusercontent.com/29654756/150149215-3ade543a-b556-4cb0-b758-acd5a5b9f6d5.png)
+
+2. Fill in manticore and program arguments in the `MUI Setup` component, and click the `Run` Button. Notably, users can specify:
+- the Manticore binary used (by default, a bundled binary which requires `python3.9` on PATH is used)
+- the port used by Manticore's state server (by default, an open port starting from `3215` will be allocated).
+
+![image](https://user-images.githubusercontent.com/29654756/150147868-fc525a73-72c2-4980-be9a-d2d07fd5f423.png)
 
 3. View log message output and a list of states and their statuses via the `MUI Log`/`MUI State List` components which will be visible on `Run`. Alternatively, you can open the components manually via `MUI -> Show Log / Show State List` in the menu. 
 

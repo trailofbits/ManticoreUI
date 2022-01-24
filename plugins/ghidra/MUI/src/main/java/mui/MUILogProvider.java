@@ -42,12 +42,12 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		logPanel.add(logTabPane);
 	}
 
-	public void runMUI(String manticoreExePath, String programPath,
+	public void runMUI(String programPath,
 			HashMap<String, JTextField> formOptions, String moreArgs) {
 		MUILogContentComponent newTabContent = new MUILogContentComponent();
 
 		newTabContent.MUIInstance
-				.callProc(buildCommand("manticore", programPath, formOptions, moreArgs), defPort);
+				.callProc(buildCommand(programPath, formOptions, moreArgs), defPort);
 
 		logTabPane.add(
 			ZonedDateTime.now(ZoneId.systemDefault())
@@ -61,13 +61,14 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 	}
 
-	public String[] buildCommand(String manticoreExePath, String programPath,
+	public String[] buildCommand(String programPath,
 			HashMap<String, JTextField> formOptions, String moreArgs) {
 		ArrayList<String> f_command = new ArrayList<String>();
-		f_command.add(manticoreExePath);
-		String[] argv = parseCommand(formOptions.get("argv").getText());
+		f_command.add(formOptions.get("{mcore_binary}").getText());
+
 		for (Entry<String, JTextField> option : formOptions.entrySet()) {
-			if (option.getKey() == "argv")
+			if (Arrays.asList("argv", "{mcore_binary}", "{state_server_port}")
+					.contains(option.getKey()))
 				continue;
 			for (String arg : parseCommand(option.getValue().getText())) {
 				f_command.add("--".concat(option.getKey()));
@@ -77,15 +78,23 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 		f_command.addAll(Arrays.asList(parseCommand(moreArgs)));
 
-		defPort = 3214;
-		while (!portAvailable(defPort)) {
-			defPort += 2;
+		f_command.add("--core.PORT");
+
+		if (formOptions.get("{state_server_port}").getText().length() == 0) {
+			defPort = 3214;
+			while (!portAvailable(defPort)) {
+				defPort += 2;
+			}
+			f_command.add(Integer.toString(defPort));
+		}
+		else {
+			f_command.add(Integer.toString(
+				Integer.parseInt(formOptions.get("{state_server_port}").getText()) - 1));
 		}
 
-		f_command.add("--core.PORT");
-		f_command.add(Integer.toString(defPort));
-
 		f_command.add(programPath);
+
+		String[] argv = parseCommand(formOptions.get("argv").getText());
 		f_command.addAll(Arrays.asList(argv));
 		Msg.info(this, f_command.get(0));
 		return f_command.toArray(String[]::new);

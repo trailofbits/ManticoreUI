@@ -1,14 +1,13 @@
 package mui;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 public class MUISettings {
 
-	public static Map<String, Map<String, Map<String, Object>[]>> SETTINGS =
+	public static Map<String, TreeMap<String, Map<String, Object>[]>> SETTINGS =
 		Map.of(
 			"NATIVE_RUN_SETTINGS",
-			Map.of(
+			new TreeMap(Map.of(
 				"data", new Map[] {
 					Map.of(
 						"title", "Concrete Start",
@@ -54,6 +53,22 @@ public class MUISettings {
 						"type", "array",
 						"elementType", "string",
 						"default", ""),
-					Map.of() }));
+					Map.of() },
+				"{mcore_binary}", new Map[] {
+					Map.of(
+						"title", "Manticore Binary",
+						"description", "Manticore binary to use",
+						"type", "string",
+						"default", ""),
+					Map.of(
+						"is_dir_path", true) },
+				"{state_server_port}", new Map[] {
+					Map.of(
+						"title", "State Server Port (leave blank to auto-allocate)",
+						"description",
+						"Port to use for manticore's state server. If set to auto-allocate, default port is 3215, and MUI will try ports in increments of 2 if port is in use.",
+						"type", "number",
+						"default", ""),
+					Map.of() })));
 
 }

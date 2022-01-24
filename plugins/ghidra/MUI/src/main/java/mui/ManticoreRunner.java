@@ -28,7 +28,6 @@ public class ManticoreRunner {
 	private int port;
 
 	public HashSet<TreePath> expandedPaths;
-
 	public ManticoreStateListModel stateListModel;
 
 	public ManticoreRunner(JTextArea logArea, JButton stopButton) {

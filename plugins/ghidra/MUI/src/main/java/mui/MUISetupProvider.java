@@ -22,7 +22,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 	private JPanel mainPanel;
 	private String programPath;
-	private String manticoreExePath;
+	private String bundledManticorePath;
 
 	private MUILogProvider logProvider;
 	private MUIStateListProvider stateListProvider;
@@ -57,6 +57,17 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 			new GridLayout(MUISettings.SETTINGS.get("NATIVE_RUN_SETTINGS").size(), 2));
 		formPanel.setMinimumSize(new Dimension(800, 500));
 
+		try {
+			if (!Application.isInitialized()) {
+				Application.initializeApplication(
+					new GhidraApplicationLayout(), new ApplicationConfiguration());
+			}
+			bundledManticorePath = Application.getOSFile("manticore").getCanonicalPath();
+		}
+		catch (Exception e) {
+			bundledManticorePath = "";
+		}
+
 		formOptions = new HashMap<String, JTextField>();
 
 		for (Entry<String, Map<String, Object>[]> option : MUISettings.SETTINGS
@@ -71,7 +82,9 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 			formPanel.add(new JLabel(title));
 
 			if (extra.containsKey("is_dir_path") && (Boolean) extra.get("is_dir_path")) {
-				formOptions.put(name, createPathInput(prop.get("default").toString()));
+				formOptions.put(name,
+					createPathInput((name == "{mcore_binary}" ? bundledManticorePath
+							: prop.get("default").toString())));
 			}
 			else if (prop.get("type") == "string" || prop.get("type") == "number") {
 				formOptions.put(name, createStringNumberInput(prop.get("default").toString()));
@@ -109,18 +122,17 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		JTextField entry = new JTextField();
 
 		JPanel inputRow = new JPanel(new GridBagLayout());
-		inputRow.setMinimumSize(new Dimension(800, 100));
-		GridBagConstraints inputRowConstraints = new GridBagConstraints();
-		inputRowConstraints.fill = GridBagConstraints.HORIZONTAL;
-
-		inputRowConstraints.gridx = 0;
-		inputRowConstraints.gridwidth = 3;
-		inputRowConstraints.gridy = 0;
-		inputRowConstraints.gridheight = 1;
-		inputRowConstraints.weightx = 0.75;
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		//inputRow.setMinimumSize(new Dimension(800, 100));
 
 		entry.setText(defaultStr);
-		inputRow.add(entry, inputRowConstraints);
+		entry.setPreferredSize(new Dimension(160, 27));
+		constraints.gridx = 0;
+		constraints.gridwidth = 2;
+		constraints.gridy = 0;
+		constraints.weightx = 0.66;
+		inputRow.add(entry, constraints);
 
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -144,11 +156,10 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 			}
 
 		});
-
-		inputRowConstraints.gridx = 3;
-		inputRowConstraints.gridwidth = 1;
-		inputRowConstraints.weightx = 0.25;
-		inputRow.add(selectButton, inputRowConstraints);
+		constraints.gridx = 2;
+		constraints.gridwidth = 1;
+		constraints.weightx = 0.33;
+		inputRow.add(selectButton, constraints);
 
 		formPanel.add(inputRow);
 		return entry;
@@ -159,17 +170,6 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		mainPanel.setMinimumSize(new Dimension(900, 500));
 
 		mainPanel.add(formPanel, BorderLayout.CENTER);
-
-		try {
-			if (!Application.isInitialized()) {
-				Application.initializeApplication(
-					new GhidraApplicationLayout(), new ApplicationConfiguration());
-			}
-			manticoreExePath = Application.getOSFile("manticore").getCanonicalPath();
-		}
-		catch (Exception e) {
-			manticoreExePath = "";
-		}
 
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 
@@ -188,14 +188,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				public void actionPerformed(ActionEvent e) {
 					logProvider.setVisible(true);
 					stateListProvider.setVisible(true);
-
-					if (manticoreExePath.length() == 0) {
-						logProvider.noManticoreBinary();
-					}
-					else {
-						logProvider.runMUI(
-							manticoreExePath, programPath, formOptions, moreArgs.getText());
-					}
+					logProvider.runMUI(programPath, formOptions, moreArgs.getText());
 				}
 			});
 		bottomPanel.add(runBtn, BorderLayout.SOUTH);
@@ -212,4 +205,5 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	public JComponent getComponent() {
 		return mainPanel;
 	}
+
 }
