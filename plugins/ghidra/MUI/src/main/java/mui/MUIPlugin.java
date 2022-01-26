@@ -38,6 +38,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 	public MUISetupProvider provider;
 	public MUILogProvider log;
+	public MUIPopupMenu popup;
 	public MUIStateListProvider stateList;
 
 	private DockingAction showSetup;
@@ -48,6 +49,7 @@ public class MUIPlugin extends ProgramPlugin {
 		super(tool, true, true);
 		String pluginName = getName();
 		log = new MUILogProvider(tool, pluginName);
+		popup = new MUIPopupMenu(tool, pluginName);
 		stateList = new MUIStateListProvider(tool, pluginName);
 		provider = new MUISetupProvider(tool, pluginName, log, stateList);
 
@@ -88,5 +90,6 @@ public class MUIPlugin extends ProgramPlugin {
 	@Override
 	protected void programActivated(Program p) {
 		provider.setProgram(p);
+		popup.setProgram(p);
 	}
 }

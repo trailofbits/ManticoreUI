@@ -28,6 +28,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	private MUIStateListProvider stateListProvider;
 
 	private JPanel formPanel;
+	public static JLabel findAvoidUnimplementedLbl;
 
 	private HashMap<String, JTextField> formOptions;
 
@@ -173,12 +174,24 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 
-		bottomPanel.add(new JLabel("Extra Manticore Arguments:"), BorderLayout.NORTH);
+		findAvoidUnimplementedLbl = new JLabel(
+			"<html>WARNING: You have set instructions for Manticore to Find/Avoid in the Listing window. Find/Avoid functionality has NOT been implemented for MUI-Ghidra, and clicking 'Run' will result in Manticore exploring all paths as per usual.</html>");
+		findAvoidUnimplementedLbl.setForeground(new Color(139, 0, 0)); // DARK RED
+		findAvoidUnimplementedLbl.setHorizontalAlignment(SwingConstants.CENTER);
+
+		bottomPanel.add(findAvoidUnimplementedLbl, BorderLayout.CENTER);
+		findAvoidUnimplementedLbl.setVisible(false);
+
+		JPanel moreArgsPanel = new JPanel(new BorderLayout());
+
+		moreArgsPanel.add(new JLabel("Extra Manticore Arguments:"), BorderLayout.NORTH);
 
 		JTextArea moreArgs = new JTextArea();
 		moreArgs.setLineWrap(true);
 		moreArgs.setWrapStyleWord(true);
-		bottomPanel.add(moreArgs, BorderLayout.CENTER);
+		moreArgsPanel.add(moreArgs, BorderLayout.CENTER);
+
+		bottomPanel.add(moreArgsPanel, BorderLayout.NORTH);
 
 		JButton runBtn = new JButton("Run");
 		runBtn.addActionListener(
