@@ -18,6 +18,9 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * The class representing each instance of Manticore.
+ */
 public class ManticoreRunner {
 
 	private Boolean isTerminated;
@@ -41,10 +44,18 @@ public class ManticoreRunner {
 		port = 3214;
 	}
 
+	/**
+	 * Gracefully terminates the Manticore process.
+	 */
 	public void stopProc() {
 		isTerminated = true;
 	}
 
+	/**
+	 * Opens a new thread to run an instance of Manticore using the arguments specified.
+	 * @param command Full Manticore command to be passed to ProcessBuilder.
+	 * @param portUsed Chosen port for the Log server (+1 for State server).
+	 */
 	public void callProc(String[] command, int portUsed) {
 
 		stopButton.setEnabled(true);
@@ -151,6 +162,10 @@ public class ManticoreRunner {
 		sw.execute();
 	}
 
+	/**
+	 * Updates the State List shown only if the Log tab of the Manticore instance is currently being viewed.
+	 * @param model Updated model reflecting existing States and their statuses.
+	 */
 	private void updateStateList(ManticoreStateListModel model) {
 		stateListModel = model;
 		if (MUIStateListProvider.runnerDisplayed == this) {

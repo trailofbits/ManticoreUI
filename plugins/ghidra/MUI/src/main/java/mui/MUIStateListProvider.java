@@ -21,6 +21,9 @@ import ghidra.framework.plugintool.PluginTool;
 import ghidra.util.Msg;
 import mserialize.StateOuterClass;
 
+/**
+ * Provides the "MUI State List" component used to display the State List of the Manticore instance whose MUI Log tab is currently focused.
+ */
 public class MUIStateListProvider extends ComponentProviderAdapter {
 
 	private JPanel mainPanel;
@@ -49,11 +52,17 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 		setVisible(false);
 	}
 
+	/**
+	 * Builds main component panel which contains the JTree display.
+	 */
 	private void buildMainPanel() {
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(stateListView, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Builds scrollable tree display with states categorized into the 5 statuses.
+	 */
 	private void buildStateListView() {
 		rootNode =
 			new DefaultMutableTreeNode("States");
@@ -90,12 +99,19 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 		});
 	}
 
+	/**
+	 * Gracefully updates the Manticore instance whose State List is shown.
+	 * @param runner The new Manticore instance whose State List should be shown.
+	 */
 	public static void changeRunner(ManticoreRunner runner) {
 		clearStateTree();
 		runnerDisplayed = runner;
 		tryUpdate(runnerDisplayed.stateListModel);
 	}
 
+	/**
+	 * Helper method to clear all states from the state tree in preparation for a new update.
+	 */
 	private static void clearStateTree() {
 		activeNode.removeAllChildren();
 		waitingNode.removeAllChildren();
@@ -104,6 +120,10 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 		erroredNode.removeAllChildren();
 	}
 
+	/**
+	 * Updates the State List UI using the given state list model.
+	 * @param stateListModel Updated State List model.
+	 */
 	public static void tryUpdate(ManticoreStateListModel stateListModel) {
 
 		maxStateId = 0;
@@ -145,6 +165,10 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 		}
 	}
 
+	/**
+	 * @param st State
+	 * @return Node that can be added to another parent node for the State List UI.
+	 */
 	private static DefaultMutableTreeNode stateToNode(StateOuterClass.State st) {
 		maxStateId = Math.max(maxStateId, st.getId());
 		numsSent.add(st.getId());

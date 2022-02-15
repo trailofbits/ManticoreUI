@@ -6,6 +6,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+/**
+ * Provides the component for the Tab itself in the MUI Log tabbed pane, including behaviour when switching and closing tabs.
+ */
 public class MUILogTabComponent extends JPanel {
 	private JTabbedPane parentPane;
 	private MUILogProvider logProvider;
@@ -54,6 +57,10 @@ public class MUILogTabComponent extends JPanel {
 			addActionListener(this);
 		}
 
+		/**
+		 * Closes tab when close button is clicked, and calls additional method to handle auxiliary functions.
+		 * @see MUILogProvider#closeLogTab(int)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			int i = parentPane.indexOfTabComponent(MUILogTabComponent.this);
 			if (i != -1) {
@@ -61,9 +68,16 @@ public class MUILogTabComponent extends JPanel {
 			}
 		}
 
+		/**
+		 * Overrides the updateUI method with no action, since the Tab and thus the Button will be closed on click anyways.
+		 */
+		@Override
 		public void updateUI() {
 		}
 
+		/**
+		 * Natively paints the close button graphic.
+		 */
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -82,6 +96,9 @@ public class MUILogTabComponent extends JPanel {
 		}
 	}
 
+	/**
+	 * Handles tab switching, including auxiliary behavior such as reflecting the State List of the newly-focused Manticore instance.
+	 */
 	private final MouseAdapter switchTabMouseAdapter =
 		new MouseAdapter() {
 			@Override
@@ -96,6 +113,9 @@ public class MUILogTabComponent extends JPanel {
 			}
 		};
 
+	/**
+	 * Handles UI changes when mousing over and clicking into the close tab button.
+	 */
 	private final MouseListener closeButtonMouseListener =
 		new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {

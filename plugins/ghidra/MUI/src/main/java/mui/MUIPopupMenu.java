@@ -12,6 +12,9 @@ import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.address.Address;
 
+/**
+ * Provides functionality to Find/Avoid a specific address via a right-click context menu item in the Listing component.
+ */
 public class MUIPopupMenu extends ListingContextAction {
 
 	private static Program program;
@@ -28,6 +31,10 @@ public class MUIPopupMenu extends ListingContextAction {
 		setupMenu();
 	}
 
+	/**
+	 * Clears color from the Listing component for the specified address.
+	 * @param address The address to clear color from.
+	 */
 	public static void unsetColor(Address address) {
 		ColorizingService service = pluginTool.getService(ColorizingService.class);
 		int tid = program.startTransaction("unsetColor");
@@ -35,6 +42,11 @@ public class MUIPopupMenu extends ListingContextAction {
 		program.endTransaction(tid, true);
 	}
 
+	/**
+	 * Sets color in the Listing component for the specified address.
+	 * @param address The address to clear color from.
+	 * @param color The color to set for the address in the Listing component.
+	 */
 	public static void setColor(Address address, Color color) {
 		ColorizingService service = pluginTool.getService(ColorizingService.class);
 		int tid = program.startTransaction("setColor");
@@ -43,6 +55,9 @@ public class MUIPopupMenu extends ListingContextAction {
 
 	}
 
+	/**
+	 * Displays a warning in the "MUI Setup" component indicating that Find/Avoid backend functionality is currently unimplemented.
+	 */
 	private void updateWarning() {
 		if (findAddresses.isEmpty() && avoidAddresses.isEmpty()) {
 			MUISetupProvider.findAvoidUnimplementedLbl.setVisible(false);
@@ -52,6 +67,9 @@ public class MUIPopupMenu extends ListingContextAction {
 		}
 	}
 
+	/**
+	 * Builds the menu items in the right-click context menu of the Listing component.
+	 */
 	public void setupMenu() {
 		pluginTool.setMenuGroup(new String[] { "MUI" }, "MUI");
 
@@ -109,6 +127,11 @@ public class MUIPopupMenu extends ListingContextAction {
 
 	}
 
+	/** 
+	 * Called once the binary being analyzed in Ghidra has been activated.
+	 * @param p the binary being analyzed in Ghidra
+	 * @see MUIPlugin#programActivated(Program)
+	 */
 	public void setProgram(Program p) {
 		program = p;
 	}

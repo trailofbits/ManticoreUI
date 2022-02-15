@@ -24,7 +24,6 @@ import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 
-/** TODO: Provide class-level documentation that describes what this plugin does. */
 // @formatter:off
 @PluginInfo(
     status = PluginStatus.UNSTABLE,
@@ -45,6 +44,9 @@ public class MUIPlugin extends ProgramPlugin {
 	private DockingAction showLog;
 	private DockingAction showStateList;
 
+	/**
+	 * The main extension constructor, initializes the plugin's components and sets up the "MUI" MenuBar tab.
+	 */
 	public MUIPlugin(PluginTool tool) {
 		super(tool, true, true);
 		String pluginName = getName();

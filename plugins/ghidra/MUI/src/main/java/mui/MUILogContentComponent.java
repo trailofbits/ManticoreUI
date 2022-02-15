@@ -11,6 +11,9 @@ import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import resources.ResourceManager;
 
+/**
+ * Provides the component for the Tab Content in the MUI Log tabbed pane.
+ */
 public class MUILogContentComponent extends JPanel {
 
 	public ManticoreRunner MUIInstance;
@@ -30,6 +33,9 @@ public class MUILogContentComponent extends JPanel {
 		buildToolBar();
 	}
 
+	/**
+	 * Builds a scrollable, uneditable TextArea which displays the logs of a Manticore instance.
+	 */
 	public void buildLogArea() {
 		logArea.setEditable(false);
 		logArea.setLineWrap(true);
@@ -43,6 +49,9 @@ public class MUILogContentComponent extends JPanel {
 		add(logScrollPane, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Builds the log's toolbar including a Stop button that will terminate the Manticore instance of the currently-focused tab.
+	 */
 	public void buildToolBar() {
 		JToolBar logToolBar = new JToolBar();
 		logToolBar.setFloatable(false);

@@ -18,6 +18,9 @@ import java.util.Map.Entry;
 
 import javax.swing.*;
 
+/**
+ * Provides the "MUI Log" component used to display Manticore Logs. Also acts as the control center for the StateList component and for managing the different Manticore instances.
+ */
 public class MUILogProvider extends ComponentProviderAdapter {
 
 	private JPanel logPanel;
@@ -33,6 +36,9 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		setVisible(false);
 	}
 
+	/** 
+	 * Builds main component panel which hosts multiple log tabs.
+	 */
 	private void buildLogPanel() {
 		logPanel = new JPanel();
 		logPanel.setLayout(new BorderLayout());
@@ -42,6 +48,12 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		logPanel.add(logTabPane);
 	}
 
+	/**
+	 * Builds and makes changes to UI elements when a user attempts to run a new instance of Manticore, and calls the function that actually creates the new Manticore process.
+	 * @param programPath Path of the binary being analyzed.
+	 * @param formOptions Map storing pre-selected key Manticore options.
+	 * @param moreArgs Additional Manticore arguments set by the user.
+	 */
 	public void runMUI(String programPath,
 			HashMap<String, JTextField> formOptions, String moreArgs) {
 		MUILogContentComponent newTabContent = new MUILogContentComponent();
@@ -61,8 +73,15 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 	}
 
-	public String[] buildCommand(String programPath,
-			HashMap<String, JTextField> formOptions, String moreArgs) {
+	/**
+	 * Structures Manticore argument data input by the user to be compatible with ProcessBuilder.
+	 * @param programPath Path of the binary being analyzed.
+	 * @param formOptions Map storing pre-selected key Manticore options.
+	 * @param moreArgs Additional Manticore arguments set by the user.
+	 * @return String array suitable to be passed to a ProcessBuilder.
+	 */
+	public String[] buildCommand(String programPath, HashMap<String, JTextField> formOptions,
+			String moreArgs) {
 		ArrayList<String> f_command = new ArrayList<String>();
 		f_command.add(formOptions.get("{mcore_binary}").getText());
 
@@ -70,13 +89,13 @@ public class MUILogProvider extends ComponentProviderAdapter {
 			if (Arrays.asList("argv", "{mcore_binary}", "{state_server_port}")
 					.contains(option.getKey()))
 				continue;
-			for (String arg : parseCommand(option.getValue().getText())) {
+			for (String arg : tokenizeArrayInput(option.getValue().getText())) {
 				f_command.add("--".concat(option.getKey()));
 				f_command.add(arg);
 			}
 		}
 
-		f_command.addAll(Arrays.asList(parseCommand(moreArgs)));
+		f_command.addAll(Arrays.asList(tokenizeArrayInput(moreArgs)));
 
 		f_command.add("--core.PORT");
 
@@ -94,12 +113,17 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 		f_command.add(programPath);
 
-		String[] argv = parseCommand(formOptions.get("argv").getText());
+		String[] argv = tokenizeArrayInput(formOptions.get("argv").getText());
 		f_command.addAll(Arrays.asList(argv));
 		Msg.info(this, f_command.get(0));
 		return f_command.toArray(String[]::new);
 	}
 
+	/**
+	 * Checks whether a port is available or already in use.
+	 * @param port The port to check the availability of.
+	 * @return True if the given port is available, False if it's in use.
+	 */
 	private boolean portAvailable(int port) {
 		Socket s = null;
 		try {
@@ -121,7 +145,12 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		}
 	}
 
-	public String[] parseCommand(String string) {
+	/**
+	 * Tokenizes a String containing multiple arguments formatted shell-style, cognizant of spaces which are escaped or within quotes.
+	 * @param string Shell-style space-separated arguments for Manticore arguments with array input type.
+	 * @return String array suitable to be passed to a ProcessBuilder.
+	 */
+	public String[] tokenizeArrayInput(String string) {
 		final List<Character> WORD_DELIMITERS = Arrays.asList(' ', '\t');
 		final List<Character> QUOTE_CHARACTERS = Arrays.asList('"', '\'');
 		final char ESCAPE_CHARACTER = '\\';
@@ -158,15 +187,10 @@ public class MUILogProvider extends ComponentProviderAdapter {
 		return words.toArray(new String[0]);
 	}
 
-	public void noManticoreBinary() {
-		MUILogContentComponent newTabContent = new MUILogContentComponent();
-		newTabContent.logArea.append("No manticore binary found!");
-		newTabContent.stopButton.setEnabled(false);
-		logTabPane.add(Long.toString(Instant.now().getEpochSecond()), newTabContent);
-		logTabPane.setTabComponentAt(
-			logTabPane.getTabCount() - 1, new MUILogTabComponent(logTabPane, this));
-	}
-
+	/**
+	 * Performs auxiliary actions when closing a tab, including stopping the Manticore instance and removing the tab component from the tab pane.
+	 * @param tabIndex The index of the closed tab in the MUI Log tab pane.
+	 */
 	public void closeLogTab(int tabIndex) {
 		MUILogContentComponent curComp =
 			(MUILogContentComponent) logTabPane.getComponentAt(tabIndex);

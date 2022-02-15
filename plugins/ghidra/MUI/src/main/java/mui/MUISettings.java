@@ -2,8 +2,15 @@ package mui;
 
 import java.util.*;
 
+/**
+ * Outlines the key manticore arguments to display for the user, as well as their sensible defaults. Should eventually be deprecated for a more interoperable format.
+ * @see <a href="https://github.com/trailofbits/ManticoreUI/blob/master/mui/settings.py">Binary Ninja plugin equivalent</a>
+ */
 public class MUISettings {
 
+	/**
+	 * Map containing key Manticore arguments and their details including input types, defaults, and descriptions.
+	 */
 	public static Map<String, TreeMap<String, Map<String, Object>[]>> SETTINGS =
 		Map.of(
 			"NATIVE_RUN_SETTINGS",

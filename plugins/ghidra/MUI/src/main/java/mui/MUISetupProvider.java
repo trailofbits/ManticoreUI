@@ -16,6 +16,9 @@ import java.util.Map.Entry;
 
 import javax.swing.*;
 
+/**
+ * Provides the "MUI Setup" component used to set the arguments for and run Manticore.
+ */
 public class MUISetupProvider extends ComponentProviderAdapter {
 
 	private Program program;
@@ -52,6 +55,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		stateListProvider = stateList;
 	}
 
+	/**
+	 * Builds the component where key manticore arguments are displayed with dedicated input fields which are loaded with sensible defaults. Arguments include are defined in MUISettings.
+	 * @see MUISettings#SETTINGS
+	 * @throws UnsupportedOperationException
+	 */
 	private void buildFormPanel() throws UnsupportedOperationException {
 		formPanel = new JPanel();
 		formPanel.setLayout(
@@ -102,6 +110,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		}
 	}
 
+	/** 
+	 * Creates JTextField for a string/number Manticore argument and adds it to the Setup Panel.
+	 * @param defaultStr The default value of the string/number argument, which should be set in MUISettings.
+	 * @return An editable JTextField through which a user can set a string/number argument.
+	 */
 	private JTextField createStringNumberInput(String defaultStr) {
 		JTextField entry = new JTextField();
 		entry.setText(defaultStr);
@@ -110,6 +123,12 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		return entry;
 	}
 
+	/** 
+	 * Creates JTextField for an array Manticore argument and adds it to the Setup Panel. The user is expected to space-separate each element in the array. Tokenizer supports escaped spaces or spaces within quotes.
+	 * @implNote Should mimic Binary Ninja plugin behavior in future, which would allow for removal of tokenizer.
+	 * @see MUILogProvider#tokenizeArrayInput
+	 * @return An editable JTextField through which a user can set an array argument.
+	 */
 	private JTextField createArrayInput() {
 		// TODO: doesn't handle default param for arrays, but not needed as part of sensible defaults for running manticore on native binaries
 		// for now, same UI as string/num, and we will parse space-separated args
@@ -119,6 +138,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		return entry;
 	}
 
+	/** 
+	 * Creates JTextField and file selector dialog (shown by a select button) for a path Manticore argument and adds it to the Setup Panel.
+	 * @param defaultStr The default value of the path argument.
+	 * @return An editable JTextField through which a user can set a path argument.
+	 */
 	private JTextField createPathInput(String defaultStr) {
 		JTextField entry = new JTextField();
 
@@ -166,6 +190,9 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		return entry;
 	}
 
+	/**
+	 * Builds the main component panel which wraps formPanel and includes a JTextArea where user can specify additional args, the Run button, and displays warnings for when user interacts with unsupported Find/Avoid feature.
+	 */
 	private void buildMainPanel() {
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setMinimumSize(new Dimension(900, 500));
@@ -209,6 +236,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 	}
 
+	/** 
+	 * Called once the binary being analyzed in Ghidra has been activated.
+	 * @param p the binary being analyzed in Ghidra
+	 * @see MUIPlugin#programActivated(Program)
+	 */
 	public void setProgram(Program p) {
 		program = p;
 		programPath = program.getExecutablePath();
