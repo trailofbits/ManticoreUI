@@ -31,7 +31,7 @@ from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.manticore_evm_runner import ManticoreEVMRunner
-from mui.manticore_native_runnner import ManticoreNativeRunner
+from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
 from mui.settings import MUISettings
 from mui.utils import highlight_instr, clear_highlight
