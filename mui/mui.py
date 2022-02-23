@@ -48,6 +48,7 @@ BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
 
+
 def offset_address(bv: BinaryView, addr: int):
     """Offsets addresses to take into consideration position independent executables (PIE)"""
     # Addresses taken from https://github.com/trailofbits/manticore/blob/c3eabe03cf94f410bedd96d850df09cb0bda1711/manticore/platforms/linux.py#L954-L956
@@ -60,7 +61,7 @@ def offset_address(bv: BinaryView, addr: int):
             h_addr = bv.symbols["__elf_header"][0].address
             h_type = bv.types["Elf64_Header"]
             header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3: # ET_DYN
+            if header["type"].value == 3:  # ET_DYN
                 addr_off = BASE_DYN_ADDR
             else:
                 addr_off = 0
@@ -68,7 +69,7 @@ def offset_address(bv: BinaryView, addr: int):
             h_addr = bv.symbols["__elf_header"][0].address
             h_type = bv.types["Elf32_Header"]
             header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3: # ET_DYN
+            if header["type"].value == 3:  # ET_DYN
                 addr_off = BASE_DYN_ADDR_32
             else:
                 addr_off = 0
@@ -76,8 +77,8 @@ def offset_address(bv: BinaryView, addr: int):
             addr_off = 0
 
         bv.session_data.mui_addr_offset = addr_off
-    
-    return addr_off+addr
+
+    return addr_off + addr
 
 
 def find_instr(bv: BinaryView, addr: int):
