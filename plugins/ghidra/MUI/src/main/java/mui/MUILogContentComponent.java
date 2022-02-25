@@ -16,12 +16,15 @@ import resources.ResourceManager;
  */
 public class MUILogContentComponent extends JPanel {
 
-	public ManticoreRunner MUIInstance;
+	public ManticoreRunner manticoreRunner;
 
 	public JTextArea logArea;
 	public JButton stopButton;
 
-	public MUILogContentComponent() {
+	public MUILogContentComponent(ManticoreRunner mcore) {
+
+		manticoreRunner = mcore;
+
 		setLayout(new BorderLayout());
 		setMinimumSize(new Dimension(300, 300));
 
@@ -29,7 +32,6 @@ public class MUILogContentComponent extends JPanel {
 		stopButton = new JButton();
 
 		buildLogArea();
-		MUIInstance = new ManticoreRunner(logArea, stopButton);
 		buildToolBar();
 	}
 
@@ -55,14 +57,16 @@ public class MUILogContentComponent extends JPanel {
 	public void buildToolBar() {
 		JToolBar logToolBar = new JToolBar();
 		logToolBar.setFloatable(false);
+		stopButton.setEnabled(true);
 		stopButton.setIcon(ResourceManager.loadImage("images/stopNode.png"));
 		stopButton.addActionListener(
 			new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					MUIInstance.stopProc();
+					manticoreRunner.terminateManticore();
 				}
+
 			});
 		logToolBar.add(Box.createGlue()); // shifts buttons to the right
 		logToolBar.add(stopButton);

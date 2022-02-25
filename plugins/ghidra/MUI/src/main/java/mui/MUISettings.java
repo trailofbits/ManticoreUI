@@ -37,14 +37,6 @@ public class MUISettings {
 						"elementType", "string",
 						"default", ""),
 					Map.of() },
-				"workspace", new Map[] {
-					Map.of(
-						"title", "Workspace URL",
-						"description", "Workspace URL to use for manticore",
-						"type", "string",
-						"default", "mem:"),
-					Map.of(
-						"is_dir_path", true) },
 				"env", new Map[] {
 					Map.of(
 						"title", "Environment Variables",
@@ -59,22 +51,6 @@ public class MUISettings {
 						"description", "Symbolic input files for manticore",
 						"type", "array",
 						"elementType", "string",
-						"default", ""),
-					Map.of() },
-				"{mcore_binary}", new Map[] {
-					Map.of(
-						"title", "Manticore Binary",
-						"description", "Manticore binary to use",
-						"type", "string",
-						"default", ""),
-					Map.of(
-						"is_dir_path", true) },
-				"{state_server_port}", new Map[] {
-					Map.of(
-						"title", "State Server Port (leave blank to auto-allocate)",
-						"description",
-						"Port to use for manticore's state server. If set to auto-allocate, default port is 3215, and MUI will try ports in increments of 2 if port is in use.",
-						"type", "number",
 						"default", ""),
 					Map.of() })));
 

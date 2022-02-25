@@ -10,6 +10,8 @@ import ghidra.app.context.ListingContextAction;
 import ghidra.app.plugin.core.colorizer.ColorizingService;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
+import muicore.MUICore.AddressRequest;
+import muicore.MUICore.AddressRequest.Builder;
 import ghidra.program.model.address.Address;
 
 /**
@@ -56,18 +58,6 @@ public class MUIPopupMenu extends ListingContextAction {
 	}
 
 	/**
-	 * Displays a warning in the "MUI Setup" component indicating that Find/Avoid backend functionality is currently unimplemented.
-	 */
-	private void updateWarning() {
-		if (findAddresses.isEmpty() && avoidAddresses.isEmpty()) {
-			MUISetupProvider.findAvoidUnimplementedLbl.setVisible(false);
-		}
-		else {
-			MUISetupProvider.findAvoidUnimplementedLbl.setVisible(true);
-		}
-	}
-
-	/**
 	 * Builds the menu items in the right-click context menu of the Listing component.
 	 */
 	public void setupMenu() {
@@ -79,16 +69,23 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
+					Builder reqBuilder = AddressRequest.newBuilder()
+							.setAddress(Long.parseLong(selectedAddr.toString(), 16));
+
 					if (findAddresses.contains(selectedAddr)) {
 						findAddresses.remove(selectedAddr);
 						unsetColor(selectedAddr);
+						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
+						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
 					}
 					else {
 						findAddresses.add(selectedAddr);
 						avoidAddresses.remove(selectedAddr);
 						setColor(selectedAddr, Color.GREEN);
+						reqBuilder.setType(AddressRequest.TargetType.FIND);
+						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+
 					}
-					updateWarning();
 				}
 			};
 
@@ -105,16 +102,23 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
+					Builder reqBuilder = AddressRequest.newBuilder()
+							.setAddress(Long.parseLong(selectedAddr.toString(), 16));
+
 					if (avoidAddresses.contains(selectedAddr)) {
 						avoidAddresses.remove(selectedAddr);
 						unsetColor(selectedAddr);
+						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
+						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+
 					}
 					else {
 						avoidAddresses.add(selectedAddr);
 						findAddresses.remove(selectedAddr);
 						setColor(selectedAddr, Color.RED);
+						reqBuilder.setType(AddressRequest.TargetType.AVOID);
+						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
 					}
-					updateWarning();
 				}
 			};
 

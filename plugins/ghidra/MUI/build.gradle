@@ -53,21 +53,68 @@ else {
 }
 //----------------------END "DO NOT MODIFY" SECTION-------------------------------
 
+
+def ghidraDir = file(ghidraInstallDir + "/Ghidra").getCanonicalFile().getAbsolutePath()
+def ghidraProps = new Properties()
+def ghidraVersion
+def ghidraUserDirectory
+def ghidraReleaseName
+
+
+file(ghidraDir + "/application.properties").withReader { reader ->
+    ghidraProps.load(reader)
+        ghidraReleaseName = ghidraProps.getProperty('application.release.name')
+    ghidraVersion = ghidraProps.getProperty('application.version')
+    ghidraUserDirectory = "${project.gradle.gradleUserHomeDir.parent}/.ghidra/.ghidra_${ghidra_version}_${ghidraReleaseName}"
+}
+
+def userDir = new File(ghidraUserDirectory)
+if(!userDir.exists()){
+    userDir.mkdirs()
+}
+
+
 repositories {
+    maven { url "https://maven-central.storage-download.googleapis.com/maven2/" }
     mavenCentral()
 }
 
+
+def grpcVersion = '1.44.1'
+def protobufVersion = '3.19.2'
+def protocVersion = protobufVersion
+
+
 dependencies {
-    // Any external dependencies added here will automatically be copied to the lib/ directory when
-    // this extension is built.
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    compileOnly "org.apache.tomcat:annotations-api:6.0.53"
+
+    // examples/advanced need this for JsonFormat
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+
+    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
 }
 
 protobuf {
     generatedFilesBaseDir = "$projectDir/src"
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+              grpc {}
+        }
     }
 }
+
 
 // The following installation helpers were copied from
 // https://github.com/cmu-sei/kaiju/blob/c00a351aa4332e8b6e2be94f6fe52418f8946b11/build.gradle
@@ -75,10 +122,10 @@ task uninstallPreviousMUI {
     description = "Removes a previous MUI installation, or notifies user of previous installation"
     doFirst {
         // check if a previous MUI installation exists
-        if (file(ghidraInstallDir + '/Ghidra/Extensions/' + 'MUI/').exists()) {
+        if (new File(ghidraUserDirectory + '/Extensions/MUI').exists()) {
             // automatically remove past install if user specifies
             if (project.hasProperty('MUI_AUTO_REMOVE')) {
-                def muiDir = new File(ghidraInstallDir + '/Ghidra/Extensions/' + 'MUI/')
+                def muiDir = new File(ghidraUserDirectory + '/Extensions/MUI/')
                 muiDir.deleteDir()
                 logger.quiet("SUCCESS! Previous standalone MUI installation was removed automatically by gradle.")
             } else {
@@ -91,21 +138,12 @@ task uninstallPreviousMUI {
 
 build.dependsOn uninstallPreviousMUI
 
-task copyZip(type: Copy) {
-    group = "Installation"
-    description = "Copies zip contents into special Extensions directory so user may enable or disable easily with reinstalling from gradle each time."
-    from "$buildExtension.destinationDir/$buildExtension.baseName.$buildExtension.extension"
-    into ghidraInstallDir + '/Extensions/Ghidra'
-    dependsOn buildExtension
-}
 
 task installZip(type: Exec) {
     group = "Installation"
     description = "Installs the zip package in installed Ghidra's default extension directory"
-    workingDir ghidraInstallDir + '/Ghidra/Extensions'
-    commandLine 'unzip', '-o', "$buildExtension.destinationDir/$buildExtension.baseName.$buildExtension.extension"
-    dependsOn copyZip
-    mustRunAfter copyZip
+    commandLine 'unzip', '-o', "$buildExtension.destinationDir/$buildExtension.baseName.$buildExtension.extension", '-d', ghidraUserDirectory+'/Extensions/'
+    dependsOn buildExtension
 }
 
 task install() {
@@ -135,8 +173,9 @@ spotless {
         endWithNewline()
     }
     java {
-        target 'src/*/java/**/*.java', 'ghidra_scripts/*.java'
-        targetExclude('src/main/java/mserialize/**/*.java')
+        target 'src/*/java/mui/**/*.java', 'ghidra_scripts/*.java'
+        targetExclude('src/main/java/muicore/**/*.java')
+        targetExclude('src/main/grpc/**/*.java')
         // The Ghidra formatting file was taken from Ghidra 10.1.1 located in
         // eclipse/GhidraEclipseFormatter.xml Ghidra repo
         eclipse().configFile('GhidraEclipseFormatter.xml')

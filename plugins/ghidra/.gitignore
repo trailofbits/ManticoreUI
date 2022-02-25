@@ -2,9 +2,10 @@ MUI/bin/
 MUI/build/
 MUI/dist/
 MUI/lib/*
-MUI/.classpath
-MUI/.settings
-MUI/.gradle/
-MUI/os/.gradle/
-MUI/.project
-MUI/.pydevproject
+**/.classpath
+**/.settings
+**/.gradle/
+**/.project
+**/.pydevproject
+**/__pycache__/
+**/mcore*/

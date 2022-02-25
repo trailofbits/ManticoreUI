@@ -1,6 +1,8 @@
 # MUI-Ghidra
 MUI support for Ghidra. This is primarily a prototype repository. See the main [MUI repo](https://github.com/trailofbits/mui) for a more complete implementation.
 
+This repository is also the temporary home for [MUI-Core](MUICore/README.md).
+
 # Usage
 
 At its present form, MUI-Ghidra manifests as three Ghidra components named `MUI Setup` (used to specify args and run Manticore), `MUI Log`, and `MUI State List` (which together display Manticore output). 

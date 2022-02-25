@@ -1,19 +1,20 @@
 package mui;
 
 import docking.*;
-import ghidra.GhidraApplicationLayout;
-import ghidra.framework.Application;
-import ghidra.framework.ApplicationConfiguration;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
+import muicore.MUICore.CLIArguments;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.ArrayList;
 import javax.swing.*;
 
 /**
@@ -25,34 +26,19 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 	private JPanel mainPanel;
 	private String programPath;
-	private String bundledManticorePath;
-
-	private MUILogProvider logProvider;
-	private MUIStateListProvider stateListProvider;
-
 	private JPanel formPanel;
+
 	public static JLabel findAvoidUnimplementedLbl;
 
 	private HashMap<String, JTextField> formOptions;
 
-	public MUISetupProvider(PluginTool tool, String name, MUILogProvider log,
-			MUIStateListProvider stateList) {
+	public MUISetupProvider(PluginTool tool, String name) {
 		super(tool, name, name);
-		setLogProvider(log);
-		setStateListProvider(stateList);
 		buildFormPanel();
 		buildMainPanel();
 		setTitle("MUI Setup");
 		setDefaultWindowPosition(WindowPosition.WINDOW);
 		setVisible(false);
-	}
-
-	private void setLogProvider(MUILogProvider log) {
-		logProvider = log;
-	}
-
-	private void setStateListProvider(MUIStateListProvider stateList) {
-		stateListProvider = stateList;
 	}
 
 	/**
@@ -65,17 +51,6 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		formPanel.setLayout(
 			new GridLayout(MUISettings.SETTINGS.get("NATIVE_RUN_SETTINGS").size(), 2));
 		formPanel.setMinimumSize(new Dimension(800, 500));
-
-		try {
-			if (!Application.isInitialized()) {
-				Application.initializeApplication(
-					new GhidraApplicationLayout(), new ApplicationConfiguration());
-			}
-			bundledManticorePath = Application.getOSFile("manticore").getCanonicalPath();
-		}
-		catch (Exception e) {
-			bundledManticorePath = "";
-		}
 
 		formOptions = new HashMap<String, JTextField>();
 
@@ -92,8 +67,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 			if (extra.containsKey("is_dir_path") && (Boolean) extra.get("is_dir_path")) {
 				formOptions.put(name,
-					createPathInput((name == "{mcore_binary}" ? bundledManticorePath
-							: prop.get("default").toString())));
+					createPathInput(prop.get("default").toString()));
 			}
 			else if (prop.get("type") == "string" || prop.get("type") == "number") {
 				formOptions.put(name, createStringNumberInput(prop.get("default").toString()));
@@ -201,14 +175,6 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 		JPanel bottomPanel = new JPanel(new BorderLayout());
 
-		findAvoidUnimplementedLbl = new JLabel(
-			"<html>WARNING: You have set instructions for Manticore to Find/Avoid in the Listing window. Find/Avoid functionality has NOT been implemented for MUI-Ghidra, and clicking 'Run' will result in Manticore exploring all paths as per usual.</html>");
-		findAvoidUnimplementedLbl.setForeground(new Color(139, 0, 0)); // DARK RED
-		findAvoidUnimplementedLbl.setHorizontalAlignment(SwingConstants.CENTER);
-
-		bottomPanel.add(findAvoidUnimplementedLbl, BorderLayout.CENTER);
-		findAvoidUnimplementedLbl.setVisible(false);
-
 		JPanel moreArgsPanel = new JPanel(new BorderLayout());
 
 		moreArgsPanel.add(new JLabel("Extra Manticore Arguments:"), BorderLayout.NORTH);
@@ -218,7 +184,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		moreArgs.setWrapStyleWord(true);
 		moreArgsPanel.add(moreArgs, BorderLayout.CENTER);
 
-		bottomPanel.add(moreArgsPanel, BorderLayout.NORTH);
+		bottomPanel.add(moreArgsPanel, BorderLayout.CENTER);
 
 		JButton runBtn = new JButton("Run");
 		runBtn.addActionListener(
@@ -226,14 +192,71 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					logProvider.setVisible(true);
-					stateListProvider.setVisible(true);
-					logProvider.runMUI(programPath, formOptions, moreArgs.getText());
+
+					CLIArguments mcoreArgs = CLIArguments.newBuilder()
+							.setProgramPath(programPath)
+							.addAllBinaryArgs(tokenizeArrayInput(formOptions.get("argv").getText()))
+							.addAllEnvp(tokenizeArrayInput(formOptions.get("env").getText()))
+							.addAllSymbolicFiles(
+								tokenizeArrayInput(formOptions.get("file").getText()))
+							.setStdinSize(formOptions.get("native.stdin_size").getText())
+							.setConcreteStart(formOptions.get("data").getText())
+							.setAdditionalMcoreArgs(moreArgs.getText())
+							.build();
+
+					ManticoreRunner runner = new ManticoreRunner();
+					runner.startManticore(mcoreArgs);
+
+					MUIPlugin.log.setVisible(true);
+					MUIPlugin.stateList.setVisible(true);
+					MUIPlugin.log.addLogTab(runner);
 				}
 			});
 		bottomPanel.add(runBtn, BorderLayout.SOUTH);
 
 		mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * Tokenizes a String containing multiple arguments formatted shell-style, cognizant of spaces which are escaped or within quotes.
+	 * @param string Shell-style space-separated arguments for Manticore arguments with array input type.
+	 * @return String iterable suitable to be passed to a ProcessBuilder.
+	 */
+	private List<String> tokenizeArrayInput(String string) {
+		final List<Character> WORD_DELIMITERS = Arrays.asList(' ', '\t');
+		final List<Character> QUOTE_CHARACTERS = Arrays.asList('"', '\'');
+		final char ESCAPE_CHARACTER = '\\';
+
+		StringBuilder wordBuilder = new StringBuilder();
+		List<String> words = new ArrayList<>();
+		char quote = 0;
+
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+
+			if (c == ESCAPE_CHARACTER && i + 1 < string.length()) {
+				wordBuilder.append(string.charAt(++i));
+			}
+			else if (WORD_DELIMITERS.contains(c) && quote == 0) {
+				words.add(wordBuilder.toString());
+				wordBuilder.setLength(0);
+			}
+			else if (quote == 0 && QUOTE_CHARACTERS.contains(c)) {
+				quote = c;
+			}
+			else if (quote == c) {
+				quote = 0;
+			}
+			else {
+				wordBuilder.append(c);
+			}
+		}
+
+		if (wordBuilder.length() > 0) {
+			words.add(wordBuilder.toString());
+		}
+
+		return words;
 	}
 
 	/** 
