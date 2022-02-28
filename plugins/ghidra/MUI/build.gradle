@@ -115,6 +115,15 @@ protobuf {
     }
 }
 
+tasks.whenTaskAdded { task ->
+    if (task.name == 'extractIncludeProto'){
+        task.getDependsOn().add(copyDependencies)
+    } else if (task.name == 'generateProto'){
+        zipSource.dependsOn task
+        processResources.dependsOn task
+        spotlessJava.dependsOn task
+    }
+}
 
 // The following installation helpers were copied from
 // https://github.com/cmu-sei/kaiju/blob/c00a351aa4332e8b6e2be94f6fe52418f8946b11/build.gradle
@@ -140,10 +149,11 @@ build.dependsOn uninstallPreviousMUI
 
 
 task installZip(type: Exec) {
+    dependsOn buildExtension
     group = "Installation"
     description = "Installs the zip package in installed Ghidra's default extension directory"
-    commandLine 'unzip', '-o', "$buildExtension.destinationDir/$buildExtension.baseName.$buildExtension.extension", '-d', ghidraUserDirectory+'/Extensions/'
-    dependsOn buildExtension
+    def zipPath = buildExtension.destinationDirectory.get().getAsFile().toString() + "/" + buildExtension.archiveBaseName.get() + "." + buildExtension.archiveExtension.get()
+    commandLine 'unzip', '-o', zipPath, '-d', ghidraUserDirectory+'/Extensions/'
 }
 
 task install() {
