@@ -3,3 +3,7 @@ format:
 
 lint:
   gradle -p MUI spotlessCheck
+
+install:
+  just --justfile MUICore/justfile install
+  gradle -p MUI install
