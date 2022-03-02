@@ -10,7 +10,7 @@ from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
-from mui.utils import MUIState
+from mui.utils import MUIState, print_timestamp
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
@@ -83,6 +83,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print(f"{symbol.name}: {buf!r}\n")
 
                 with m.locked_context() as context:
+                    context["find_reached"] = True
                     m.kill()
                 state.abandon()
 
@@ -112,14 +113,21 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             def check_termination(_):
                 """Check if the user wants to termninate manticore"""
                 if bv.session_data.mui_is_running == False:
-                    print("Manticore terminated by user!")
+                    print_timestamp("Manticore terminated by user!")
                     with m.locked_context() as context:
                         m.kill()
 
             m.register_daemon(run_every(check_termination, 1))
 
+            with m.locked_context() as context:
+                context["find_reached"] = False
+            print_timestamp("Manticore started")
             m.run()
             bv.session_data.mui_state.notify_states_changed(m.introspect())
-            print("Manticore finished")
+            with m.locked_context() as context:
+                if context["find_reached"]:
+                    print_timestamp("Manticore finished")
+                else:
+                    print_timestamp("Manticore finished without reaching find")
         finally:
             bv.session_data.mui_is_running = False
