@@ -107,6 +107,7 @@ def get_default_solc_path():
 
     return ""
 
+
 def print_timestamp(*args, **kw):
     """Print with timestamp prefixed (local timezone)"""
     timestamp = datetime.now().astimezone()
