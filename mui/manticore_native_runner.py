@@ -2,7 +2,7 @@ import tempfile
 from time import sleep
 from typing import Callable, Set
 
-from binaryninja import BackgroundTaskThread, Settings, BinaryView
+from binaryninja import BackgroundTaskThread, Settings, BinaryView, TypedDataAccessor, Endianness, Architecture
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
@@ -16,9 +16,13 @@ from mui.utils import MUIState, print_timestamp
 class ManticoreNativeRunner(BackgroundTaskThread):
     def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
         BackgroundTaskThread.__init__(self, "Solving with Manticore...", True)
-        self.find = tuple(find)
-        self.avoid = tuple(avoid)
         self.view = view
+
+        # Get binary base (if necessary) and rebase hooks
+        self.addr_off = self.get_address_offset(view)
+        self.find = [addr+self.addr_off for addr in find]
+        self.avoid = [addr+self.addr_off for addr in avoid]
+        self.custom_hooks = [(addr+self.addr_off, func) for addr, func in view.session_data.mui_custom_hooks.items()]
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
@@ -90,7 +94,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for addr in self.find:
                 m.hook(addr)(find_f)
 
-            for addr, func in bv.session_data.mui_custom_hooks.items():
+            for addr, func in self.custom_hooks:
                 exec(func, {"addr": addr, "bv": bv, "m": m})
 
             def run_every(callee: Callable, duration: int = 3) -> Callable:
@@ -131,3 +135,31 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished without reaching find")
         finally:
             bv.session_data.mui_is_running = False
+    
+    def get_address_offset(self, bv: BinaryView):
+        """Offsets addresses to take into consideration position independent executables (PIE)"""
+        # Addresses taken from https://github.com/trailofbits/manticore/blob/c3eabe03cf94f410bedd96d850df09cb0bda1711/manticore/platforms/linux.py#L954-L956
+        BASE_DYN_ADDR = 0x555555554000
+        BASE_DYN_ADDR_32 = 0x56555000
+
+        addr_off = None
+        if bv.arch == Architecture["x86_64"]:
+            h_addr = bv.symbols["__elf_header"][0].address
+            h_type = bv.types["Elf64_Header"]
+            header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
+            if header["type"].value == 3:  # ET_DYN
+                addr_off = BASE_DYN_ADDR
+            else:
+                addr_off = 0
+        elif bv.arch == Architecture["x86"]:
+            h_addr = bv.symbols["__elf_header"][0].address
+            h_type = bv.types["Elf32_Header"]
+            header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
+            if header["type"].value == 3:  # ET_DYN
+                addr_off = BASE_DYN_ADDR_32
+            else:
+                addr_off = 0
+        else:
+            addr_off = 0
+
+        return addr_off

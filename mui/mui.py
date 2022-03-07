@@ -48,39 +48,6 @@ BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
 
-
-def offset_address(bv: BinaryView, addr: int):
-    """Offsets addresses to take into consideration position independent executables (PIE)"""
-    # Addresses taken from https://github.com/trailofbits/manticore/blob/c3eabe03cf94f410bedd96d850df09cb0bda1711/manticore/platforms/linux.py#L954-L956
-    BASE_DYN_ADDR = 0x555555554000
-    BASE_DYN_ADDR_32 = 0x56555000
-
-    addr_off = bv.session_data.mui_addr_offset
-    if addr_off == None:
-        if bv.arch == Architecture["x86_64"]:
-            h_addr = bv.symbols["__elf_header"][0].address
-            h_type = bv.types["Elf64_Header"]
-            header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3:  # ET_DYN
-                addr_off = BASE_DYN_ADDR
-            else:
-                addr_off = 0
-        elif bv.arch == Architecture["x86"]:
-            h_addr = bv.symbols["__elf_header"][0].address
-            h_type = bv.types["Elf32_Header"]
-            header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3:  # ET_DYN
-                addr_off = BASE_DYN_ADDR_32
-            else:
-                addr_off = 0
-        else:
-            addr_off = 0
-
-        bv.session_data.mui_addr_offset = addr_off
-
-    return addr_off + addr
-
-
 def find_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the find list and highlights it green in the UI"""
 
@@ -88,7 +55,7 @@ def find_instr(bv: BinaryView, addr: int):
     highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
 
     # Add the instruction to the list associated with the current view
-    bv.session_data.mui_find.add(offset_address(bv, addr))
+    bv.session_data.mui_find.add(addr)
 
 
 def rm_find_instr(bv: BinaryView, addr: int):
@@ -98,7 +65,7 @@ def rm_find_instr(bv: BinaryView, addr: int):
     clear_highlight(bv, addr)
 
     # Remove the instruction to the list associated with the current view
-    bv.session_data.mui_find.remove(offset_address(bv, addr))
+    bv.session_data.mui_find.remove(addr)
 
 
 def avoid_instr(bv: BinaryView, addr: int):
@@ -108,7 +75,7 @@ def avoid_instr(bv: BinaryView, addr: int):
     highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
 
     # Add the instruction to the list associated with the current view
-    bv.session_data.mui_avoid.add(offset_address(bv, addr))
+    bv.session_data.mui_avoid.add(addr)
 
 
 def rm_avoid_instr(bv: BinaryView, addr: int):
@@ -118,7 +85,7 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
     clear_highlight(bv, addr)
 
     # Remove the instruction to the list associated with the current view
-    bv.session_data.mui_avoid.remove(offset_address(bv, addr))
+    bv.session_data.mui_avoid.remove(addr)
 
 
 def solve(bv: BinaryView):
@@ -183,10 +150,8 @@ def solve(bv: BinaryView):
 def edit_custom_hook(bv: BinaryView, addr: int):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
 
-    off_addr = offset_address(bv, addr)
-
-    if off_addr in bv.session_data.mui_custom_hooks:
-        dialog.set_text(bv.session_data.mui_custom_hooks[off_addr])
+    if addr in bv.session_data.mui_custom_hooks:
+        dialog.set_text(bv.session_data.mui_custom_hooks[addr])
 
     result: QDialog.DialogCode = dialog.exec()
 
@@ -194,14 +159,14 @@ def edit_custom_hook(bv: BinaryView, addr: int):
 
         if len(dialog.text()) == 0:
             # delete the hook if empty input is provided
-            if off_addr in bv.session_data.mui_custom_hooks:
+            if addr in bv.session_data.mui_custom_hooks:
                 clear_highlight(bv, addr)
-                del bv.session_data.mui_custom_hooks[off_addr]
+                del bv.session_data.mui_custom_hooks[addr]
 
         else:
             # add/edit the hook if input is non-empty
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
-            bv.session_data.mui_custom_hooks[off_addr] = dialog.text()
+            bv.session_data.mui_custom_hooks[addr] = dialog.text()
 
 
 def load_evm(bv: BinaryView):
@@ -245,12 +210,12 @@ def stop_manticore(bv: BinaryView):
 
 def avoid_instr_is_valid(bv: BinaryView, addr: int):
     """checks if avoid_instr is valid for a given address"""
-    return offset_address(bv, addr) not in bv.session_data.mui_avoid
+    return addr not in bv.session_data.mui_avoid
 
 
 def find_instr_is_valid(bv: BinaryView, addr: int):
     """checks if find_instr is valid for a given address"""
-    return offset_address(bv, addr) not in bv.session_data.mui_find
+    return addr not in bv.session_data.mui_find
 
 
 def solve_is_valid(bv: BinaryView):
