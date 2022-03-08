@@ -17,8 +17,6 @@ from binaryninja import (
     get_open_filename_input,
     Architecture,
     SettingsScope,
-    TypedDataAccessor,
-    Endianness,
 )
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
@@ -32,6 +30,7 @@ from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
+from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
@@ -57,6 +56,10 @@ def find_instr(bv: BinaryView, addr: int):
     # Add the instruction to the list associated with the current view
     bv.session_data.mui_find.add(addr)
 
+    # Add to hook list widget
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget.add_hook(HookType.FIND, addr)
+
 
 def rm_find_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the find list and undoes the highlights"""
@@ -66,6 +69,10 @@ def rm_find_instr(bv: BinaryView, addr: int):
 
     # Remove the instruction to the list associated with the current view
     bv.session_data.mui_find.remove(addr)
+
+    # Remove from hook list widget
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget.remove_hook(HookType.FIND, addr)
 
 
 def avoid_instr(bv: BinaryView, addr: int):
@@ -77,6 +84,10 @@ def avoid_instr(bv: BinaryView, addr: int):
     # Add the instruction to the list associated with the current view
     bv.session_data.mui_avoid.add(addr)
 
+    # Add to hook list widget
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget.add_hook(HookType.AVOID, addr)
+
 
 def rm_avoid_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the avoid list and undoes the highlights"""
@@ -86,6 +97,10 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
 
     # Remove the instruction to the list associated with the current view
     bv.session_data.mui_avoid.remove(addr)
+
+    # Remove from hook list widget
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget.remove_hook(HookType.AVOID, addr)
 
 
 def solve(bv: BinaryView):
@@ -269,6 +284,10 @@ PluginCommand.register(
 
 widget.register_dockwidget(
     StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
+)
+
+widget.register_dockwidget(
+    HookListWidget, HookListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
 )
 
 widget.register_dockwidget(
