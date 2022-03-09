@@ -4,7 +4,7 @@ from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardCol
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
 
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
-from mui.utils import highlight_instr
+from mui.utils import highlight_instr, get_mgr
 
 
 class UINotification(UIContextNotification):
@@ -24,54 +24,24 @@ class UINotification(UIContextNotification):
 
         bv: BinaryView = frame.getCurrentBinaryView()
 
-        # restore hook session_data from settings
-        settings = Settings()
-        bv.session_data.mui_find = set(
-            json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}find", bv))
-        )
-        bv.session_data.mui_avoid = set(
-            json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}avoid", bv))
-        )
-        bv.session_data.mui_custom_hooks = {
-            int(key): item
-            for key, item in json.loads(
-                settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
-            ).items()
-        }
+        # Initialise manager
+        mgr = get_mgr(bv)
 
         # restore highlight
-        for addr in bv.session_data.mui_find:
+        for addr in mgr.hooks.find:
             highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
-        for addr in bv.session_data.mui_avoid:
+        for addr in mgr.hooks.avoid:
             highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
-        for addr in bv.session_data.mui_custom_hooks.keys():
+        for addr in mgr.hooks.custom.keys():
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
 
     def OnBeforeSaveFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> bool:
         """Update settings to reflect the latest session_data"""
 
         bv: BinaryView = frame.getCurrentBinaryView()
-        settings = Settings()
 
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}find",
-            json.dumps(list(bv.session_data.mui_find)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}avoid",
-            json.dumps(list(bv.session_data.mui_avoid)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
-            json.dumps(bv.session_data.mui_custom_hooks),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
+        # Save to bndb
+        hooks = get_mgr(bv).hooks
+        hooks.serialise_metadata()
 
         return True

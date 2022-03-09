@@ -2,7 +2,14 @@ import tempfile
 from time import sleep
 from typing import Callable, Set
 
-from binaryninja import BackgroundTaskThread, Settings, BinaryView, TypedDataAccessor, Endianness, Architecture
+from binaryninja import (
+    BackgroundTaskThread,
+    Settings,
+    BinaryView,
+    TypedDataAccessor,
+    Endianness,
+    Architecture,
+)
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
@@ -10,19 +17,19 @@ from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.introspect_plugin import MUIIntrospectionPlugin
-from mui.utils import MUIState, print_timestamp
+from mui.utils import MUIState, NativeHooks, print_timestamp
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
-    def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
+    def __init__(self, hooks: NativeHooks, view: BinaryView):
         BackgroundTaskThread.__init__(self, "Solving with Manticore...", True)
         self.view = view
 
         # Get binary base (if necessary) and rebase hooks
         self.addr_off = self.get_address_offset(view)
-        self.find = [addr+self.addr_off for addr in find]
-        self.avoid = [addr+self.addr_off for addr in avoid]
-        self.custom_hooks = [(addr+self.addr_off, func) for addr, func in view.session_data.mui_custom_hooks.items()]
+        self.find = [addr + self.addr_off for addr in hooks.find]
+        self.avoid = [addr + self.addr_off for addr in hooks.avoid]
+        self.custom_hooks = [(addr + self.addr_off, func) for addr, func in hooks.custom.items()]
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
@@ -135,7 +142,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished without reaching find")
         finally:
             bv.session_data.mui_is_running = False
-    
+
     def get_address_offset(self, bv: BinaryView):
         """Offsets addresses to take into consideration position independent executables (PIE)"""
         # Addresses taken from https://github.com/trailofbits/manticore/blob/c3eabe03cf94f410bedd96d850df09cb0bda1711/manticore/platforms/linux.py#L954-L956

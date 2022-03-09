@@ -2,6 +2,7 @@ import os
 import typing
 from pathlib import Path
 from datetime import datetime
+from mui.native_hooks import NativeHooks
 
 from binaryninja import (
     BinaryView,
@@ -12,6 +13,38 @@ from binaryninja import (
     HighlightColor,
 )
 from manticore.core.plugin import StateDescriptor
+
+
+def get_mgr(bv: BinaryView):
+    """Get the manager for the bv instance"""
+    for mgr in MUIManager.managers:
+        if mgr.bv == bv:
+            return mgr
+
+    mgr = MUIManager(bv)
+    MUIManager.managers.append(mgr)
+    return mgr
+
+
+def del_mgr(bv: BinaryView):
+    """Delete manager"""
+    mgr = None
+    for _mgr in MUIManager.managers:
+        if _mgr.bv == bv:
+            mgr = _mgr
+
+    if mgr:
+        MUIManager.managers.remove(mgr)
+
+
+class MUIManager:
+    """Class that manages data/state for each instance of MUI created"""
+
+    managers = []
+
+    def __init__(self, bv: BinaryView):
+        self.bv = bv
+        self.hooks = NativeHooks(bv)
 
 
 class MUIState:
