@@ -4,7 +4,7 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import muicore.MUICore.CLIArguments;
+import muicore.MUICore.NativeArguments;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -193,7 +193,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
-					CLIArguments mcoreArgs = CLIArguments.newBuilder()
+					NativeArguments mcoreArgs = NativeArguments.newBuilder()
 							.setProgramPath(programPath)
 							.addAllBinaryArgs(tokenizeArrayInput(formOptions.get("argv").getText()))
 							.addAllEnvp(tokenizeArrayInput(formOptions.get("env").getText()))

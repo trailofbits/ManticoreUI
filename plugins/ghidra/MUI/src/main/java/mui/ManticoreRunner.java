@@ -1,6 +1,6 @@
 package mui;
 
-import muicore.MUICore.CLIArguments;
+import muicore.MUICore.NativeArguments;
 import muicore.MUICore.MUILogMessage;
 import muicore.MUICore.MUIMessageList;
 import muicore.MUICore.MUIState;
@@ -61,9 +61,9 @@ public class ManticoreRunner {
 
 	/**
 	 * Starts Manticore with given arguments.
-	 * @param cliArgs MUICore.CLIArguments object
+	 * @param nativeArgs MUICore.NativeArguments object
 	 */
-	public void startManticore(CLIArguments cliArgs) {
+	public void startManticore(NativeArguments nativeArgs) {
 
 		StreamObserver<ManticoreInstance> startObserver = new StreamObserver<ManticoreInstance>() {
 
@@ -84,7 +84,7 @@ public class ManticoreRunner {
 
 		};
 
-		MUIPlugin.asyncMUICoreStub.start(cliArgs, startObserver);
+		MUIPlugin.asyncMUICoreStub.startNative(nativeArgs, startObserver);
 	}
 
 	public void setManticoreInstance(ManticoreInstance m) {

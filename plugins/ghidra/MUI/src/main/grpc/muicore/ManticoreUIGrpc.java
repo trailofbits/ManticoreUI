@@ -15,6 +15,68 @@ public final class ManticoreUIGrpc {
   public static final String SERVICE_NAME = "muicore.ManticoreUI";
 
   // Static method descriptors that strictly reflect the proto.
+  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.NativeArguments,
+      muicore.MUICore.ManticoreInstance> getStartNativeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StartNative",
+      requestType = muicore.MUICore.NativeArguments.class,
+      responseType = muicore.MUICore.ManticoreInstance.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<muicore.MUICore.NativeArguments,
+      muicore.MUICore.ManticoreInstance> getStartNativeMethod() {
+    io.grpc.MethodDescriptor<muicore.MUICore.NativeArguments, muicore.MUICore.ManticoreInstance> getStartNativeMethod;
+    if ((getStartNativeMethod = ManticoreUIGrpc.getStartNativeMethod) == null) {
+      synchronized (ManticoreUIGrpc.class) {
+        if ((getStartNativeMethod = ManticoreUIGrpc.getStartNativeMethod) == null) {
+          ManticoreUIGrpc.getStartNativeMethod = getStartNativeMethod =
+              io.grpc.MethodDescriptor.<muicore.MUICore.NativeArguments, muicore.MUICore.ManticoreInstance>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StartNative"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.NativeArguments.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.ManticoreInstance.getDefaultInstance()))
+              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("StartNative"))
+              .build();
+        }
+      }
+    }
+    return getStartNativeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.EVMArguments,
+      muicore.MUICore.ManticoreInstance> getStartEVMMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StartEVM",
+      requestType = muicore.MUICore.EVMArguments.class,
+      responseType = muicore.MUICore.ManticoreInstance.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<muicore.MUICore.EVMArguments,
+      muicore.MUICore.ManticoreInstance> getStartEVMMethod() {
+    io.grpc.MethodDescriptor<muicore.MUICore.EVMArguments, muicore.MUICore.ManticoreInstance> getStartEVMMethod;
+    if ((getStartEVMMethod = ManticoreUIGrpc.getStartEVMMethod) == null) {
+      synchronized (ManticoreUIGrpc.class) {
+        if ((getStartEVMMethod = ManticoreUIGrpc.getStartEVMMethod) == null) {
+          ManticoreUIGrpc.getStartEVMMethod = getStartEVMMethod =
+              io.grpc.MethodDescriptor.<muicore.MUICore.EVMArguments, muicore.MUICore.ManticoreInstance>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StartEVM"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.EVMArguments.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.ManticoreInstance.getDefaultInstance()))
+              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("StartEVM"))
+              .build();
+        }
+      }
+    }
+    return getStartEVMMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<muicore.MUICore.ManticoreInstance,
       muicore.MUICore.TerminateResponse> getTerminateMethod;
 
@@ -44,68 +106,6 @@ public final class ManticoreUIGrpc {
       }
     }
     return getTerminateMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.CLIArguments,
-      muicore.MUICore.ManticoreInstance> getStartMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "Start",
-      requestType = muicore.MUICore.CLIArguments.class,
-      responseType = muicore.MUICore.ManticoreInstance.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<muicore.MUICore.CLIArguments,
-      muicore.MUICore.ManticoreInstance> getStartMethod() {
-    io.grpc.MethodDescriptor<muicore.MUICore.CLIArguments, muicore.MUICore.ManticoreInstance> getStartMethod;
-    if ((getStartMethod = ManticoreUIGrpc.getStartMethod) == null) {
-      synchronized (ManticoreUIGrpc.class) {
-        if ((getStartMethod = ManticoreUIGrpc.getStartMethod) == null) {
-          ManticoreUIGrpc.getStartMethod = getStartMethod =
-              io.grpc.MethodDescriptor.<muicore.MUICore.CLIArguments, muicore.MUICore.ManticoreInstance>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Start"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  muicore.MUICore.CLIArguments.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  muicore.MUICore.ManticoreInstance.getDefaultInstance()))
-              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("Start"))
-              .build();
-        }
-      }
-    }
-    return getStartMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest,
-      muicore.MUICore.TargetResponse> getTargetAddressMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "TargetAddress",
-      requestType = muicore.MUICore.AddressRequest.class,
-      responseType = muicore.MUICore.TargetResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest,
-      muicore.MUICore.TargetResponse> getTargetAddressMethod() {
-    io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest, muicore.MUICore.TargetResponse> getTargetAddressMethod;
-    if ((getTargetAddressMethod = ManticoreUIGrpc.getTargetAddressMethod) == null) {
-      synchronized (ManticoreUIGrpc.class) {
-        if ((getTargetAddressMethod = ManticoreUIGrpc.getTargetAddressMethod) == null) {
-          ManticoreUIGrpc.getTargetAddressMethod = getTargetAddressMethod =
-              io.grpc.MethodDescriptor.<muicore.MUICore.AddressRequest, muicore.MUICore.TargetResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "TargetAddress"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  muicore.MUICore.AddressRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  muicore.MUICore.TargetResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("TargetAddress"))
-              .build();
-        }
-      }
-    }
-    return getTargetAddressMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<muicore.MUICore.ManticoreInstance,
@@ -201,6 +201,37 @@ public final class ManticoreUIGrpc {
     return getCheckManticoreRunningMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest,
+      muicore.MUICore.TargetResponse> getTargetAddressNativeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "TargetAddressNative",
+      requestType = muicore.MUICore.AddressRequest.class,
+      responseType = muicore.MUICore.TargetResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest,
+      muicore.MUICore.TargetResponse> getTargetAddressNativeMethod() {
+    io.grpc.MethodDescriptor<muicore.MUICore.AddressRequest, muicore.MUICore.TargetResponse> getTargetAddressNativeMethod;
+    if ((getTargetAddressNativeMethod = ManticoreUIGrpc.getTargetAddressNativeMethod) == null) {
+      synchronized (ManticoreUIGrpc.class) {
+        if ((getTargetAddressNativeMethod = ManticoreUIGrpc.getTargetAddressNativeMethod) == null) {
+          ManticoreUIGrpc.getTargetAddressNativeMethod = getTargetAddressNativeMethod =
+              io.grpc.MethodDescriptor.<muicore.MUICore.AddressRequest, muicore.MUICore.TargetResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "TargetAddressNative"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.AddressRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.TargetResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("TargetAddressNative"))
+              .build();
+        }
+      }
+    }
+    return getTargetAddressNativeMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -251,23 +282,23 @@ public final class ManticoreUIGrpc {
 
     /**
      */
+    public void startNative(muicore.MUICore.NativeArguments request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStartNativeMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void startEVM(muicore.MUICore.EVMArguments request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStartEVMMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void terminate(muicore.MUICore.ManticoreInstance request,
         io.grpc.stub.StreamObserver<muicore.MUICore.TerminateResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getTerminateMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void start(muicore.MUICore.CLIArguments request,
-        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStartMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void targetAddress(muicore.MUICore.AddressRequest request,
-        io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getTargetAddressMethod(), responseObserver);
     }
 
     /**
@@ -291,8 +322,29 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCheckManticoreRunningMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void targetAddressNative(muicore.MUICore.AddressRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getTargetAddressNativeMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+          .addMethod(
+            getStartNativeMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                muicore.MUICore.NativeArguments,
+                muicore.MUICore.ManticoreInstance>(
+                  this, METHODID_START_NATIVE)))
+          .addMethod(
+            getStartEVMMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                muicore.MUICore.EVMArguments,
+                muicore.MUICore.ManticoreInstance>(
+                  this, METHODID_START_EVM)))
           .addMethod(
             getTerminateMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -300,20 +352,6 @@ public final class ManticoreUIGrpc {
                 muicore.MUICore.ManticoreInstance,
                 muicore.MUICore.TerminateResponse>(
                   this, METHODID_TERMINATE)))
-          .addMethod(
-            getStartMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                muicore.MUICore.CLIArguments,
-                muicore.MUICore.ManticoreInstance>(
-                  this, METHODID_START)))
-          .addMethod(
-            getTargetAddressMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                muicore.MUICore.AddressRequest,
-                muicore.MUICore.TargetResponse>(
-                  this, METHODID_TARGET_ADDRESS)))
           .addMethod(
             getGetStateListMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -335,6 +373,13 @@ public final class ManticoreUIGrpc {
                 muicore.MUICore.ManticoreInstance,
                 muicore.MUICore.ManticoreRunningStatus>(
                   this, METHODID_CHECK_MANTICORE_RUNNING)))
+          .addMethod(
+            getTargetAddressNativeMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                muicore.MUICore.AddressRequest,
+                muicore.MUICore.TargetResponse>(
+                  this, METHODID_TARGET_ADDRESS_NATIVE)))
           .build();
     }
   }
@@ -355,26 +400,26 @@ public final class ManticoreUIGrpc {
 
     /**
      */
+    public void startNative(muicore.MUICore.NativeArguments request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getStartNativeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void startEVM(muicore.MUICore.EVMArguments request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getStartEVMMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void terminate(muicore.MUICore.ManticoreInstance request,
         io.grpc.stub.StreamObserver<muicore.MUICore.TerminateResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getTerminateMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void start(muicore.MUICore.CLIArguments request,
-        io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getStartMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void targetAddress(muicore.MUICore.AddressRequest request,
-        io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getTargetAddressMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -400,6 +445,14 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getCheckManticoreRunningMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void targetAddressNative(muicore.MUICore.AddressRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getTargetAddressNativeMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -418,23 +471,23 @@ public final class ManticoreUIGrpc {
 
     /**
      */
+    public muicore.MUICore.ManticoreInstance startNative(muicore.MUICore.NativeArguments request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getStartNativeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public muicore.MUICore.ManticoreInstance startEVM(muicore.MUICore.EVMArguments request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getStartEVMMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
     public muicore.MUICore.TerminateResponse terminate(muicore.MUICore.ManticoreInstance request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getTerminateMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public muicore.MUICore.ManticoreInstance start(muicore.MUICore.CLIArguments request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getStartMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public muicore.MUICore.TargetResponse targetAddress(muicore.MUICore.AddressRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getTargetAddressMethod(), getCallOptions(), request);
     }
 
     /**
@@ -457,6 +510,13 @@ public final class ManticoreUIGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCheckManticoreRunningMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public muicore.MUICore.TargetResponse targetAddressNative(muicore.MUICore.AddressRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTargetAddressNativeMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -475,26 +535,26 @@ public final class ManticoreUIGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.ManticoreInstance> startNative(
+        muicore.MUICore.NativeArguments request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getStartNativeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.ManticoreInstance> startEVM(
+        muicore.MUICore.EVMArguments request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getStartEVMMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.TerminateResponse> terminate(
         muicore.MUICore.ManticoreInstance request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getTerminateMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.ManticoreInstance> start(
-        muicore.MUICore.CLIArguments request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getStartMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.TargetResponse> targetAddress(
-        muicore.MUICore.AddressRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getTargetAddressMethod(), getCallOptions()), request);
     }
 
     /**
@@ -520,14 +580,23 @@ public final class ManticoreUIGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getCheckManticoreRunningMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.TargetResponse> targetAddressNative(
+        muicore.MUICore.AddressRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getTargetAddressNativeMethod(), getCallOptions()), request);
+    }
   }
 
-  private static final int METHODID_TERMINATE = 0;
-  private static final int METHODID_START = 1;
-  private static final int METHODID_TARGET_ADDRESS = 2;
+  private static final int METHODID_START_NATIVE = 0;
+  private static final int METHODID_START_EVM = 1;
+  private static final int METHODID_TERMINATE = 2;
   private static final int METHODID_GET_STATE_LIST = 3;
   private static final int METHODID_GET_MESSAGE_LIST = 4;
   private static final int METHODID_CHECK_MANTICORE_RUNNING = 5;
+  private static final int METHODID_TARGET_ADDRESS_NATIVE = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -546,17 +615,17 @@ public final class ManticoreUIGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_START_NATIVE:
+          serviceImpl.startNative((muicore.MUICore.NativeArguments) request,
+              (io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance>) responseObserver);
+          break;
+        case METHODID_START_EVM:
+          serviceImpl.startEVM((muicore.MUICore.EVMArguments) request,
+              (io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance>) responseObserver);
+          break;
         case METHODID_TERMINATE:
           serviceImpl.terminate((muicore.MUICore.ManticoreInstance) request,
               (io.grpc.stub.StreamObserver<muicore.MUICore.TerminateResponse>) responseObserver);
-          break;
-        case METHODID_START:
-          serviceImpl.start((muicore.MUICore.CLIArguments) request,
-              (io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreInstance>) responseObserver);
-          break;
-        case METHODID_TARGET_ADDRESS:
-          serviceImpl.targetAddress((muicore.MUICore.AddressRequest) request,
-              (io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse>) responseObserver);
           break;
         case METHODID_GET_STATE_LIST:
           serviceImpl.getStateList((muicore.MUICore.ManticoreInstance) request,
@@ -569,6 +638,10 @@ public final class ManticoreUIGrpc {
         case METHODID_CHECK_MANTICORE_RUNNING:
           serviceImpl.checkManticoreRunning((muicore.MUICore.ManticoreInstance) request,
               (io.grpc.stub.StreamObserver<muicore.MUICore.ManticoreRunningStatus>) responseObserver);
+          break;
+        case METHODID_TARGET_ADDRESS_NATIVE:
+          serviceImpl.targetAddressNative((muicore.MUICore.AddressRequest) request,
+              (io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -631,12 +704,13 @@ public final class ManticoreUIGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new ManticoreUIFileDescriptorSupplier())
+              .addMethod(getStartNativeMethod())
+              .addMethod(getStartEVMMethod())
               .addMethod(getTerminateMethod())
-              .addMethod(getStartMethod())
-              .addMethod(getTargetAddressMethod())
               .addMethod(getGetStateListMethod())
               .addMethod(getGetMessageListMethod())
               .addMethod(getCheckManticoreRunningMethod())
+              .addMethod(getTargetAddressNativeMethod())
               .build();
         }
       }

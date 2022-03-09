@@ -76,14 +76,14 @@ public class MUIPopupMenu extends ListingContextAction {
 						findAddresses.remove(selectedAddr);
 						unsetColor(selectedAddr);
 						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
-						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 					}
 					else {
 						findAddresses.add(selectedAddr);
 						avoidAddresses.remove(selectedAddr);
 						setColor(selectedAddr, Color.GREEN);
 						reqBuilder.setType(AddressRequest.TargetType.FIND);
-						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 
 					}
 				}
@@ -109,7 +109,7 @@ public class MUIPopupMenu extends ListingContextAction {
 						avoidAddresses.remove(selectedAddr);
 						unsetColor(selectedAddr);
 						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
-						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 
 					}
 					else {
@@ -117,7 +117,7 @@ public class MUIPopupMenu extends ListingContextAction {
 						findAddresses.remove(selectedAddr);
 						setColor(selectedAddr, Color.RED);
 						reqBuilder.setType(AddressRequest.TargetType.AVOID);
-						MUIPlugin.asyncMUICoreStub.targetAddress(reqBuilder.build(), null);
+						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 					}
 				}
 			};

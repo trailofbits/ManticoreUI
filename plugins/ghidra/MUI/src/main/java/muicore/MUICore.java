@@ -5313,8 +5313,8 @@ public final class MUICore {
 
   }
 
-  public interface CLIArgumentsOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:muicore.CLIArguments)
+  public interface NativeArgumentsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:muicore.NativeArguments)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -5441,18 +5441,18 @@ public final class MUICore {
         getAdditionalMcoreArgsBytes();
   }
   /**
-   * Protobuf type {@code muicore.CLIArguments}
+   * Protobuf type {@code muicore.NativeArguments}
    */
-  public static final class CLIArguments extends
+  public static final class NativeArguments extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:muicore.CLIArguments)
-      CLIArgumentsOrBuilder {
+      // @@protoc_insertion_point(message_implements:muicore.NativeArguments)
+      NativeArgumentsOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use CLIArguments.newBuilder() to construct.
-    private CLIArguments(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use NativeArguments.newBuilder() to construct.
+    private NativeArguments(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private CLIArguments() {
+    private NativeArguments() {
       programPath_ = "";
       binaryArgs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       envp_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -5466,7 +5466,7 @@ public final class MUICore {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new CLIArguments();
+      return new NativeArguments();
     }
 
     @java.lang.Override
@@ -5474,7 +5474,7 @@ public final class MUICore {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private CLIArguments(
+    private NativeArguments(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -5574,15 +5574,15 @@ public final class MUICore {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return muicore.MUICore.internal_static_muicore_CLIArguments_descriptor;
+      return muicore.MUICore.internal_static_muicore_NativeArguments_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return muicore.MUICore.internal_static_muicore_CLIArguments_fieldAccessorTable
+      return muicore.MUICore.internal_static_muicore_NativeArguments_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              muicore.MUICore.CLIArguments.class, muicore.MUICore.CLIArguments.Builder.class);
+              muicore.MUICore.NativeArguments.class, muicore.MUICore.NativeArguments.Builder.class);
     }
 
     public static final int PROGRAM_PATH_FIELD_NUMBER = 11;
@@ -5932,10 +5932,10 @@ public final class MUICore {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof muicore.MUICore.CLIArguments)) {
+      if (!(obj instanceof muicore.MUICore.NativeArguments)) {
         return super.equals(obj);
       }
-      muicore.MUICore.CLIArguments other = (muicore.MUICore.CLIArguments) obj;
+      muicore.MUICore.NativeArguments other = (muicore.MUICore.NativeArguments) obj;
 
       if (!getProgramPath()
           .equals(other.getProgramPath())) return false;
@@ -5987,69 +5987,69 @@ public final class MUICore {
       return hash;
     }
 
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(byte[] data)
+    public static muicore.MUICore.NativeArguments parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(java.io.InputStream input)
+    public static muicore.MUICore.NativeArguments parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static muicore.MUICore.CLIArguments parseDelimitedFrom(java.io.InputStream input)
+    public static muicore.MUICore.NativeArguments parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static muicore.MUICore.CLIArguments parseDelimitedFrom(
+    public static muicore.MUICore.NativeArguments parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static muicore.MUICore.CLIArguments parseFrom(
+    public static muicore.MUICore.NativeArguments parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6062,7 +6062,7 @@ public final class MUICore {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(muicore.MUICore.CLIArguments prototype) {
+    public static Builder newBuilder(muicore.MUICore.NativeArguments prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -6078,26 +6078,26 @@ public final class MUICore {
       return builder;
     }
     /**
-     * Protobuf type {@code muicore.CLIArguments}
+     * Protobuf type {@code muicore.NativeArguments}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:muicore.CLIArguments)
-        muicore.MUICore.CLIArgumentsOrBuilder {
+        // @@protoc_insertion_point(builder_implements:muicore.NativeArguments)
+        muicore.MUICore.NativeArgumentsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return muicore.MUICore.internal_static_muicore_CLIArguments_descriptor;
+        return muicore.MUICore.internal_static_muicore_NativeArguments_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return muicore.MUICore.internal_static_muicore_CLIArguments_fieldAccessorTable
+        return muicore.MUICore.internal_static_muicore_NativeArguments_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                muicore.MUICore.CLIArguments.class, muicore.MUICore.CLIArguments.Builder.class);
+                muicore.MUICore.NativeArguments.class, muicore.MUICore.NativeArguments.Builder.class);
       }
 
-      // Construct using muicore.MUICore.CLIArguments.newBuilder()
+      // Construct using muicore.MUICore.NativeArguments.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6135,17 +6135,17 @@ public final class MUICore {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return muicore.MUICore.internal_static_muicore_CLIArguments_descriptor;
+        return muicore.MUICore.internal_static_muicore_NativeArguments_descriptor;
       }
 
       @java.lang.Override
-      public muicore.MUICore.CLIArguments getDefaultInstanceForType() {
-        return muicore.MUICore.CLIArguments.getDefaultInstance();
+      public muicore.MUICore.NativeArguments getDefaultInstanceForType() {
+        return muicore.MUICore.NativeArguments.getDefaultInstance();
       }
 
       @java.lang.Override
-      public muicore.MUICore.CLIArguments build() {
-        muicore.MUICore.CLIArguments result = buildPartial();
+      public muicore.MUICore.NativeArguments build() {
+        muicore.MUICore.NativeArguments result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -6153,8 +6153,8 @@ public final class MUICore {
       }
 
       @java.lang.Override
-      public muicore.MUICore.CLIArguments buildPartial() {
-        muicore.MUICore.CLIArguments result = new muicore.MUICore.CLIArguments(this);
+      public muicore.MUICore.NativeArguments buildPartial() {
+        muicore.MUICore.NativeArguments result = new muicore.MUICore.NativeArguments(this);
         int from_bitField0_ = bitField0_;
         result.programPath_ = programPath_;
         if (((bitField0_ & 0x00000001) != 0)) {
@@ -6213,16 +6213,16 @@ public final class MUICore {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof muicore.MUICore.CLIArguments) {
-          return mergeFrom((muicore.MUICore.CLIArguments)other);
+        if (other instanceof muicore.MUICore.NativeArguments) {
+          return mergeFrom((muicore.MUICore.NativeArguments)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(muicore.MUICore.CLIArguments other) {
-        if (other == muicore.MUICore.CLIArguments.getDefaultInstance()) return this;
+      public Builder mergeFrom(muicore.MUICore.NativeArguments other) {
+        if (other == muicore.MUICore.NativeArguments.getDefaultInstance()) return this;
         if (!other.getProgramPath().isEmpty()) {
           programPath_ = other.programPath_;
           onChanged();
@@ -6284,11 +6284,11 @@ public final class MUICore {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        muicore.MUICore.CLIArguments parsedMessage = null;
+        muicore.MUICore.NativeArguments parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (muicore.MUICore.CLIArguments) e.getUnfinishedMessage();
+          parsedMessage = (muicore.MUICore.NativeArguments) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -6945,41 +6945,1579 @@ public final class MUICore {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:muicore.CLIArguments)
+      // @@protoc_insertion_point(builder_scope:muicore.NativeArguments)
     }
 
-    // @@protoc_insertion_point(class_scope:muicore.CLIArguments)
-    private static final muicore.MUICore.CLIArguments DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:muicore.NativeArguments)
+    private static final muicore.MUICore.NativeArguments DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new muicore.MUICore.CLIArguments();
+      DEFAULT_INSTANCE = new muicore.MUICore.NativeArguments();
     }
 
-    public static muicore.MUICore.CLIArguments getDefaultInstance() {
+    public static muicore.MUICore.NativeArguments getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<CLIArguments>
-        PARSER = new com.google.protobuf.AbstractParser<CLIArguments>() {
+    private static final com.google.protobuf.Parser<NativeArguments>
+        PARSER = new com.google.protobuf.AbstractParser<NativeArguments>() {
       @java.lang.Override
-      public CLIArguments parsePartialFrom(
+      public NativeArguments parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new CLIArguments(input, extensionRegistry);
+        return new NativeArguments(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<CLIArguments> parser() {
+    public static com.google.protobuf.Parser<NativeArguments> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<CLIArguments> getParserForType() {
+    public com.google.protobuf.Parser<NativeArguments> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public muicore.MUICore.CLIArguments getDefaultInstanceForType() {
+    public muicore.MUICore.NativeArguments getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface EVMArgumentsOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:muicore.EVMArguments)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string contract_path = 12;</code>
+     * @return The contractPath.
+     */
+    java.lang.String getContractPath();
+    /**
+     * <code>string contract_path = 12;</code>
+     * @return The bytes for contractPath.
+     */
+    com.google.protobuf.ByteString
+        getContractPathBytes();
+
+    /**
+     * <code>string contract_name = 13;</code>
+     * @return The contractName.
+     */
+    java.lang.String getContractName();
+    /**
+     * <code>string contract_name = 13;</code>
+     * @return The bytes for contractName.
+     */
+    com.google.protobuf.ByteString
+        getContractNameBytes();
+
+    /**
+     * <code>string solc_bin = 14;</code>
+     * @return The solcBin.
+     */
+    java.lang.String getSolcBin();
+    /**
+     * <code>string solc_bin = 14;</code>
+     * @return The bytes for solcBin.
+     */
+    com.google.protobuf.ByteString
+        getSolcBinBytes();
+
+    /**
+     * <code>string tx_limit = 22;</code>
+     * @return The txLimit.
+     */
+    java.lang.String getTxLimit();
+    /**
+     * <code>string tx_limit = 22;</code>
+     * @return The bytes for txLimit.
+     */
+    com.google.protobuf.ByteString
+        getTxLimitBytes();
+
+    /**
+     * <code>string tx_account = 23;</code>
+     * @return The txAccount.
+     */
+    java.lang.String getTxAccount();
+    /**
+     * <code>string tx_account = 23;</code>
+     * @return The bytes for txAccount.
+     */
+    com.google.protobuf.ByteString
+        getTxAccountBytes();
+
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @return A list containing the detectorsToExclude.
+     */
+    java.util.List<java.lang.String>
+        getDetectorsToExcludeList();
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @return The count of detectorsToExclude.
+     */
+    int getDetectorsToExcludeCount();
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @param index The index of the element to return.
+     * @return The detectorsToExclude at the given index.
+     */
+    java.lang.String getDetectorsToExclude(int index);
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the detectorsToExclude at the given index.
+     */
+    com.google.protobuf.ByteString
+        getDetectorsToExcludeBytes(int index);
+
+    /**
+     * <code>string additional_flags = 25;</code>
+     * @return The additionalFlags.
+     */
+    java.lang.String getAdditionalFlags();
+    /**
+     * <code>string additional_flags = 25;</code>
+     * @return The bytes for additionalFlags.
+     */
+    com.google.protobuf.ByteString
+        getAdditionalFlagsBytes();
+  }
+  /**
+   * Protobuf type {@code muicore.EVMArguments}
+   */
+  public static final class EVMArguments extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:muicore.EVMArguments)
+      EVMArgumentsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use EVMArguments.newBuilder() to construct.
+    private EVMArguments(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private EVMArguments() {
+      contractPath_ = "";
+      contractName_ = "";
+      solcBin_ = "";
+      txLimit_ = "";
+      txAccount_ = "";
+      detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      additionalFlags_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new EVMArguments();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private EVMArguments(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 98: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              contractPath_ = s;
+              break;
+            }
+            case 106: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              contractName_ = s;
+              break;
+            }
+            case 114: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              solcBin_ = s;
+              break;
+            }
+            case 178: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              txLimit_ = s;
+              break;
+            }
+            case 186: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              txAccount_ = s;
+              break;
+            }
+            case 194: {
+              java.lang.String s = input.readStringRequireUtf8();
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                detectorsToExclude_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              detectorsToExclude_.add(s);
+              break;
+            }
+            case 202: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              additionalFlags_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          detectorsToExclude_ = detectorsToExclude_.getUnmodifiableView();
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return muicore.MUICore.internal_static_muicore_EVMArguments_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return muicore.MUICore.internal_static_muicore_EVMArguments_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              muicore.MUICore.EVMArguments.class, muicore.MUICore.EVMArguments.Builder.class);
+    }
+
+    public static final int CONTRACT_PATH_FIELD_NUMBER = 12;
+    private volatile java.lang.Object contractPath_;
+    /**
+     * <code>string contract_path = 12;</code>
+     * @return The contractPath.
+     */
+    @java.lang.Override
+    public java.lang.String getContractPath() {
+      java.lang.Object ref = contractPath_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        contractPath_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string contract_path = 12;</code>
+     * @return The bytes for contractPath.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getContractPathBytes() {
+      java.lang.Object ref = contractPath_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        contractPath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONTRACT_NAME_FIELD_NUMBER = 13;
+    private volatile java.lang.Object contractName_;
+    /**
+     * <code>string contract_name = 13;</code>
+     * @return The contractName.
+     */
+    @java.lang.Override
+    public java.lang.String getContractName() {
+      java.lang.Object ref = contractName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        contractName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string contract_name = 13;</code>
+     * @return The bytes for contractName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getContractNameBytes() {
+      java.lang.Object ref = contractName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        contractName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int SOLC_BIN_FIELD_NUMBER = 14;
+    private volatile java.lang.Object solcBin_;
+    /**
+     * <code>string solc_bin = 14;</code>
+     * @return The solcBin.
+     */
+    @java.lang.Override
+    public java.lang.String getSolcBin() {
+      java.lang.Object ref = solcBin_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        solcBin_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string solc_bin = 14;</code>
+     * @return The bytes for solcBin.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSolcBinBytes() {
+      java.lang.Object ref = solcBin_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        solcBin_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TX_LIMIT_FIELD_NUMBER = 22;
+    private volatile java.lang.Object txLimit_;
+    /**
+     * <code>string tx_limit = 22;</code>
+     * @return The txLimit.
+     */
+    @java.lang.Override
+    public java.lang.String getTxLimit() {
+      java.lang.Object ref = txLimit_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        txLimit_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tx_limit = 22;</code>
+     * @return The bytes for txLimit.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTxLimitBytes() {
+      java.lang.Object ref = txLimit_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        txLimit_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TX_ACCOUNT_FIELD_NUMBER = 23;
+    private volatile java.lang.Object txAccount_;
+    /**
+     * <code>string tx_account = 23;</code>
+     * @return The txAccount.
+     */
+    @java.lang.Override
+    public java.lang.String getTxAccount() {
+      java.lang.Object ref = txAccount_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        txAccount_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tx_account = 23;</code>
+     * @return The bytes for txAccount.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTxAccountBytes() {
+      java.lang.Object ref = txAccount_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        txAccount_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DETECTORS_TO_EXCLUDE_FIELD_NUMBER = 24;
+    private com.google.protobuf.LazyStringList detectorsToExclude_;
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @return A list containing the detectorsToExclude.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getDetectorsToExcludeList() {
+      return detectorsToExclude_;
+    }
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @return The count of detectorsToExclude.
+     */
+    public int getDetectorsToExcludeCount() {
+      return detectorsToExclude_.size();
+    }
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @param index The index of the element to return.
+     * @return The detectorsToExclude at the given index.
+     */
+    public java.lang.String getDetectorsToExclude(int index) {
+      return detectorsToExclude_.get(index);
+    }
+    /**
+     * <code>repeated string detectors_to_exclude = 24;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the detectorsToExclude at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getDetectorsToExcludeBytes(int index) {
+      return detectorsToExclude_.getByteString(index);
+    }
+
+    public static final int ADDITIONAL_FLAGS_FIELD_NUMBER = 25;
+    private volatile java.lang.Object additionalFlags_;
+    /**
+     * <code>string additional_flags = 25;</code>
+     * @return The additionalFlags.
+     */
+    @java.lang.Override
+    public java.lang.String getAdditionalFlags() {
+      java.lang.Object ref = additionalFlags_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        additionalFlags_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string additional_flags = 25;</code>
+     * @return The bytes for additionalFlags.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAdditionalFlagsBytes() {
+      java.lang.Object ref = additionalFlags_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        additionalFlags_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contractPath_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, contractPath_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contractName_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 13, contractName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(solcBin_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, solcBin_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txLimit_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 22, txLimit_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txAccount_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 23, txAccount_);
+      }
+      for (int i = 0; i < detectorsToExclude_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 24, detectorsToExclude_.getRaw(i));
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalFlags_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, additionalFlags_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contractPath_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, contractPath_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contractName_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, contractName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(solcBin_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, solcBin_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txLimit_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, txLimit_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txAccount_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, txAccount_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < detectorsToExclude_.size(); i++) {
+          dataSize += computeStringSizeNoTag(detectorsToExclude_.getRaw(i));
+        }
+        size += dataSize;
+        size += 2 * getDetectorsToExcludeList().size();
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalFlags_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, additionalFlags_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof muicore.MUICore.EVMArguments)) {
+        return super.equals(obj);
+      }
+      muicore.MUICore.EVMArguments other = (muicore.MUICore.EVMArguments) obj;
+
+      if (!getContractPath()
+          .equals(other.getContractPath())) return false;
+      if (!getContractName()
+          .equals(other.getContractName())) return false;
+      if (!getSolcBin()
+          .equals(other.getSolcBin())) return false;
+      if (!getTxLimit()
+          .equals(other.getTxLimit())) return false;
+      if (!getTxAccount()
+          .equals(other.getTxAccount())) return false;
+      if (!getDetectorsToExcludeList()
+          .equals(other.getDetectorsToExcludeList())) return false;
+      if (!getAdditionalFlags()
+          .equals(other.getAdditionalFlags())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + CONTRACT_PATH_FIELD_NUMBER;
+      hash = (53 * hash) + getContractPath().hashCode();
+      hash = (37 * hash) + CONTRACT_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getContractName().hashCode();
+      hash = (37 * hash) + SOLC_BIN_FIELD_NUMBER;
+      hash = (53 * hash) + getSolcBin().hashCode();
+      hash = (37 * hash) + TX_LIMIT_FIELD_NUMBER;
+      hash = (53 * hash) + getTxLimit().hashCode();
+      hash = (37 * hash) + TX_ACCOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + getTxAccount().hashCode();
+      if (getDetectorsToExcludeCount() > 0) {
+        hash = (37 * hash) + DETECTORS_TO_EXCLUDE_FIELD_NUMBER;
+        hash = (53 * hash) + getDetectorsToExcludeList().hashCode();
+      }
+      hash = (37 * hash) + ADDITIONAL_FLAGS_FIELD_NUMBER;
+      hash = (53 * hash) + getAdditionalFlags().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static muicore.MUICore.EVMArguments parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.EVMArguments parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.EVMArguments parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.EVMArguments parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(muicore.MUICore.EVMArguments prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code muicore.EVMArguments}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:muicore.EVMArguments)
+        muicore.MUICore.EVMArgumentsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return muicore.MUICore.internal_static_muicore_EVMArguments_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return muicore.MUICore.internal_static_muicore_EVMArguments_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                muicore.MUICore.EVMArguments.class, muicore.MUICore.EVMArguments.Builder.class);
+      }
+
+      // Construct using muicore.MUICore.EVMArguments.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        contractPath_ = "";
+
+        contractName_ = "";
+
+        solcBin_ = "";
+
+        txLimit_ = "";
+
+        txAccount_ = "";
+
+        detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        additionalFlags_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return muicore.MUICore.internal_static_muicore_EVMArguments_descriptor;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.EVMArguments getDefaultInstanceForType() {
+        return muicore.MUICore.EVMArguments.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.EVMArguments build() {
+        muicore.MUICore.EVMArguments result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.EVMArguments buildPartial() {
+        muicore.MUICore.EVMArguments result = new muicore.MUICore.EVMArguments(this);
+        int from_bitField0_ = bitField0_;
+        result.contractPath_ = contractPath_;
+        result.contractName_ = contractName_;
+        result.solcBin_ = solcBin_;
+        result.txLimit_ = txLimit_;
+        result.txAccount_ = txAccount_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          detectorsToExclude_ = detectorsToExclude_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.detectorsToExclude_ = detectorsToExclude_;
+        result.additionalFlags_ = additionalFlags_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof muicore.MUICore.EVMArguments) {
+          return mergeFrom((muicore.MUICore.EVMArguments)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(muicore.MUICore.EVMArguments other) {
+        if (other == muicore.MUICore.EVMArguments.getDefaultInstance()) return this;
+        if (!other.getContractPath().isEmpty()) {
+          contractPath_ = other.contractPath_;
+          onChanged();
+        }
+        if (!other.getContractName().isEmpty()) {
+          contractName_ = other.contractName_;
+          onChanged();
+        }
+        if (!other.getSolcBin().isEmpty()) {
+          solcBin_ = other.solcBin_;
+          onChanged();
+        }
+        if (!other.getTxLimit().isEmpty()) {
+          txLimit_ = other.txLimit_;
+          onChanged();
+        }
+        if (!other.getTxAccount().isEmpty()) {
+          txAccount_ = other.txAccount_;
+          onChanged();
+        }
+        if (!other.detectorsToExclude_.isEmpty()) {
+          if (detectorsToExclude_.isEmpty()) {
+            detectorsToExclude_ = other.detectorsToExclude_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureDetectorsToExcludeIsMutable();
+            detectorsToExclude_.addAll(other.detectorsToExclude_);
+          }
+          onChanged();
+        }
+        if (!other.getAdditionalFlags().isEmpty()) {
+          additionalFlags_ = other.additionalFlags_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        muicore.MUICore.EVMArguments parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (muicore.MUICore.EVMArguments) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object contractPath_ = "";
+      /**
+       * <code>string contract_path = 12;</code>
+       * @return The contractPath.
+       */
+      public java.lang.String getContractPath() {
+        java.lang.Object ref = contractPath_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          contractPath_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string contract_path = 12;</code>
+       * @return The bytes for contractPath.
+       */
+      public com.google.protobuf.ByteString
+          getContractPathBytes() {
+        java.lang.Object ref = contractPath_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          contractPath_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string contract_path = 12;</code>
+       * @param value The contractPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContractPath(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        contractPath_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string contract_path = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContractPath() {
+        
+        contractPath_ = getDefaultInstance().getContractPath();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string contract_path = 12;</code>
+       * @param value The bytes for contractPath to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContractPathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        contractPath_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object contractName_ = "";
+      /**
+       * <code>string contract_name = 13;</code>
+       * @return The contractName.
+       */
+      public java.lang.String getContractName() {
+        java.lang.Object ref = contractName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          contractName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string contract_name = 13;</code>
+       * @return The bytes for contractName.
+       */
+      public com.google.protobuf.ByteString
+          getContractNameBytes() {
+        java.lang.Object ref = contractName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          contractName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string contract_name = 13;</code>
+       * @param value The contractName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContractName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        contractName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string contract_name = 13;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContractName() {
+        
+        contractName_ = getDefaultInstance().getContractName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string contract_name = 13;</code>
+       * @param value The bytes for contractName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContractNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        contractName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object solcBin_ = "";
+      /**
+       * <code>string solc_bin = 14;</code>
+       * @return The solcBin.
+       */
+      public java.lang.String getSolcBin() {
+        java.lang.Object ref = solcBin_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          solcBin_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string solc_bin = 14;</code>
+       * @return The bytes for solcBin.
+       */
+      public com.google.protobuf.ByteString
+          getSolcBinBytes() {
+        java.lang.Object ref = solcBin_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          solcBin_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string solc_bin = 14;</code>
+       * @param value The solcBin to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSolcBin(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        solcBin_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string solc_bin = 14;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSolcBin() {
+        
+        solcBin_ = getDefaultInstance().getSolcBin();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string solc_bin = 14;</code>
+       * @param value The bytes for solcBin to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSolcBinBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        solcBin_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object txLimit_ = "";
+      /**
+       * <code>string tx_limit = 22;</code>
+       * @return The txLimit.
+       */
+      public java.lang.String getTxLimit() {
+        java.lang.Object ref = txLimit_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          txLimit_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tx_limit = 22;</code>
+       * @return The bytes for txLimit.
+       */
+      public com.google.protobuf.ByteString
+          getTxLimitBytes() {
+        java.lang.Object ref = txLimit_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          txLimit_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tx_limit = 22;</code>
+       * @param value The txLimit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTxLimit(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        txLimit_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tx_limit = 22;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTxLimit() {
+        
+        txLimit_ = getDefaultInstance().getTxLimit();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tx_limit = 22;</code>
+       * @param value The bytes for txLimit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTxLimitBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        txLimit_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object txAccount_ = "";
+      /**
+       * <code>string tx_account = 23;</code>
+       * @return The txAccount.
+       */
+      public java.lang.String getTxAccount() {
+        java.lang.Object ref = txAccount_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          txAccount_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tx_account = 23;</code>
+       * @return The bytes for txAccount.
+       */
+      public com.google.protobuf.ByteString
+          getTxAccountBytes() {
+        java.lang.Object ref = txAccount_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          txAccount_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tx_account = 23;</code>
+       * @param value The txAccount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTxAccount(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        txAccount_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tx_account = 23;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTxAccount() {
+        
+        txAccount_ = getDefaultInstance().getTxAccount();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tx_account = 23;</code>
+       * @param value The bytes for txAccount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTxAccountBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        txAccount_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.LazyStringList detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureDetectorsToExcludeIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          detectorsToExclude_ = new com.google.protobuf.LazyStringArrayList(detectorsToExclude_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @return A list containing the detectorsToExclude.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getDetectorsToExcludeList() {
+        return detectorsToExclude_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @return The count of detectorsToExclude.
+       */
+      public int getDetectorsToExcludeCount() {
+        return detectorsToExclude_.size();
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param index The index of the element to return.
+       * @return The detectorsToExclude at the given index.
+       */
+      public java.lang.String getDetectorsToExclude(int index) {
+        return detectorsToExclude_.get(index);
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the detectorsToExclude at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getDetectorsToExcludeBytes(int index) {
+        return detectorsToExclude_.getByteString(index);
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param index The index to set the value at.
+       * @param value The detectorsToExclude to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDetectorsToExclude(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDetectorsToExcludeIsMutable();
+        detectorsToExclude_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param value The detectorsToExclude to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDetectorsToExclude(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureDetectorsToExcludeIsMutable();
+        detectorsToExclude_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param values The detectorsToExclude to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllDetectorsToExclude(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureDetectorsToExcludeIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, detectorsToExclude_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDetectorsToExclude() {
+        detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string detectors_to_exclude = 24;</code>
+       * @param value The bytes of the detectorsToExclude to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDetectorsToExcludeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureDetectorsToExcludeIsMutable();
+        detectorsToExclude_.add(value);
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object additionalFlags_ = "";
+      /**
+       * <code>string additional_flags = 25;</code>
+       * @return The additionalFlags.
+       */
+      public java.lang.String getAdditionalFlags() {
+        java.lang.Object ref = additionalFlags_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          additionalFlags_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string additional_flags = 25;</code>
+       * @return The bytes for additionalFlags.
+       */
+      public com.google.protobuf.ByteString
+          getAdditionalFlagsBytes() {
+        java.lang.Object ref = additionalFlags_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          additionalFlags_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string additional_flags = 25;</code>
+       * @param value The additionalFlags to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAdditionalFlags(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        additionalFlags_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string additional_flags = 25;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAdditionalFlags() {
+        
+        additionalFlags_ = getDefaultInstance().getAdditionalFlags();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string additional_flags = 25;</code>
+       * @param value The bytes for additionalFlags to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAdditionalFlagsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        additionalFlags_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:muicore.EVMArguments)
+    }
+
+    // @@protoc_insertion_point(class_scope:muicore.EVMArguments)
+    private static final muicore.MUICore.EVMArguments DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new muicore.MUICore.EVMArguments();
+    }
+
+    public static muicore.MUICore.EVMArguments getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<EVMArguments>
+        PARSER = new com.google.protobuf.AbstractParser<EVMArguments>() {
+      @java.lang.Override
+      public EVMArguments parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EVMArguments(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<EVMArguments> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EVMArguments> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public muicore.MUICore.EVMArguments getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6990,18 +8528,18 @@ public final class MUICore {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint64 address = 12;</code>
+     * <code>uint64 address = 26;</code>
      * @return The address.
      */
     long getAddress();
 
     /**
-     * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+     * <code>.muicore.AddressRequest.TargetType type = 27;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
-     * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+     * <code>.muicore.AddressRequest.TargetType type = 27;</code>
      * @return The type.
      */
     muicore.MUICore.AddressRequest.TargetType getType();
@@ -7052,12 +8590,12 @@ public final class MUICore {
             case 0:
               done = true;
               break;
-            case 96: {
+            case 208: {
 
               address_ = input.readUInt64();
               break;
             }
-            case 104: {
+            case 216: {
               int rawValue = input.readEnum();
 
               type_ = rawValue;
@@ -7212,10 +8750,10 @@ public final class MUICore {
       // @@protoc_insertion_point(enum_scope:muicore.AddressRequest.TargetType)
     }
 
-    public static final int ADDRESS_FIELD_NUMBER = 12;
+    public static final int ADDRESS_FIELD_NUMBER = 26;
     private long address_;
     /**
-     * <code>uint64 address = 12;</code>
+     * <code>uint64 address = 26;</code>
      * @return The address.
      */
     @java.lang.Override
@@ -7223,17 +8761,17 @@ public final class MUICore {
       return address_;
     }
 
-    public static final int TYPE_FIELD_NUMBER = 13;
+    public static final int TYPE_FIELD_NUMBER = 27;
     private int type_;
     /**
-     * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+     * <code>.muicore.AddressRequest.TargetType type = 27;</code>
      * @return The enum numeric value on the wire for type.
      */
     @java.lang.Override public int getTypeValue() {
       return type_;
     }
     /**
-     * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+     * <code>.muicore.AddressRequest.TargetType type = 27;</code>
      * @return The type.
      */
     @java.lang.Override public muicore.MUICore.AddressRequest.TargetType getType() {
@@ -7257,10 +8795,10 @@ public final class MUICore {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (address_ != 0L) {
-        output.writeUInt64(12, address_);
+        output.writeUInt64(26, address_);
       }
       if (type_ != muicore.MUICore.AddressRequest.TargetType.FIND.getNumber()) {
-        output.writeEnum(13, type_);
+        output.writeEnum(27, type_);
       }
       unknownFields.writeTo(output);
     }
@@ -7273,11 +8811,11 @@ public final class MUICore {
       size = 0;
       if (address_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(12, address_);
+          .computeUInt64Size(26, address_);
       }
       if (type_ != muicore.MUICore.AddressRequest.TargetType.FIND.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(13, type_);
+          .computeEnumSize(27, type_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7563,7 +9101,7 @@ public final class MUICore {
 
       private long address_ ;
       /**
-       * <code>uint64 address = 12;</code>
+       * <code>uint64 address = 26;</code>
        * @return The address.
        */
       @java.lang.Override
@@ -7571,7 +9109,7 @@ public final class MUICore {
         return address_;
       }
       /**
-       * <code>uint64 address = 12;</code>
+       * <code>uint64 address = 26;</code>
        * @param value The address to set.
        * @return This builder for chaining.
        */
@@ -7582,7 +9120,7 @@ public final class MUICore {
         return this;
       }
       /**
-       * <code>uint64 address = 12;</code>
+       * <code>uint64 address = 26;</code>
        * @return This builder for chaining.
        */
       public Builder clearAddress() {
@@ -7594,14 +9132,14 @@ public final class MUICore {
 
       private int type_ = 0;
       /**
-       * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+       * <code>.muicore.AddressRequest.TargetType type = 27;</code>
        * @return The enum numeric value on the wire for type.
        */
       @java.lang.Override public int getTypeValue() {
         return type_;
       }
       /**
-       * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+       * <code>.muicore.AddressRequest.TargetType type = 27;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
        */
@@ -7612,7 +9150,7 @@ public final class MUICore {
         return this;
       }
       /**
-       * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+       * <code>.muicore.AddressRequest.TargetType type = 27;</code>
        * @return The type.
        */
       @java.lang.Override
@@ -7622,7 +9160,7 @@ public final class MUICore {
         return result == null ? muicore.MUICore.AddressRequest.TargetType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+       * <code>.muicore.AddressRequest.TargetType type = 27;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
@@ -7636,7 +9174,7 @@ public final class MUICore {
         return this;
       }
       /**
-       * <code>.muicore.AddressRequest.TargetType type = 13;</code>
+       * <code>.muicore.AddressRequest.TargetType type = 27;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
@@ -7703,7 +9241,7 @@ public final class MUICore {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>bool success = 14;</code>
+     * <code>bool success = 28;</code>
      * @return The success.
      */
     boolean getSuccess();
@@ -7753,7 +9291,7 @@ public final class MUICore {
             case 0:
               done = true;
               break;
-            case 112: {
+            case 224: {
 
               success_ = input.readBool();
               break;
@@ -7790,10 +9328,10 @@ public final class MUICore {
               muicore.MUICore.TargetResponse.class, muicore.MUICore.TargetResponse.Builder.class);
     }
 
-    public static final int SUCCESS_FIELD_NUMBER = 14;
+    public static final int SUCCESS_FIELD_NUMBER = 28;
     private boolean success_;
     /**
-     * <code>bool success = 14;</code>
+     * <code>bool success = 28;</code>
      * @return The success.
      */
     @java.lang.Override
@@ -7816,7 +9354,7 @@ public final class MUICore {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (success_ != false) {
-        output.writeBool(14, success_);
+        output.writeBool(28, success_);
       }
       unknownFields.writeTo(output);
     }
@@ -7829,7 +9367,7 @@ public final class MUICore {
       size = 0;
       if (success_ != false) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(14, success_);
+          .computeBoolSize(28, success_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -8106,7 +9644,7 @@ public final class MUICore {
 
       private boolean success_ ;
       /**
-       * <code>bool success = 14;</code>
+       * <code>bool success = 28;</code>
        * @return The success.
        */
       @java.lang.Override
@@ -8114,7 +9652,7 @@ public final class MUICore {
         return success_;
       }
       /**
-       * <code>bool success = 14;</code>
+       * <code>bool success = 28;</code>
        * @param value The success to set.
        * @return This builder for chaining.
        */
@@ -8125,7 +9663,7 @@ public final class MUICore {
         return this;
       }
       /**
-       * <code>bool success = 14;</code>
+       * <code>bool success = 28;</code>
        * @return This builder for chaining.
        */
       public Builder clearSuccess() {
@@ -8707,10 +10245,15 @@ public final class MUICore {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_muicore_TerminateResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_muicore_CLIArguments_descriptor;
+    internal_static_muicore_NativeArguments_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_muicore_CLIArguments_fieldAccessorTable;
+      internal_static_muicore_NativeArguments_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_muicore_EVMArguments_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_muicore_EVMArguments_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_muicore_AddressRequest_descriptor;
   private static final 
@@ -8746,28 +10289,34 @@ public final class MUICore {
       "uicore.MUIState\022*\n\017complete_states\030\010 \003(\013" +
       "2\021.muicore.MUIState\"!\n\021ManticoreInstance" +
       "\022\014\n\004uuid\030\t \001(\t\"$\n\021TerminateResponse\022\017\n\007s" +
-      "uccess\030\n \001(\010\"\252\001\n\014CLIArguments\022\024\n\014program" +
-      "_path\030\013 \001(\t\022\023\n\013binary_args\030\020 \003(\t\022\014\n\004envp" +
-      "\030\021 \003(\t\022\026\n\016symbolic_files\030\022 \003(\t\022\026\n\016concre" +
-      "te_start\030\023 \001(\t\022\022\n\nstdin_size\030\024 \001(\t\022\035\n\025ad" +
-      "ditional_mcore_args\030\025 \001(\t\"\201\001\n\016AddressReq" +
-      "uest\022\017\n\007address\030\014 \001(\004\0220\n\004type\030\r \001(\0162\".mu" +
-      "icore.AddressRequest.TargetType\",\n\nTarge" +
-      "tType\022\010\n\004FIND\020\000\022\t\n\005AVOID\020\001\022\t\n\005CLEAR\020\002\"!\n" +
-      "\016TargetResponse\022\017\n\007success\030\016 \001(\010\",\n\026Mant" +
-      "icoreRunningStatus\022\022\n\nis_running\030\017 \001(\0102\275" +
-      "\003\n\013ManticoreUI\022E\n\tTerminate\022\032.muicore.Ma" +
-      "nticoreInstance\032\032.muicore.TerminateRespo" +
-      "nse\"\000\022<\n\005Start\022\025.muicore.CLIArguments\032\032." +
-      "muicore.ManticoreInstance\"\000\022C\n\rTargetAdd" +
-      "ress\022\027.muicore.AddressRequest\032\027.muicore." +
-      "TargetResponse\"\000\022C\n\014GetStateList\022\032.muico" +
-      "re.ManticoreInstance\032\025.muicore.MUIStateL" +
-      "ist\"\000\022G\n\016GetMessageList\022\032.muicore.Mantic" +
-      "oreInstance\032\027.muicore.MUIMessageList\"\000\022V" +
-      "\n\025CheckManticoreRunning\022\032.muicore.Mantic" +
-      "oreInstance\032\037.muicore.ManticoreRunningSt" +
-      "atus\"\000b\006proto3"
+      "uccess\030\n \001(\010\"\255\001\n\017NativeArguments\022\024\n\014prog" +
+      "ram_path\030\013 \001(\t\022\023\n\013binary_args\030\020 \003(\t\022\014\n\004e" +
+      "nvp\030\021 \003(\t\022\026\n\016symbolic_files\030\022 \003(\t\022\026\n\016con" +
+      "crete_start\030\023 \001(\t\022\022\n\nstdin_size\030\024 \001(\t\022\035\n" +
+      "\025additional_mcore_args\030\025 \001(\t\"\254\001\n\014EVMArgu" +
+      "ments\022\025\n\rcontract_path\030\014 \001(\t\022\025\n\rcontract" +
+      "_name\030\r \001(\t\022\020\n\010solc_bin\030\016 \001(\t\022\020\n\010tx_limi" +
+      "t\030\026 \001(\t\022\022\n\ntx_account\030\027 \001(\t\022\034\n\024detectors" +
+      "_to_exclude\030\030 \003(\t\022\030\n\020additional_flags\030\031 " +
+      "\001(\t\"\201\001\n\016AddressRequest\022\017\n\007address\030\032 \001(\004\022" +
+      "0\n\004type\030\033 \001(\0162\".muicore.AddressRequest.T" +
+      "argetType\",\n\nTargetType\022\010\n\004FIND\020\000\022\t\n\005AVO" +
+      "ID\020\001\022\t\n\005CLEAR\020\002\"!\n\016TargetResponse\022\017\n\007suc" +
+      "cess\030\034 \001(\010\",\n\026ManticoreRunningStatus\022\022\n\n" +
+      "is_running\030\017 \001(\0102\215\004\n\013ManticoreUI\022E\n\013Star" +
+      "tNative\022\030.muicore.NativeArguments\032\032.muic" +
+      "ore.ManticoreInstance\"\000\022?\n\010StartEVM\022\025.mu" +
+      "icore.EVMArguments\032\032.muicore.ManticoreIn" +
+      "stance\"\000\022E\n\tTerminate\022\032.muicore.Manticor" +
+      "eInstance\032\032.muicore.TerminateResponse\"\000\022" +
+      "C\n\014GetStateList\022\032.muicore.ManticoreInsta" +
+      "nce\032\025.muicore.MUIStateList\"\000\022G\n\016GetMessa" +
+      "geList\022\032.muicore.ManticoreInstance\032\027.mui" +
+      "core.MUIMessageList\"\000\022V\n\025CheckManticoreR" +
+      "unning\022\032.muicore.ManticoreInstance\032\037.mui" +
+      "core.ManticoreRunningStatus\"\000\022I\n\023TargetA" +
+      "ddressNative\022\027.muicore.AddressRequest\032\027." +
+      "muicore.TargetResponse\"\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8809,26 +10358,32 @@ public final class MUICore {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_TerminateResponse_descriptor,
         new java.lang.String[] { "Success", });
-    internal_static_muicore_CLIArguments_descriptor =
+    internal_static_muicore_NativeArguments_descriptor =
       getDescriptor().getMessageTypes().get(6);
-    internal_static_muicore_CLIArguments_fieldAccessorTable = new
+    internal_static_muicore_NativeArguments_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_muicore_CLIArguments_descriptor,
+        internal_static_muicore_NativeArguments_descriptor,
         new java.lang.String[] { "ProgramPath", "BinaryArgs", "Envp", "SymbolicFiles", "ConcreteStart", "StdinSize", "AdditionalMcoreArgs", });
-    internal_static_muicore_AddressRequest_descriptor =
+    internal_static_muicore_EVMArguments_descriptor =
       getDescriptor().getMessageTypes().get(7);
+    internal_static_muicore_EVMArguments_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_muicore_EVMArguments_descriptor,
+        new java.lang.String[] { "ContractPath", "ContractName", "SolcBin", "TxLimit", "TxAccount", "DetectorsToExclude", "AdditionalFlags", });
+    internal_static_muicore_AddressRequest_descriptor =
+      getDescriptor().getMessageTypes().get(8);
     internal_static_muicore_AddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_AddressRequest_descriptor,
         new java.lang.String[] { "Address", "Type", });
     internal_static_muicore_TargetResponse_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_muicore_TargetResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_TargetResponse_descriptor,
         new java.lang.String[] { "Success", });
     internal_static_muicore_ManticoreRunningStatus_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_muicore_ManticoreRunningStatus_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_ManticoreRunningStatus_descriptor,

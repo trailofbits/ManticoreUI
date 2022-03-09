@@ -1,6 +1,5 @@
 MUI/bin/
 MUI/build/
-MUI/dist/
 MUI/lib/*
 **/.classpath
 **/.settings
@@ -9,3 +8,4 @@ MUI/lib/*
 **/.pydevproject
 **/__pycache__/
 **/mcore*/
+**/dist/
