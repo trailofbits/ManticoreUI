@@ -15,36 +15,37 @@ from binaryninja import (
 from manticore.core.plugin import StateDescriptor
 
 
+class MUIManager:
+    """Class that manages data/state for each instance of MUI created"""
+
+    def __init__(self, bv: BinaryView):
+        self.bv = bv
+        self.hooks = NativeHooks(bv)
+
+
+managers: typing.List[MUIManager] = []
+
+
 def get_mgr(bv: BinaryView):
     """Get the manager for the bv instance"""
-    for mgr in MUIManager.managers:
+    for mgr in managers:
         if mgr.bv == bv:
             return mgr
 
     mgr = MUIManager(bv)
-    MUIManager.managers.append(mgr)
+    managers.append(mgr)
     return mgr
 
 
 def del_mgr(bv: BinaryView):
     """Delete manager"""
     mgr = None
-    for _mgr in MUIManager.managers:
+    for _mgr in managers:
         if _mgr.bv == bv:
             mgr = _mgr
 
     if mgr:
-        MUIManager.managers.remove(mgr)
-
-
-class MUIManager:
-    """Class that manages data/state for each instance of MUI created"""
-
-    managers = []
-
-    def __init__(self, bv: BinaryView):
-        self.bv = bv
-        self.hooks = NativeHooks(bv)
+        managers.remove(mgr)
 
 
 class MUIState:
