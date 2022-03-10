@@ -37,10 +37,11 @@ from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.native_hooks import NativeHooks, NativeHookType
 from mui.notification import UINotification
 from mui.settings import MUISettings
-from mui.utils import highlight_instr, clear_highlight, get_mgr
+from mui.utils import highlight_instr, clear_highlight
 
 settings = Settings()
 
+BinaryView.set_default_session_data("mui_hooks", None)
 BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
@@ -53,7 +54,7 @@ def find_instr(bv: BinaryView, addr: int):
     # Highlight the instruction in green
     highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
 
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     hooks.add_hook(NativeHookType.FIND, addr)
 
 
@@ -63,7 +64,7 @@ def rm_find_instr(bv: BinaryView, addr: int):
     # Remove instruction highlight
     clear_highlight(bv, addr)
 
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     hooks.del_hook(NativeHookType.FIND, addr)
 
 
@@ -73,7 +74,7 @@ def avoid_instr(bv: BinaryView, addr: int):
     # Highlight the instruction in red
     highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
 
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     hooks.add_hook(NativeHookType.AVOID, addr)
 
 
@@ -83,7 +84,7 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
     # Remove instruction highlight
     clear_highlight(bv, addr)
 
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     hooks.del_hook(NativeHookType.AVOID, addr)
 
 
@@ -124,7 +125,7 @@ def solve(bv: BinaryView):
             s.start()
 
     else:
-        hooks = get_mgr(bv).hooks
+        hooks = bv.session_data.hooks
         if len(hooks.find) == 0 and len(hooks.custom.keys()) == 0:
             show_message_box(
                 "Manticore Solve",
@@ -149,7 +150,7 @@ def solve(bv: BinaryView):
 
 def edit_custom_hook(bv: BinaryView, addr: int):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
 
     if addr in hooks.custom:
         dialog.set_text(hooks.custom[addr])
@@ -210,13 +211,13 @@ def stop_manticore(bv: BinaryView):
 
 def avoid_instr_is_valid(bv: BinaryView, addr: int):
     """checks if avoid_instr is valid for a given address"""
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     return not hooks.has_hook(NativeHookType.AVOID, addr)
 
 
 def find_instr_is_valid(bv: BinaryView, addr: int):
     """checks if find_instr is valid for a given address"""
-    hooks = get_mgr(bv).hooks
+    hooks = bv.session_data.hooks
     return not hooks.has_hook(NativeHookType.FIND, addr)
 
 

@@ -4,7 +4,8 @@ from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardCol
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
 
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
-from mui.utils import highlight_instr, get_mgr
+from mui.utils import highlight_instr
+from mui.native_hooks import NativeHooks
 
 
 class UINotification(UIContextNotification):
@@ -24,15 +25,16 @@ class UINotification(UIContextNotification):
 
         bv: BinaryView = frame.getCurrentBinaryView()
 
-        # Initialise manager
-        mgr = get_mgr(bv)
+        # Initialise hooks
+        hooks = NativeHooks(bv)
+        bv.session_data.hooks = hooks
 
         # restore highlight
-        for addr in mgr.hooks.find:
+        for addr in hooks.find:
             highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
-        for addr in mgr.hooks.avoid:
+        for addr in hooks.avoid:
             highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
-        for addr in mgr.hooks.custom.keys():
+        for addr in hooks.custom.keys():
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
 
     def OnBeforeSaveFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> bool:
@@ -41,7 +43,6 @@ class UINotification(UIContextNotification):
         bv: BinaryView = frame.getCurrentBinaryView()
 
         # Save to bndb
-        hooks = get_mgr(bv).hooks
-        hooks.serialise_metadata()
+        bv.session_data.hooks.serialise_metadata()
 
         return True
