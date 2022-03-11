@@ -2,7 +2,14 @@ import tempfile
 from time import sleep
 from typing import Callable, Set
 
-from binaryninja import BackgroundTaskThread, Settings, BinaryView, TypedDataAccessor, Endianness, Architecture
+from binaryninja import (
+    BackgroundTaskThread,
+    Settings,
+    BinaryView,
+    TypedDataAccessor,
+    Endianness,
+    Architecture,
+)
 from manticore.core.state import StateBase
 from manticore.native import Manticore
 
@@ -20,9 +27,12 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
         # Get binary base (if necessary) and rebase hooks
         self.addr_off = self.get_address_offset(view)
-        self.find = [addr+self.addr_off for addr in find]
-        self.avoid = [addr+self.addr_off for addr in avoid]
-        self.custom_hooks = [(addr+self.addr_off, func) for addr, func in view.session_data.mui_custom_hooks.items()]
+        self.find = [addr + self.addr_off for addr in find]
+        self.avoid = [addr + self.addr_off for addr in avoid]
+        self.custom_hooks = [
+            (addr + self.addr_off, func)
+            for addr, func in view.session_data.mui_custom_hooks.items()
+        ]
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
@@ -135,7 +145,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished without reaching find")
         finally:
             bv.session_data.mui_is_running = False
-    
+
     def get_address_offset(self, bv: BinaryView):
         """Offsets addresses to take into consideration position independent executables (PIE)"""
         # Addresses taken from https://github.com/trailofbits/manticore/blob/c3eabe03cf94f410bedd96d850df09cb0bda1711/manticore/platforms/linux.py#L954-L956

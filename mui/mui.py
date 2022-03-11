@@ -47,6 +47,7 @@ BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
 
+
 def find_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the find list and highlights it green in the UI"""
 
@@ -57,7 +58,7 @@ def find_instr(bv: BinaryView, addr: int):
     bv.session_data.mui_find.add(addr)
 
     # Add to hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     hook_widget.add_hook(HookType.FIND, addr)
 
 
@@ -71,7 +72,7 @@ def rm_find_instr(bv: BinaryView, addr: int):
     bv.session_data.mui_find.remove(addr)
 
     # Remove from hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     hook_widget.remove_hook(HookType.FIND, addr)
 
 
@@ -85,7 +86,7 @@ def avoid_instr(bv: BinaryView, addr: int):
     bv.session_data.mui_avoid.add(addr)
 
     # Add to hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     hook_widget.add_hook(HookType.AVOID, addr)
 
 
@@ -99,7 +100,7 @@ def rm_avoid_instr(bv: BinaryView, addr: int):
     bv.session_data.mui_avoid.remove(addr)
 
     # Remove from hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME) 
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     hook_widget.remove_hook(HookType.AVOID, addr)
 
 
@@ -164,6 +165,7 @@ def solve(bv: BinaryView):
 
 def edit_custom_hook(bv: BinaryView, addr: int):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
 
     if addr in bv.session_data.mui_custom_hooks:
         dialog.set_text(bv.session_data.mui_custom_hooks[addr])
@@ -177,10 +179,14 @@ def edit_custom_hook(bv: BinaryView, addr: int):
             if addr in bv.session_data.mui_custom_hooks:
                 clear_highlight(bv, addr)
                 del bv.session_data.mui_custom_hooks[addr]
+                hook_widget.remove_hook(HookType.CUSTOM, addr)
 
         else:
             # add/edit the hook if input is non-empty
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
+            # add to hook list if new
+            if addr not in bv.session_data.mui_custom_hooks:
+                hook_widget.add_hook(HookType.CUSTOM, addr)
             bv.session_data.mui_custom_hooks[addr] = dialog.text()
 
 
