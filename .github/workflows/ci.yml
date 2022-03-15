@@ -35,7 +35,7 @@ jobs:
 
         # the package installation will only be executed when the
         # requirements-files have changed.
-      - run: pip install -r requirements-dev.txt -r requirements.txt
+      - run: pip install -r requirements-dev.txt -r binjastub/requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Lint

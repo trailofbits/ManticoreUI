@@ -1,3 +1,0 @@
-[submodule "manticore"]
-	path = manticore
-	url = https://github.com/trailofbits/manticore.git
