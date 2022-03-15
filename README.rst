@@ -26,7 +26,7 @@ MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against
 
 Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux, and it requires the installation of `ethersplay <https://github.com/crytic/ethersplay>`_.
 
-Python dependencies are currently managed using ``requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up a development environment.
+Python dependencies are currently managed using ``binjastub/requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up a development environment.
 
 #. Make the project available to Binary Ninja by creating a symbolic link to the plugins directory. From within the root of this repo, run the following::
 
@@ -66,9 +66,9 @@ Tests for code without Binary Ninja interaction can be run if you have a headles
 
     $ make test
 
-Adding a new dependency can be done by editing ``requirements.txt`` or ``requirements-dev.txt`` and then running the following in the virtual environment::
+Adding a new dependency can be done by editing ``binjastub/requirements.txt`` or ``requirements-dev.txt`` and then running the following in the virtual environment::
 
-    $ pip install -r requirements-dev.txt -r requirements.txt
+    $ pip install -r requirements-dev.txt -r binjastub/requirements.txt
 
 Usage (Native)
 --------------
