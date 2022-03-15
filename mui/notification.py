@@ -5,6 +5,8 @@ from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFra
 
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
 from mui.utils import highlight_instr
+from mui.dockwidgets.hook_list_widget import HookListWidget
+from mui.dockwidgets import widget
 
 
 class UINotification(UIContextNotification):
@@ -38,6 +40,10 @@ class UINotification(UIContextNotification):
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
             ).items()
         }
+
+        # initialise hook list widget
+        hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
+        hook_widget.load_existing_hooks()
 
         # restore highlight
         for addr in bv.session_data.mui_find:
