@@ -40,6 +40,12 @@ class UINotification(UIContextNotification):
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
             ).items()
         }
+        bv.session_data.mui_global_hooks = {
+            key: item
+            for key, item in json.loads(
+                settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}global", bv)
+            ).items()
+        }
 
         # initialise hook list widget
         hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
@@ -76,6 +82,13 @@ class UINotification(UIContextNotification):
         settings.set_string(
             f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
             json.dumps(bv.session_data.mui_custom_hooks),
+            view=bv,
+            scope=SettingsScope.SettingsResourceScope,
+        )
+
+        settings.set_string(
+            f"{BINJA_HOOK_SETTINGS_PREFIX}global",
+            json.dumps(bv.session_data.mui_global_hooks),
             view=bv,
             scope=SettingsScope.SettingsResourceScope,
         )

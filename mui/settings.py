@@ -118,6 +118,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "global": (
+                {
+                    "title": "Global Hooks",
+                    "description": "Names and python code for global custom hooks",
+                    "type": "string",
+                    "default": json.dumps({}),
+                },
+                {},
+            ),
         },
         BINJA_EVM_RUN_SETTINGS_PREFIX: {
             "solc_path": (

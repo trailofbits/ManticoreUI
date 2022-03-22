@@ -33,6 +33,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             (addr + self.addr_off, func)
             for addr, func in view.session_data.mui_custom_hooks.items()
         ]
+        self.global_hooks = list(view.session_data.mui_global_hooks.values())
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
@@ -106,6 +107,9 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
             for addr, func in self.custom_hooks:
                 exec(func, {"addr": addr, "bv": bv, "m": m})
+
+            for func in self.global_hooks:
+                exec(func, {"bv": bv, "m": m})
 
             def run_every(callee: Callable, duration: int = 3) -> Callable:
                 """
