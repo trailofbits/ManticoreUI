@@ -157,14 +157,16 @@ def function_model_analysis_cb(bv: BinaryView) -> None:
             if name.startswith(func.name):
                 matches.add(func)
 
-    banner = "\n"
-    banner += "###################################\n"
-    banner += "# MUI Function Model Analysis     #\n"
-    banner += "#                                 #\n"
-    banner += f"# {len(matches):02d} function(s) match:           #\n"
-    for func in matches:
-        s = f"# * {func.start:08x}, {func.name}"
-        banner += s.ljust(34, " ") + "#\n"
-    banner += "###################################\n"
-    banner += "-> Use 'Add Function Model' to hook these functions"
-    print(banner)
+    if matches:
+        banner = "\n"
+        banner += "###################################\n"
+        banner += "# MUI Function Model Analysis     #\n"
+        banner += "#                                 #\n"
+        banner += f"# {len(matches):02d} function(s) match:           #\n"
+        for func in matches:
+            s = f"# * {func.start:08x}, {func.name}"
+            banner += s.ljust(34, " ") + "#\n"
+        banner += "###################################\n"
+        banner += "-> Use 'Add Function Model' to hook these functions"
+
+        print(banner)
