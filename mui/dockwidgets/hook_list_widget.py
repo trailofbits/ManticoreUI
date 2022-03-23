@@ -12,6 +12,7 @@ class HookType(Enum):
     FIND = 0
     AVOID = 1
     CUSTOM = 2
+    GLOBAL = 3
 
 
 class HookListWidget(QWidget, DockContextHandler):
@@ -38,11 +39,13 @@ class HookListWidget(QWidget, DockContextHandler):
         self.find_hooks = QTreeWidgetItem(None, ["Find"])
         self.avoid_hooks = QTreeWidgetItem(None, ["Avoid"])
         self.custom_hooks = QTreeWidgetItem(None, ["Custom"])
+        self.global_hooks = QTreeWidgetItem(None, ["Global"])
 
         self.hook_lists = [
             self.find_hooks,
             self.avoid_hooks,
             self.custom_hooks,
+            self.global_hooks,
         ]
 
         tree_widget.insertTopLevelItems(0, self.hook_lists)
@@ -53,7 +56,7 @@ class HookListWidget(QWidget, DockContextHandler):
         layout.addWidget(tree_widget)
         self.setLayout(layout)
 
-        self.hook_items: Dict[Tuple[HookType, int], QTreeWidgetItem] = {}
+        self.hook_items: Dict[Tuple[HookType, int, str], QTreeWidgetItem] = {}
 
     @Slot(QTreeWidgetItem, int)
     def on_click(self, item: QTreeWidgetItem, col: int):
@@ -63,7 +66,7 @@ class HookListWidget(QWidget, DockContextHandler):
         if addr:
             self.bv.navigate(self.bv.view, addr)
 
-    def add_hook(self, hook_type: HookType, addr: int):
+    def add_hook(self, hook_type: HookType, addr: int, name=""):
         """Add a hook to its corresponding hook list"""
         parent = None
         if hook_type == HookType.FIND:
@@ -72,16 +75,21 @@ class HookListWidget(QWidget, DockContextHandler):
             parent = self.avoid_hooks
         elif hook_type == HookType.CUSTOM:
             parent = self.custom_hooks
+        elif hook_type == HookType.GLOBAL:
+            parent = self.global_hooks
         else:
             raise Exception("Invalid hook type")
 
-        item = QTreeWidgetItem(parent, [f"{addr:08x}"])
+        if name:
+            item = QTreeWidgetItem(parent, [name])
+        else:
+            item = QTreeWidgetItem(parent, [f"{addr:08x}"])
         item.setData(self.HOOK_ADDR_COLUMN, self.HOOK_ROLE, addr)
-        self.hook_items[(hook_type, addr)] = item
+        self.hook_items[(hook_type, addr, name)] = item
 
-    def remove_hook(self, hook_type: HookType, addr: int):
+    def remove_hook(self, hook_type: HookType, addr: int, name=""):
         """Remove a hook from its corresponding hook list"""
-        item = self.hook_items[(hook_type, addr)]
+        item = self.hook_items[(hook_type, addr, name)]
         item.parent().removeChild(item)
 
     def load_existing_hooks(self):
@@ -94,3 +102,6 @@ class HookListWidget(QWidget, DockContextHandler):
 
         for addr in self.bv.session_data.mui_custom_hooks.keys():
             self.add_hook(HookType.CUSTOM, addr)
+
+        for name in self.bv.session_data.mui_global_hooks.keys():
+            self.add_hook(HookType.GLOBAL, 0, name)
