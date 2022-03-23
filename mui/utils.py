@@ -1,7 +1,9 @@
 import os
+from pyclbr import Function
 import typing
 from pathlib import Path
 from datetime import datetime
+from inspect import getmembers, isfunction
 
 from binaryninja import (
     BinaryView,
@@ -12,6 +14,7 @@ from binaryninja import (
     HighlightColor,
 )
 from manticore.core.plugin import StateDescriptor
+from manticore.native import models
 
 
 class MUIState:
@@ -112,3 +115,56 @@ def print_timestamp(*args, **kw):
     """Print with timestamp prefixed (local timezone)"""
     timestamp = datetime.now().astimezone()
     print(f"[{timestamp}]", *args, **kw)
+
+
+def get_function_models() -> typing.List[typing.Tuple[str, Function]]:
+    """
+    Returns available function models
+    ref: https://github.com/trailofbits/manticore/blob/master/docs/native.rst#function-models
+    """
+
+    # Functions only
+    functions = filter(lambda x: isfunction(x[1]), getmembers(models))
+
+    # Manually remove non-function model functions
+    def is_model(tup) -> bool:
+        name, func = tup
+        blacklist = set(["isvariadic", "variadic", "must_be_NULL", "cannot_be_NULL", "can_be_NULL"])
+        if func.__module__ != "manticore.native.models":
+            return False
+        # Functions starting with '_' assumed to be private
+        if name.startswith("_"):
+            return False
+        if name in blacklist:
+            return False
+        return True
+
+    functions = filter(is_model, functions)
+
+    return list(functions)
+
+
+def function_model_analysis_cb(bv: BinaryView) -> None:
+    """
+    Callback when initial analysis completed.
+    Tries to match functions with same name as available function models
+    """
+    models = get_function_models()
+    model_names = [model[0] for model in models]
+    matches = set()
+    for func in bv.functions:
+        for name in model_names:
+            if name.startswith(func.name):
+                matches.add(func)
+
+    banner = "\n"
+    banner += "###################################\n"
+    banner += "# MUI Function Model Analysis     #\n"
+    banner += "#                                 #\n"
+    banner += f"# {len(matches):02d} function(s) match:           #\n"
+    for func in matches:
+        s = f"# * {func.start:08x}, {func.name}"
+        banner += s.ljust(34, " ") + "#\n"
+    banner += "###################################\n"
+    banner += "-> Use 'Add Function Model' to hook these functions"
+    print(banner)

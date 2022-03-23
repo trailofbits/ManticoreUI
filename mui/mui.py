@@ -17,6 +17,7 @@ from binaryninja import (
     get_open_filename_input,
     Architecture,
     SettingsScope,
+    BinaryViewType,
 )
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
@@ -28,6 +29,7 @@ from mui.constants import (
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.run_dialog import RunDialog
+from mui.dockwidgets.function_model_dialog import FunctionModelDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
@@ -35,7 +37,7 @@ from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
 from mui.settings import MUISettings
-from mui.utils import highlight_instr, clear_highlight
+from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
 
 settings = Settings()
 
@@ -190,6 +192,31 @@ def edit_custom_hook(bv: BinaryView, addr: int):
             bv.session_data.mui_custom_hooks[addr] = dialog.text()
 
 
+def add_function_model(bv: BinaryView, addr: int):
+    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
+    dialog = FunctionModelDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    result: QDialog.DialogCode = dialog.exec()
+
+    if result == QDialog.Accepted:
+        fname = dialog.get_selected_model()
+        if not fname:
+            return
+
+        highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
+        hook_widget.add_hook(HookType.CUSTOM, addr)
+        code = "\n".join(
+            [
+                f"from manticore.native.models import {fname}",
+                "global bv,m,addr",
+                "def hook(state):",
+                f"    print('{fname} function model')",
+                f"    state.invoke_model({fname})",
+                "m.hook(addr)(hook)",
+            ]
+        )
+        bv.session_data.mui_custom_hooks[addr] = code
+
+
 def load_evm(bv: BinaryView):
     filename = get_open_filename_input("filename:", "*.sol").decode()
     if filename is None:
@@ -283,7 +310,11 @@ PluginCommand.register(
 PluginCommand.register_for_address(
     "MUI \\ Add/Edit Custom Hook", "Add/edit a custom hook at the current address", edit_custom_hook
 )
-
+PluginCommand.register_for_address(
+    "MUI \\ Add Function Model",
+    "Add a function model to replace native function implementation",
+    add_function_model,
+)
 PluginCommand.register(
     "MUI \\ Load Ethereum Contract", "Load a solidity ethereum contract", load_evm
 )
@@ -305,3 +336,6 @@ MUISettings.register()
 
 # Register notification as a global so it doesn't get destructed
 notif = UINotification()
+
+# Register analysis completion callback
+BinaryViewType.add_binaryview_initial_analysis_completion_event(function_model_analysis_cb)
