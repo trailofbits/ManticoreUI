@@ -30,6 +30,7 @@ from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.function_model_dialog import FunctionModelDialog
+from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
@@ -44,6 +45,7 @@ settings = Settings()
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
 BinaryView.set_default_session_data("mui_custom_hooks", dict())
+BinaryView.set_default_session_data("mui_global_hooks", dict())
 BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
@@ -192,6 +194,11 @@ def edit_custom_hook(bv: BinaryView, addr: int):
             bv.session_data.mui_custom_hooks[addr] = dialog.text()
 
 
+def edit_global_hook(bv: BinaryView):
+    dialog = GlobalHookDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    dialog.exec()
+
+
 def add_function_model(bv: BinaryView, addr: int):
     hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     dialog = FunctionModelDialog(DockHandler.getActiveDockHandler().parent(), bv)
@@ -317,6 +324,12 @@ PluginCommand.register_for_address(
 )
 PluginCommand.register(
     "MUI \\ Load Ethereum Contract", "Load a solidity ethereum contract", load_evm
+)
+
+PluginCommand.register(
+    "MUI \\ Add/Edit Global Hook",
+    "Add/edit a custom hook that applies to all instructions",
+    edit_global_hook,
 )
 
 widget.register_dockwidget(
