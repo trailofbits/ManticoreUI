@@ -1,9 +1,9 @@
 import os
-from pyclbr import Function
 import typing
 from pathlib import Path
 from datetime import datetime
 from inspect import getmembers, isfunction
+from dataclasses import dataclass
 
 from binaryninja import (
     BinaryView,
@@ -117,7 +117,13 @@ def print_timestamp(*args, **kw):
     print(f"[{timestamp}]", *args, **kw)
 
 
-def get_function_models() -> typing.List[typing.Tuple[str, Function]]:
+@dataclass
+class MUIFunctionModel:
+    name: str
+    func: typing.Callable
+
+
+def get_function_models() -> typing.List[MUIFunctionModel]:
     """
     Returns available function models
     ref: https://github.com/trailofbits/manticore/blob/master/docs/native.rst#function-models
@@ -125,23 +131,23 @@ def get_function_models() -> typing.List[typing.Tuple[str, Function]]:
 
     # Functions only
     functions = filter(lambda x: isfunction(x[1]), getmembers(models))
+    func_models = [MUIFunctionModel(name, func) for name, func in functions]
 
     # Manually remove non-function model functions
-    def is_model(tup) -> bool:
-        name, func = tup
+    def is_model(model: MUIFunctionModel) -> bool:
         blacklist = set(["isvariadic", "variadic", "must_be_NULL", "cannot_be_NULL", "can_be_NULL"])
-        if func.__module__ != "manticore.native.models":
+        if model.func.__module__ != "manticore.native.models":
             return False
         # Functions starting with '_' assumed to be private
-        if name.startswith("_"):
+        if model.name.startswith("_"):
             return False
-        if name in blacklist:
+        if model.name in blacklist:
             return False
         return True
 
-    functions = filter(is_model, functions)
+    func_models = list(filter(is_model, func_models))
 
-    return list(functions)
+    return func_models
 
 
 def function_model_analysis_cb(bv: BinaryView) -> None:
@@ -150,7 +156,7 @@ def function_model_analysis_cb(bv: BinaryView) -> None:
     Tries to match functions with same name as available function models
     """
     models = get_function_models()
-    model_names = [model[0] for model in models]
+    model_names = [model.name for model in models]
     matches = set()
     for func in bv.functions:
         for name in model_names:

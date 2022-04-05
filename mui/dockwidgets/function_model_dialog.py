@@ -12,7 +12,7 @@ from binaryninja import (
 )
 from binaryninjaui import UIContext
 
-from mui.utils import get_function_models
+from mui.utils import get_function_models, MUIFunctionModel
 
 
 class FunctionModelDialog(QDialog):
@@ -44,20 +44,18 @@ class FunctionModelDialog(QDialog):
 
         self.list_function_models()
 
-    def list_function_models(self):
+    def list_function_models(self) -> None:
         """Adds function models to the list"""
         list_widget = self.list_widget
         models = get_function_models()
-        for name, func in models:
-            item = QListWidgetItem(name, list_widget)
+        for model in models:
+            item = QListWidgetItem(model.name, list_widget)
 
     @Slot(QListWidgetItem)
-    def item_double_click(self, item: QListWidgetItem):
+    def item_double_click(self, item: QListWidgetItem) -> None:
         """Selects item and close dialog"""
-        fname = item.text()
-        self._selected_model = fname
+        self._selected_model = item.text()
         self.accept()
-        return
 
     def get_selected_model(self) -> str:
         """Returns name of selected function model"""

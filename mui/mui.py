@@ -199,7 +199,7 @@ def edit_global_hook(bv: BinaryView):
     dialog.exec()
 
 
-def add_function_model(bv: BinaryView, addr: int):
+def add_function_model(bv: BinaryView, addr: int) -> None:
     hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
     dialog = FunctionModelDialog(DockHandler.getActiveDockHandler().parent(), bv)
     result: QDialog.DialogCode = dialog.exec()
