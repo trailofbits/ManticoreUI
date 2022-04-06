@@ -1,11 +1,12 @@
-from time import sleep
 from enum import Enum
-from typing import Dict, Final, Optional, Tuple
+from typing import Dict, Final, Tuple
 
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
-from binaryninja import BinaryView, BinaryViewEvent, BinaryViewEventType, BinaryViewType
+from PySide6.QtCore import Qt, Slot, QEvent
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
+from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
+
+from mui.utils import clear_highlight
 
 
 class HookType(Enum):
@@ -19,8 +20,9 @@ class HookListWidget(QWidget, DockContextHandler):
 
     NAME: Final[str] = "Manticore Hooks"
 
-    # column used for hook address
+    # columns used for hook address/name
     HOOK_ADDR_COLUMN: Final[int] = 0
+    HOOK_NAME_COLUMN: Final[int] = 1
 
     HOOK_ROLE: Final[int] = Qt.UserRole
 
@@ -31,10 +33,11 @@ class HookListWidget(QWidget, DockContextHandler):
         self.bv = data
 
         tree_widget = QTreeWidget()
+        self.tree_widget = tree_widget
         tree_widget.setColumnCount(1)
         tree_widget.headerItem().setText(0, "Hook List")
-        self.tree_widget = tree_widget
         tree_widget.itemDoubleClicked.connect(self.on_click)
+        tree_widget.installEventFilter(self)
 
         self.find_hooks = QTreeWidgetItem(None, ["Find"])
         self.avoid_hooks = QTreeWidgetItem(None, ["Avoid"])
@@ -57,6 +60,40 @@ class HookListWidget(QWidget, DockContextHandler):
         self.setLayout(layout)
 
         self.hook_items: Dict[Tuple[HookType, int, str], QTreeWidgetItem] = {}
+
+    def eventFilter(self, source, event) -> bool:
+        """Event filter to create hook management context menu"""
+        if event.type() == QEvent.ContextMenu and source is self.tree_widget:
+            menu = QMenu()
+            menu.addAction("Delete")
+
+            if menu.exec(event.globalPos()):
+                pos = source.viewport().mapFromParent(event.pos())
+                item = source.itemAt(pos)
+                if item:
+                    addr = item.data(self.HOOK_ADDR_COLUMN, self.HOOK_ROLE)
+                    name = item.data(self.HOOK_NAME_COLUMN, self.HOOK_ROLE)
+                    parent = item.parent()
+                    parent.removeChild(item)
+
+                    bv = self.bv
+                    if parent == self.find_hooks:
+                        clear_highlight(bv, addr)
+                        bv.session_data.mui_find.remove(addr)
+                    elif parent == self.avoid_hooks:
+                        clear_highlight(bv, addr)
+                        bv.session_data.mui_avoid.remove(addr)
+                    elif parent == self.custom_hooks:
+                        clear_highlight(bv, addr)
+                        del bv.session_data.mui_custom_hooks[addr]
+                    elif parent == self.global_hooks:
+                        del bv.session_data.mui_global_hooks[name]
+                    else:
+                        raise Exception("Deleting hook with invalid parent")
+
+            return True
+
+        return super().eventFilter(source, event)
 
     @Slot(QTreeWidgetItem, int)
     def on_click(self, item: QTreeWidgetItem, col: int):
@@ -85,6 +122,7 @@ class HookListWidget(QWidget, DockContextHandler):
         else:
             item = QTreeWidgetItem(parent, [f"{addr:08x}"])
         item.setData(self.HOOK_ADDR_COLUMN, self.HOOK_ROLE, addr)
+        item.setData(self.HOOK_NAME_COLUMN, self.HOOK_ROLE, name)
         self.hook_items[(hook_type, addr, name)] = item
 
     def remove_hook(self, hook_type: HookType, addr: int, name=""):
