@@ -64,32 +64,41 @@ class HookListWidget(QWidget, DockContextHandler):
     def eventFilter(self, source, event) -> bool:
         """Event filter to create hook management context menu"""
         if event.type() == QEvent.ContextMenu and source is self.tree_widget:
+            pos = source.viewport().mapFromParent(event.pos())
+            item = source.itemAt(pos)
+
+            # Right clicked outside an item
+            if not item:
+                return True
+
+            addr = item.data(self.HOOK_ADDR_COLUMN, self.HOOK_ROLE)
+            name = item.data(self.HOOK_NAME_COLUMN, self.HOOK_ROLE)
+
+            # Hook list instead of individual hook
+            if addr == None or name == None:
+                return True
+
             menu = QMenu()
             menu.addAction("Delete")
 
             if menu.exec(event.globalPos()):
-                pos = source.viewport().mapFromParent(event.pos())
-                item = source.itemAt(pos)
-                if item:
-                    addr = item.data(self.HOOK_ADDR_COLUMN, self.HOOK_ROLE)
-                    name = item.data(self.HOOK_NAME_COLUMN, self.HOOK_ROLE)
-                    parent = item.parent()
-                    parent.removeChild(item)
+                parent = item.parent()
+                parent.removeChild(item)
 
-                    bv = self.bv
-                    if parent == self.find_hooks:
-                        clear_highlight(bv, addr)
-                        bv.session_data.mui_find.remove(addr)
-                    elif parent == self.avoid_hooks:
-                        clear_highlight(bv, addr)
-                        bv.session_data.mui_avoid.remove(addr)
-                    elif parent == self.custom_hooks:
-                        clear_highlight(bv, addr)
-                        del bv.session_data.mui_custom_hooks[addr]
-                    elif parent == self.global_hooks:
-                        del bv.session_data.mui_global_hooks[name]
-                    else:
-                        raise Exception("Deleting hook with invalid parent")
+                bv = self.bv
+                if parent == self.find_hooks:
+                    clear_highlight(bv, addr)
+                    bv.session_data.mui_find.remove(addr)
+                elif parent == self.avoid_hooks:
+                    clear_highlight(bv, addr)
+                    bv.session_data.mui_avoid.remove(addr)
+                elif parent == self.custom_hooks:
+                    clear_highlight(bv, addr)
+                    del bv.session_data.mui_custom_hooks[addr]
+                elif parent == self.global_hooks:
+                    del bv.session_data.mui_global_hooks[name]
+                else:
+                    raise Exception("Deleting hook with invalid parent")
 
             return True
 
