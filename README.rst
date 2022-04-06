@@ -78,6 +78,7 @@ All MUI features can be accessed through either the right-click context menu or 
 - Find Path to This Instruction / Remove Instruction from Find List
 - Avoid This Instruction / Remove Instruction from Avoid List
 - Add/Edit Custom Hook
+- Add Function Model
 - Solve With Manticore / Stop Manticore
 
 And the following widgets are available:
