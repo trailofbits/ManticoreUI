@@ -1,6 +1,6 @@
 import tempfile
 from time import sleep
-from typing import Callable, Set
+from typing import Callable, Set, Optional
 
 from binaryninja import (
     BackgroundTaskThread,
@@ -87,6 +87,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 ):
                     state.platform.add_symbolic_file(file)
 
+            emulate_until: Optional[int]
             try:
                 emulate_until = int(
                     settings.get_string(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}emulateUntil", bv), 16
