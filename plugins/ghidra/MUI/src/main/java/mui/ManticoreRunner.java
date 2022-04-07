@@ -154,7 +154,7 @@ public class ManticoreRunner {
 				@Override
 				public void onNext(MUIMessageList messageList) {
 					for (MUILogMessage msg : messageList.getMessagesList()) {
-						logText.append(msg.getContent());
+						logText.append(msg.getContent() + System.lineSeparator());
 					}
 				}
 			};
