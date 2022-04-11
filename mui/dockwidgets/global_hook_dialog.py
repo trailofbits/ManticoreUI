@@ -16,11 +16,13 @@ from binaryninjaui import UIContext, DockHandler
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
+from mui.hook_manager import NativeHookManager
 
 
 class GlobalHookDialog(QDialog):
-    def __init__(self, parent: QWidget, data: BinaryView):
+    def __init__(self, parent: QWidget, data: BinaryView, mgr: NativeHookManager):
         self.bv = data
+        self.mgr = mgr
         self.ctr = 0
 
         QDialog.__init__(self, parent)
@@ -75,17 +77,12 @@ class GlobalHookDialog(QDialog):
 
     def del_hook(self) -> None:
         """Delete currently selected global hook"""
-        bv = self.bv
-        hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-        row = 0
         list_widget = self.list_widget
         selected = list_widget.selectedItems()
         for item in selected:
             self._del_list_item(item)
             # Remove hook
-            name = item.text()
-            del bv.session_data.mui_global_hooks[name]
-            hook_widget.remove_hook(HookType.GLOBAL, 0, name)
+            self.mgr.del_global_hook(item.text())
 
     @Slot(QListWidgetItem)
     def item_double_click(self, item: QListWidgetItem):
@@ -97,8 +94,8 @@ class GlobalHookDialog(QDialog):
     def edit_hook(self, name) -> bool:
         """Edits global hook by name, returns False if hook code is empty (no hook)"""
         bv = self.bv
+        mgr = self.mgr
         dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
-        hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
 
         if name in bv.session_data.mui_global_hooks:
             dialog.set_text(bv.session_data.mui_global_hooks[name])
@@ -117,31 +114,28 @@ class GlobalHookDialog(QDialog):
         result: QDialog.DialogCode = dialog.exec()
 
         if result == QDialog.Accepted:
-            if len(dialog.text()) == 0:
+            code = dialog.text()
+            if not code:
                 # delete the hook if empty input is provided
-                if name in bv.session_data.mui_global_hooks:
-                    del bv.session_data.mui_global_hooks[name]
-                    hook_widget.remove_hook(HookType.GLOBAL, 0, name)
+                if name in mgr.list_global_hooks():
+                    mgr.del_global_hook(name)
                 return False
             else:
                 # add/edit the hook if input is non-empty
-                # add to hook list if new
-                if name not in bv.session_data.mui_global_hooks:
-                    hook_widget.add_hook(HookType.GLOBAL, 0, name)
-                bv.session_data.mui_global_hooks[name] = dialog.text()
+                mgr.add_global_hook(name, code)
                 return True
         else:
-            return name in bv.session_data.mui_global_hooks
+            return mgr.has_global_hook(name)
 
     def load_existing_hooks(self) -> None:
         """Load existing global hooks into the UI"""
         bv = self.bv
-        global_hooks = bv.session_data.mui_global_hooks
+        global_hooks = self.mgr.list_global_hooks()
         if not global_hooks:
             return
 
-        for name in global_hooks.keys():
+        for name in global_hooks:
             QListWidgetItem(name, self.list_widget)
 
-        name = list(global_hooks.keys())[-1]
+        name = list(global_hooks)[-1]
         self.ctr = int(name.split("_")[-1]) + 1

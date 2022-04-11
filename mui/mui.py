@@ -34,6 +34,7 @@ from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
+from mui.hook_manager import NativeHookManager
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
@@ -42,6 +43,7 @@ from mui.utils import highlight_instr, clear_highlight, function_model_analysis_
 
 settings = Settings()
 
+BinaryView.set_default_session_data("mui_hook_mgr", None)
 BinaryView.set_default_session_data("mui_find", set())
 BinaryView.set_default_session_data("mui_avoid", set())
 BinaryView.set_default_session_data("mui_custom_hooks", dict())
@@ -54,58 +56,26 @@ BinaryView.set_default_session_data("mui_addr_offset", None)
 
 def find_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the find list and highlights it green in the UI"""
-
-    # Highlight the instruction in green
-    highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
-
-    # Add the instruction to the list associated with the current view
-    bv.session_data.mui_find.add(addr)
-
-    # Add to hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-    hook_widget.add_hook(HookType.FIND, addr)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
+    mgr.add_find_hook(addr)
 
 
 def rm_find_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the find list and undoes the highlights"""
-
-    # Remove instruction highlight
-    clear_highlight(bv, addr)
-
-    # Remove the instruction to the list associated with the current view
-    bv.session_data.mui_find.remove(addr)
-
-    # Remove from hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-    hook_widget.remove_hook(HookType.FIND, addr)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
+    mgr.del_find_hook(addr)
 
 
 def avoid_instr(bv: BinaryView, addr: int):
     """This command handler adds a given address to the avoid list and highlights it red in the UI"""
-
-    # Highlight the instruction in red
-    highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
-
-    # Add the instruction to the list associated with the current view
-    bv.session_data.mui_avoid.add(addr)
-
-    # Add to hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-    hook_widget.add_hook(HookType.AVOID, addr)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
+    mgr.add_avoid_hook(addr)
 
 
 def rm_avoid_instr(bv: BinaryView, addr: int):
     """This command handler removes a given address from the avoid list and undoes the highlights"""
-
-    # Remove instruction highlight
-    clear_highlight(bv, addr)
-
-    # Remove the instruction to the list associated with the current view
-    bv.session_data.mui_avoid.remove(addr)
-
-    # Remove from hook list widget
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-    hook_widget.remove_hook(HookType.AVOID, addr)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
+    mgr.del_avoid_hook(addr)
 
 
 def solve(bv: BinaryView):
@@ -163,44 +133,37 @@ def solve(bv: BinaryView):
         if dialog.exec() == QDialog.Accepted:
             # Start a solver thread for the path associated with the view
             bv.session_data.mui_is_running = True
-            s = ManticoreNativeRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
+            s = ManticoreNativeRunner(bv, bv.session_data.mui_hook_mgr)
             s.start()
 
 
 def edit_custom_hook(bv: BinaryView, addr: int):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-    if addr in bv.session_data.mui_custom_hooks:
-        dialog.set_text(bv.session_data.mui_custom_hooks[addr])
+    if mgr.has_custom_hook(addr):
+        dialog.set_text(mgr.get_custom_hook(addr))
 
     result: QDialog.DialogCode = dialog.exec()
 
     if result == QDialog.Accepted:
-
-        if len(dialog.text()) == 0:
+        code = dialog.text()
+        if not code:
             # delete the hook if empty input is provided
-            if addr in bv.session_data.mui_custom_hooks:
-                clear_highlight(bv, addr)
-                del bv.session_data.mui_custom_hooks[addr]
-                hook_widget.remove_hook(HookType.CUSTOM, addr)
-
+            if mgr.has_custom_hook(addr):
+                mgr.del_custom_hook(addr)
         else:
-            # add/edit the hook if input is non-empty
-            highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
-            # add to hook list if new
-            if addr not in bv.session_data.mui_custom_hooks:
-                hook_widget.add_hook(HookType.CUSTOM, addr)
-            bv.session_data.mui_custom_hooks[addr] = dialog.text()
+            mgr.add_custom_hook(addr, code)
 
 
 def edit_global_hook(bv: BinaryView):
-    dialog = GlobalHookDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
+    dialog = GlobalHookDialog(DockHandler.getActiveDockHandler().parent(), bv, mgr)
     dialog.exec()
 
 
 def add_function_model(bv: BinaryView, addr: int) -> None:
-    hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
+    mgr: NativeHookManager = bv.session_data.mui_hook_mgr
     dialog = FunctionModelDialog(DockHandler.getActiveDockHandler().parent(), bv)
     result: QDialog.DialogCode = dialog.exec()
 
@@ -209,8 +172,6 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
         if not fname:
             return
 
-        highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
-        hook_widget.add_hook(HookType.CUSTOM, addr)
         code = "\n".join(
             [
                 f"from manticore.native.models import {fname}",
@@ -221,7 +182,7 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
                 "m.hook(addr)(hook)",
             ]
         )
-        bv.session_data.mui_custom_hooks[addr] = code
+        mgr.add_custom_hook(addr, code)
 
 
 def load_evm(bv: BinaryView):
@@ -265,12 +226,18 @@ def stop_manticore(bv: BinaryView):
 
 def avoid_instr_is_valid(bv: BinaryView, addr: int):
     """checks if avoid_instr is valid for a given address"""
-    return addr not in bv.session_data.mui_avoid
+    if bv.session_data.mui_hook_mgr:
+        return not bv.session_data.mui_hook_mgr.has_avoid_hook(addr)
+    else:
+        return True
 
 
 def find_instr_is_valid(bv: BinaryView, addr: int):
     """checks if find_instr is valid for a given address"""
-    return addr not in bv.session_data.mui_find
+    if bv.session_data.mui_hook_mgr:
+        return not bv.session_data.mui_hook_mgr.has_find_hook(addr)
+    else:
+        return True
 
 
 def solve_is_valid(bv: BinaryView):

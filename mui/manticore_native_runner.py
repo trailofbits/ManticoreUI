@@ -16,24 +16,25 @@ from manticore.native import Manticore
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
+from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.utils import MUIState, print_timestamp
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
-    def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
+    def __init__(self, view: BinaryView, mgr: NativeHookManager):
         BackgroundTaskThread.__init__(self, "Solving with Manticore...", True)
         self.view = view
+        self.mgr = mgr
 
         # Get binary base (if necessary) and rebase hooks
         self.addr_off = self.get_address_offset(view)
-        self.find = [addr + self.addr_off for addr in find]
-        self.avoid = [addr + self.addr_off for addr in avoid]
+        self.find = [addr + self.addr_off for addr in mgr.list_find_hooks()]
+        self.avoid = [addr + self.addr_off for addr in mgr.list_avoid_hooks()]
         self.custom_hooks = [
-            (addr + self.addr_off, func)
-            for addr, func in view.session_data.mui_custom_hooks.items()
+            (addr + self.addr_off, func) for addr, func in mgr.list_custom_hooks().items()
         ]
-        self.global_hooks = list(view.session_data.mui_global_hooks.values())
+        self.global_hooks = list(mgr.list_global_hooks().values())
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
