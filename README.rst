@@ -78,6 +78,7 @@ All MUI features can be accessed through either the right-click context menu or 
 - Find Path to This Instruction / Remove Instruction from Find List
 - Avoid This Instruction / Remove Instruction from Avoid List
 - Add/Edit Custom Hook
+- Add/Edit Global Hook
 - Add Function Model
 - Solve With Manticore / Stop Manticore
 
@@ -103,6 +104,7 @@ And the following widgets are available:
 - Run Dialog
 
     The run dialog is shown when you invoke the ``Solve with Manticore`` command. It allows you to configure the various manticore options, and the changes will be saved to the ``bndb`` file. Some example configs include using a combination of ``LD_PRELOAD`` and ``LD_LIBRARY_PATH`` environment variables to run the binary with custom glibc.
+    The ``Emulate until address`` option allows you to use the Unicorn engine's emulation until a certain address, for significant execution speed-up.
 
 .. image:: ./screenshots/run_dialog.png
     :align: center
