@@ -26,7 +26,13 @@ jobs:
           # just command runner https://github.com/casey/just#pre-built-binaries
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "${HOME}/.local/bin"
 
-      - name: 'Test MUICore'
+      - name: 'Lint MUI Server'
+        working-directory: server
+        run: |
+          pip install -r requirements-dev.txt
+          just lint
+
+      - name: 'Test MUI Server'
         working-directory: server
         run: |
           python3 -m venv mui-env
