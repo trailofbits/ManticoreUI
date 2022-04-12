@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
 import javax.swing.tree.TreePath;
 
 /**
@@ -32,6 +33,7 @@ public class ManticoreRunner {
 
 	private JTextArea logText;
 	private JButton stopBtn;
+	private JToggleButton scrollLockBtn;
 
 	private List<MUIState> activeStates;
 	private List<MUIState> waitingStates;
@@ -49,6 +51,7 @@ public class ManticoreRunner {
 
 		logText = new JTextArea();
 		stopBtn = new JButton();
+		scrollLockBtn = new JToggleButton();
 
 		activeStates = new ArrayList<MUIState>();
 		waitingStates = new ArrayList<MUIState>();
@@ -156,6 +159,9 @@ public class ManticoreRunner {
 					for (MUILogMessage msg : messageList.getMessagesList()) {
 						logText.append(msg.getContent() + System.lineSeparator());
 					}
+					if (!scrollLockBtn.isSelected()) {
+						logText.setCaretPosition(logText.getText().length());
+					}
 				}
 			};
 
@@ -173,6 +179,7 @@ public class ManticoreRunner {
 	public void setLogUIElems(MUILogContentComponent content) {
 		logText = content.logArea;
 		stopBtn = content.stopButton;
+		scrollLockBtn = content.scrollLockButton;
 	}
 
 	/**

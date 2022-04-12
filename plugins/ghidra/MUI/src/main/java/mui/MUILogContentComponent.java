@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import resources.ResourceManager;
@@ -20,6 +21,7 @@ public class MUILogContentComponent extends JPanel {
 
 	public JTextArea logArea;
 	public JButton stopButton;
+	public JToggleButton scrollLockButton;
 
 	public MUILogContentComponent(ManticoreRunner mcore) {
 
@@ -30,6 +32,7 @@ public class MUILogContentComponent extends JPanel {
 
 		logArea = new JTextArea();
 		stopButton = new JButton();
+		scrollLockButton = new JToggleButton();
 
 		buildLogArea();
 		buildToolBar();
@@ -68,8 +71,15 @@ public class MUILogContentComponent extends JPanel {
 				}
 
 			});
+		stopButton.setToolTipText("Terminate Execution");
+
+		scrollLockButton.setEnabled(true);
+		scrollLockButton.setIcon(ResourceManager.loadImage("images/lock.png"));
+		scrollLockButton.setToolTipText("Toggle Auto-Scroll Lock");
+
 		logToolBar.add(Box.createGlue()); // shifts buttons to the right
 		logToolBar.add(stopButton);
+		logToolBar.add(scrollLockButton);
 
 		add(logToolBar, BorderLayout.PAGE_START);
 	}
