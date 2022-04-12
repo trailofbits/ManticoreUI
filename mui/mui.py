@@ -9,7 +9,6 @@ from PySide6.QtWidgets import QDialog
 from binaryninja import (
     PluginCommand,
     BinaryView,
-    HighlightStandardColor,
     show_message_box,
     MessageBoxButtonSet,
     MessageBoxIcon,
@@ -28,6 +27,7 @@ from mui.constants import (
 )
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
+from mui.dockwidgets.library_dialog import LibraryDialog
 from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.function_model_dialog import FunctionModelDialog
 from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
@@ -52,6 +52,7 @@ BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
+BinaryView.set_default_session_data("mui_libs", set())
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -185,6 +186,11 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
         mgr.add_custom_hook(addr, code)
 
 
+def manage_shared_libs(bv) -> None:
+    dialog = LibraryDialog(DockHandler.getActiveDockHandler().parent(), bv)
+    dialog.exec()
+
+
 def load_evm(bv: BinaryView):
     filename = get_open_filename_input("filename:", "*.sol").decode()
     if filename is None:
@@ -297,6 +303,11 @@ PluginCommand.register(
     "MUI \\ Add/Edit Global Hook",
     "Add/edit a custom hook that applies to all instructions",
     edit_global_hook,
+)
+PluginCommand.register(
+    "MUI \\ Manage Shared Library BNDBs",
+    "Manage shared library bndbs to extract hooks from",
+    manage_shared_libs,
 )
 
 widget.register_dockwidget(

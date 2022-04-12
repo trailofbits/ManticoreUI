@@ -9,6 +9,7 @@ from binaryninja import (
     TypedDataAccessor,
     Endianness,
     Architecture,
+    open_view,
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
@@ -19,6 +20,7 @@ from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.utils import MUIState, print_timestamp
+from mui.native_plugin import RebaseHooksPlugin
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
@@ -112,6 +114,8 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for func in self.global_hooks:
                 exec(func, {"bv": bv, "m": m})
 
+            self.load_libraries(m, find_f, avoid_f)
+
             def run_every(callee: Callable, duration: int = 3) -> Callable:
                 """
                 Returns a function that calls <callee> every <duration> seconds
@@ -178,3 +182,17 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             addr_off = 0
 
         return addr_off
+
+    def load_libraries(self, m: Manticore, find_f: Callable, avoid_f: Callable):
+        bv = self.view
+        mgrs = []
+
+        for lib_name in bv.session_data.mui_libs:
+            print(f"Loading hooks from external library: {lib_name}")
+            lib_bv = open_view(lib_name, options={"ui.log.minLevel": "ErrorLog"})
+            lib_mgr = NativeHookManager(lib_bv)
+            lib_mgr.load_existing_hooks()
+            mgrs.append(lib_mgr)
+
+        for mgr in mgrs:
+            m.register_plugin(RebaseHooksPlugin(mgr, find_f, avoid_f))
