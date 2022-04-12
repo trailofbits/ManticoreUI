@@ -13,9 +13,7 @@ from binaryninja import (
 )
 from binaryninjaui import UIContext, DockHandler
 
-from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
-from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
 from mui.hook_manager import NativeHookManager
 
 

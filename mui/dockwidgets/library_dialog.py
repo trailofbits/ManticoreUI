@@ -1,5 +1,5 @@
 import json
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
     QWidget,
@@ -16,7 +16,7 @@ from binaryninja import (
     Settings,
     SettingsScope,
 )
-from binaryninjaui import UIContext, DockHandler
+from binaryninjaui import UIContext
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 
 

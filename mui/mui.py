@@ -33,13 +33,13 @@ from mui.dockwidgets.function_model_dialog import FunctionModelDialog
 from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
-from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
+from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.hook_manager import NativeHookManager
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
 from mui.settings import MUISettings
-from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
+from mui.utils import function_model_analysis_cb
 
 settings = Settings()
 
