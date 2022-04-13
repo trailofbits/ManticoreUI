@@ -1,6 +1,6 @@
 import tempfile
 from time import sleep
-from typing import Callable, Set
+from typing import Callable, Set, Optional
 
 from binaryninja import (
     BackgroundTaskThread,
@@ -13,6 +13,7 @@ from binaryninja import (
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
+from manticore.core.plugin import Plugin
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
@@ -20,7 +21,7 @@ from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.utils import MUIState, print_timestamp
-from mui.native_plugin import RebaseHooksPlugin
+from mui.native_plugin import RebaseHooksPlugin, UnicornEmulatePlugin
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
@@ -88,6 +89,19 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}symbolicFiles", bv
                 ):
                     state.platform.add_symbolic_file(file)
+
+            emulate_until: Optional[int]
+            try:
+                emulate_until = int(
+                    settings.get_string(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}emulateUntil", bv), 16
+                )
+                emulate_until += self.addr_off
+            except:
+                emulate_until = None
+
+            if emulate_until:
+                print(f"Using Unicorn emulation until {emulate_until:#x}")
+                m.register_plugin(UnicornEmulatePlugin(emulate_until))
 
             def avoid_f(state: StateBase):
                 state.abandon()

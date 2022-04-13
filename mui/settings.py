@@ -58,6 +58,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "emulateUntil": (
+                {
+                    "title": "Emulate until address (in hex)",
+                    "description": "Emulate using unicorn until address is reached",
+                    "type": "string",
+                    "default": "",
+                },
+                {},
+            ),
             "workspaceURL": (
                 {
                     "title": "Workspace URL",
