@@ -55,3 +55,15 @@ class RebaseHooksPlugin(Plugin):
 
                 # Undo our hack to maintain original manticore behaviour
                 m.subscribe = None
+
+
+class UnicornEmulatePlugin(Plugin):
+    """Manticore plugin to speed up emulation using unicorn until `start`"""
+
+    def __init__(self, start: int):
+        super().__init__()
+        self.start = start
+
+    def will_run_callback(self, ready_states):
+        for state in ready_states:
+            state.cpu.emulate_until(self.start)
