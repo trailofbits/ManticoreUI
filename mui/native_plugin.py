@@ -22,7 +22,7 @@ class RebaseHooksPlugin(Plugin):
         mgr.bv.file.close()
 
     def on_register(self):
-        """ Called by parent manticore on registration (enable global hooks) """
+        """Called by parent manticore on registration (enable global hooks)"""
         m = self.manticore
         for func in self.global_hooks:
             exec(func, {"bv": None, "m": m})
@@ -31,7 +31,7 @@ class RebaseHooksPlugin(Plugin):
         m.hook(0)(lambda state: state)
 
     def did_map_memory_callback(self, _state, addr, _size, _perms, filename, offset, _addr):
-        """ Rebases hooks from library to loaded base address """
+        """Rebases hooks from library to loaded base address"""
         # If binary base is being loaded
         if filename == self.filename and offset == 0:
             print(f"{filename} mapped @ {addr:#x}")

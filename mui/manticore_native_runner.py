@@ -13,7 +13,6 @@ from binaryninja import (
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
-from manticore.core.plugin import Plugin
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
@@ -197,16 +196,11 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
         return addr_off
 
-    def load_libraries(self, m: Manticore, find_f: Callable, avoid_f: Callable):
-        bv = self.view
-        mgrs = []
-
-        for lib_name in bv.session_data.mui_libs:
+    def load_libraries(self, m: Manticore, find_f: Callable, avoid_f: Callable) -> None:
+        """Load hooks from shared libraries and rebase hooks"""
+        for lib_name in self.view.session_data.mui_libs:
             print(f"Loading hooks from external library: {lib_name}")
             lib_bv = open_view(lib_name, options={"ui.log.minLevel": "ErrorLog"})
             lib_mgr = NativeHookManager(lib_bv)
             lib_mgr.load_existing_hooks()
-            mgrs.append(lib_mgr)
-
-        for mgr in mgrs:
-            m.register_plugin(RebaseHooksPlugin(mgr, find_f, avoid_f))
+            m.register_plugin(RebaseHooksPlugin(lib_mgr, find_f, avoid_f))
