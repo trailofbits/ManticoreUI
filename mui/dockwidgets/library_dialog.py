@@ -23,7 +23,7 @@ from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 class LibraryDialog(QDialog):
     def __init__(self, parent: QWidget, data: BinaryView):
         self.bv = data
-        self.items = frozenset()
+        self.items: frozenset = frozenset()
 
         QDialog.__init__(self, parent)
 
