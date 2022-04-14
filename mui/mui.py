@@ -151,17 +151,6 @@ def solve(bv: BinaryView):
             bv.session_data.mui_is_running = True
 
     else:
-        if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
-            show_message_box(
-                "Manticore Solve",
-                "You have not specified a goal instruction or custom hook.\n\n"
-                + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
-                + "continue.",
-                MessageBoxButtonSet.OKButtonSet,
-                MessageBoxIcon.ErrorIcon,
-            )
-            return
-
         dialog = RunDialog(
             DockHandler.getActiveDockHandler().parent(), bv, BINJA_NATIVE_RUN_SETTINGS_PREFIX
         )
