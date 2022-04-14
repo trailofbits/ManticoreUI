@@ -53,6 +53,7 @@ BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
 BinaryView.set_default_session_data("mui_client_stub", None)
+BinaryView.set_default_session_data("server_manticore_instances", set())
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -143,9 +144,10 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-            bv.session_data.mui_client_stub.StartEVM(
+            mcore_instance = bv.session_data.mui_client_stub.StartEVM(
                 EVMArguments(contract_path=bv.file.original_filename)
             )
+            bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             bv.session_data.mui_is_running = True
 
     else:
@@ -165,10 +167,10 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-
-            bv.session_data.mui_client_stub.StartNative(
+            mcore_instance = bv.session_data.mui_client_stub.StartNative(
                 NativeArguments(program_path=bv.file.original_filename)
             )
+            bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             bv.session_data.mui_is_running = True
 
 
