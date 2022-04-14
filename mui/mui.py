@@ -40,7 +40,7 @@ from mui.notification import UINotification
 from mui.settings import MUISettings
 from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
 
-from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments
+from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
 
 settings = Settings()
 
@@ -256,6 +256,13 @@ def load_evm(bv: BinaryView):
 
 def stop_manticore(bv: BinaryView):
     """Stops the current running manticore instance"""
+    res = bv.session_data.mui_client_stub.Terminate(
+        ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
+    )
+    if res.success:
+        print("Manticore stopped by user.")
+    else:
+        print("Manticore failed to terminate.")
     bv.session_data.mui_is_running = False
 
 
