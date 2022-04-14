@@ -40,6 +40,8 @@ from mui.notification import UINotification
 from mui.settings import MUISettings
 from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
 
+from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments
+
 settings = Settings()
 
 BinaryView.set_default_session_data("mui_find", set())
@@ -50,6 +52,7 @@ BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
+BinaryView.set_default_session_data("mui_client_stub", None)
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -140,9 +143,10 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
+            bv.session_data.mui_client_stub.StartEVM(
+                EVMArguments(contract_path=bv.file.original_filename)
+            )
             bv.session_data.mui_is_running = True
-            s = ManticoreEVMRunner(bv.session_data.mui_evm_source, bv)
-            s.start()
 
     else:
         if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
@@ -161,10 +165,11 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-            # Start a solver thread for the path associated with the view
+
+            bv.session_data.mui_client_stub.StartNative(
+                NativeArguments(program_path=bv.file.original_filename)
+            )
             bv.session_data.mui_is_running = True
-            s = ManticoreNativeRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
-            s.start()
 
 
 def edit_custom_hook(bv: BinaryView, addr: int):

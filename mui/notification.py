@@ -1,4 +1,5 @@
 import json
+import grpc
 
 from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
@@ -7,6 +8,9 @@ from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
 from mui.utils import highlight_instr
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
+
+from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
+from future.utils import native
 
 
 class UINotification(UIContextNotification):
@@ -25,6 +29,8 @@ class UINotification(UIContextNotification):
         """Restore existing settings right after file open"""
 
         bv: BinaryView = frame.getCurrentBinaryView()
+
+        client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
 
         # restore hook session_data from settings
         settings = Settings()
@@ -46,6 +52,7 @@ class UINotification(UIContextNotification):
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}global", bv)
             ).items()
         }
+        bv.session_data.mui_client_stub = client_stub
 
         # initialise hook list widget
         hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
