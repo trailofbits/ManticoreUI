@@ -58,7 +58,6 @@ class LibraryDialog(QDialog):
         """Update missing items into list"""
         updated = self.bv.session_data.mui_libs
         diff = updated.difference(self.items)
-        print(diff)
         if diff:
             self.items = frozenset(updated)
             for lib in diff:
