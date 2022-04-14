@@ -148,6 +148,7 @@ def solve(bv: BinaryView):
                 EVMArguments(contract_path=bv.file.original_filename)
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
+            print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
 
     else:
@@ -160,6 +161,7 @@ def solve(bv: BinaryView):
                 NativeArguments(program_path=bv.file.original_filename)
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
+            print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
 
 
