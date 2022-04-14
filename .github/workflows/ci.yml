@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'muicore/master'
   pull_request:
     branches:
       - '*'
