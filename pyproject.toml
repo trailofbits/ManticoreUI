@@ -5,6 +5,7 @@ include = '\.pyi?$'
 extend-exclude = '''
 /(
   | manticore
+  | mui/server_utils
 )/
 '''
 
