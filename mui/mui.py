@@ -2,7 +2,11 @@ import os
 import random
 import string
 import tempfile
+import time
+import subprocess
 from pathlib import Path
+
+import grpc
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog
@@ -40,6 +44,7 @@ from mui.notification import UINotification
 from mui.settings import MUISettings
 from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
 
+from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
 from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
 
 settings = Settings()
@@ -144,6 +149,11 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
+            if bv.session_data.mui_client_stub == None:
+                subprocess.Popen([Path(__file__).resolve().parent.parent / "muicore_server"])
+                time.sleep(1)
+                client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
+                bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartEVM(
                 EVMArguments(contract_path=bv.file.original_filename)
             )
@@ -157,6 +167,11 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
+            if bv.session_data.mui_client_stub == None:
+                subprocess.Popen([Path(__file__).resolve().parent.parent / "muicore_server"])
+                time.sleep(1)
+                client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
+                bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartNative(
                 NativeArguments(program_path=bv.file.original_filename)
             )

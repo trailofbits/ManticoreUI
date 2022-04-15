@@ -1,5 +1,4 @@
 import json
-import grpc
 import subprocess
 import os
 
@@ -11,7 +10,6 @@ from mui.utils import highlight_instr
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
 
-from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
 from future.utils import native
 
 
@@ -40,8 +38,6 @@ class UINotification(UIContextNotification):
 
         bv: BinaryView = frame.getCurrentBinaryView()
 
-        client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
-
         # restore hook session_data from settings
         settings = Settings()
         bv.session_data.mui_find = set(
@@ -62,7 +58,6 @@ class UINotification(UIContextNotification):
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}global", bv)
             ).items()
         }
-        bv.session_data.mui_client_stub = client_stub
 
         # initialise hook list widget
         hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
