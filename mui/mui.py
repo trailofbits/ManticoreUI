@@ -151,7 +151,7 @@ def solve(bv: BinaryView):
         if dialog.exec() == QDialog.Accepted:
             if bv.session_data.mui_client_stub == None:
                 subprocess.Popen([Path(__file__).resolve().parent.parent / "muicore_server"])
-                time.sleep(1)
+                time.sleep(3)
                 client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartEVM(
@@ -169,7 +169,7 @@ def solve(bv: BinaryView):
         if dialog.exec() == QDialog.Accepted:
             if bv.session_data.mui_client_stub == None:
                 subprocess.Popen([Path(__file__).resolve().parent.parent / "muicore_server"])
-                time.sleep(1)
+                time.sleep(3)
                 client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartNative(
