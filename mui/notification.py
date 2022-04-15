@@ -1,5 +1,7 @@
 import json
 import grpc
+import subprocess
+import os
 
 from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
@@ -24,6 +26,14 @@ class UINotification(UIContextNotification):
 
     def __del__(self):
         UIContext.unregisterNotification(self)
+
+    def OnContextClose(self, context: UIContext) -> None:
+        server_pid: str = subprocess.run(
+            ["lsof", "-t", "-i:50010"], text=True, capture_output=True
+        ).stdout.strip()
+
+        if server_pid:
+            os.kill(int(server_pid), 9)
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
         """Restore existing settings right after file open"""
