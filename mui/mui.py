@@ -4,6 +4,7 @@ import string
 import tempfile
 import time
 import subprocess
+import json
 from pathlib import Path
 
 import grpc
@@ -154,7 +155,32 @@ def solve(bv: BinaryView):
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
             if bv.session_data.mui_client_stub == None:
-                client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
+                client_stub = ManticoreUIStub(
+                    grpc.insecure_channel(
+                        "localhost:50010",
+                        options=[
+                            (
+                                "grpc.service_config",
+                                json.dumps(
+                                    {
+                                        "methodConfig": [
+                                            {
+                                                "name": [{"service": "muicore.ManticoreUI"}],
+                                                "retryPolicy": {
+                                                    "maxAttempts": 5,
+                                                    "initialBackoff": "1s",
+                                                    "maxBackoff": "10s",
+                                                    "backoffMultiplier": 2,
+                                                    "retryableStatusCodes": ["UNAVAILABLE"],
+                                                },
+                                            }
+                                        ]
+                                    }
+                                ),
+                            )
+                        ],
+                    )
+                )
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartEVM(
                 EVMArguments(contract_path=bv.file.original_filename)
@@ -174,7 +200,32 @@ def solve(bv: BinaryView):
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
             if bv.session_data.mui_client_stub == None:
-                client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
+                client_stub = ManticoreUIStub(
+                    grpc.insecure_channel(
+                        "localhost:50010",
+                        options=[
+                            (
+                                "grpc.service_config",
+                                json.dumps(
+                                    {
+                                        "methodConfig": [
+                                            {
+                                                "name": [{"service": "muicore.ManticoreUI"}],
+                                                "retryPolicy": {
+                                                    "maxAttempts": 5,
+                                                    "initialBackoff": "1s",
+                                                    "maxBackoff": "10s",
+                                                    "backoffMultiplier": 2,
+                                                    "retryableStatusCodes": ["UNAVAILABLE"],
+                                                },
+                                            }
+                                        ]
+                                    }
+                                ),
+                            )
+                        ],
+                    )
+                )
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartNative(
                 NativeArguments(program_path=bv.file.original_filename)
