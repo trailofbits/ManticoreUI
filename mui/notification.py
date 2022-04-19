@@ -12,6 +12,9 @@ from mui.dockwidgets import widget
 
 from future.utils import native
 
+import socket
+from contextlib import closing
+
 
 class UINotification(UIContextNotification):
     """
@@ -21,17 +24,15 @@ class UINotification(UIContextNotification):
     def __init__(self):
         UIContextNotification.__init__(self)
         UIContext.registerNotification(self)
+        self.mui_grpc_server_process = None
 
     def __del__(self):
         UIContext.unregisterNotification(self)
 
     def OnContextClose(self, context: UIContext) -> None:
-        server_pid: str = subprocess.run(
-            ["lsof", "-t", "-i:50010"], text=True, capture_output=True
-        ).stdout.strip()
 
-        if server_pid:
-            os.kill(int(server_pid), 9)
+        if self.mui_grpc_server_process != None:
+            self.mui_grpc_server_process.kill()
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
         """Restore existing settings right after file open"""
