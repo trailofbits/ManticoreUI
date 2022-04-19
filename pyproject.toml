@@ -18,9 +18,18 @@ testpaths = [
 
 # mypy global options:
 [tool.mypy]
+python_version = "3.8"
+check_untyped_defs = true
 files = ['mui', 'tests']
 warn_unused_configs = true
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unreachable = true
+exclude = [
+	"^mui/server_utils/MUICore_pb2_grpc.py",
+]
+
+[[tool.mypy.overrides]]
+module = "mui.server_utils.*"
+follow_imports = "skip"
