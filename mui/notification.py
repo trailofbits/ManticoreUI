@@ -1,6 +1,8 @@
 import json
-import subprocess
+from subprocess import Popen
 import os
+
+from typing import Optional
 
 from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
@@ -12,9 +14,6 @@ from mui.dockwidgets import widget
 
 from future.utils import native
 
-import socket
-from contextlib import closing
-
 
 class UINotification(UIContextNotification):
     """
@@ -24,14 +23,13 @@ class UINotification(UIContextNotification):
     def __init__(self):
         UIContextNotification.__init__(self)
         UIContext.registerNotification(self)
-        self.mui_grpc_server_process = None
+        self.mui_grpc_server_process: Optional[Popen] = None
 
     def __del__(self):
         UIContext.unregisterNotification(self)
 
     def OnContextClose(self, context: UIContext) -> None:
-
-        if self.mui_grpc_server_process != None:
+        if isinstance(self.mui_grpc_server_process, Popen):
             self.mui_grpc_server_process.kill()
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
