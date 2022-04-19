@@ -153,7 +153,7 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen(
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
-                time.sleep(3)
+            if bv.session_data.mui_client_stub == None:
                 client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartEVM(
@@ -173,7 +173,7 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen(
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
-                time.sleep(3)
+            if bv.session_data.mui_client_stub == None:
                 client_stub = ManticoreUIStub(grpc.insecure_channel("localhost:50010"))
                 bv.session_data.mui_client_stub = client_stub
             mcore_instance = bv.session_data.mui_client_stub.StartNative(
