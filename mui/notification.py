@@ -3,7 +3,8 @@ import json
 from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
 
-from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
+from mui.constants import BINJA_HOOK_SETTINGS_PREFIX, BINJA_NATIVE_RUN_SETTINGS_PREFIX
+from mui.hook_manager import NativeHookManager
 from mui.utils import highlight_instr
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
@@ -23,74 +24,38 @@ class UINotification(UIContextNotification):
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
         """Restore existing settings right after file open"""
-
         bv: BinaryView = frame.getCurrentBinaryView()
 
-        # restore hook session_data from settings
-        settings = Settings()
-        bv.session_data.mui_find = set(
-            json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}find", bv))
-        )
-        bv.session_data.mui_avoid = set(
-            json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}avoid", bv))
-        )
-        bv.session_data.mui_custom_hooks = {
-            int(key): item
-            for key, item in json.loads(
-                settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
-            ).items()
-        }
-        bv.session_data.mui_global_hooks = {
-            key: item
-            for key, item in json.loads(
-                settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}global", bv)
-            ).items()
-        }
-
-        # initialise hook list widget
+        # initialise hook manager
         hook_widget: HookListWidget = widget.get_dockwidget(bv, HookListWidget.NAME)
-        hook_widget.load_existing_hooks()
+
+        mgr = NativeHookManager(bv, hook_widget)
+        bv.session_data.mui_hook_mgr = mgr
+        mgr.load_existing_hooks()
 
         # restore highlight
-        for addr in bv.session_data.mui_find:
+        for addr in mgr.list_find_hooks():
             highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
-        for addr in bv.session_data.mui_avoid:
+        for addr in mgr.list_avoid_hooks():
             highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
-        for addr in bv.session_data.mui_custom_hooks.keys():
+        for addr in mgr.list_custom_hooks():
             highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
+
+        # restore shared libraries
+        settings = Settings()
+        libs = set(
+            json.loads(
+                settings.get_string(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}sharedLibraries", bv)
+            )
+        )
+        bv.session_data.mui_libs = libs
 
     def OnBeforeSaveFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> bool:
         """Update settings to reflect the latest session_data"""
-
         bv: BinaryView = frame.getCurrentBinaryView()
-        settings = Settings()
+        mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}find",
-            json.dumps(list(bv.session_data.mui_find)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}avoid",
-            json.dumps(list(bv.session_data.mui_avoid)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
-            json.dumps(bv.session_data.mui_custom_hooks),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}global",
-            json.dumps(bv.session_data.mui_global_hooks),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
+        if mgr:
+            mgr.save_hooks()
 
         return True

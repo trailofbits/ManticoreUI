@@ -98,6 +98,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "sharedLibraries": (
+                {
+                    "title": "Shared Libraries",
+                    "description": "Shared library bndbs to extract mui hooks from",
+                    "type": "string",
+                    "default": "[]",
+                },
+                {},
+            ),
         },
         BINJA_HOOK_SETTINGS_PREFIX: {
             "avoid": (

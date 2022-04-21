@@ -9,32 +9,34 @@ from binaryninja import (
     TypedDataAccessor,
     Endianness,
     Architecture,
+    open_view,
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
-from manticore.core.plugin import Plugin
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
+from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.utils import MUIState, print_timestamp
+from mui.native_plugin import RebaseHooksPlugin, UnicornEmulatePlugin
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
-    def __init__(self, find: Set[int], avoid: Set[int], view: BinaryView):
+    def __init__(self, view: BinaryView, mgr: NativeHookManager):
         BackgroundTaskThread.__init__(self, "Solving with Manticore...", True)
         self.view = view
+        self.mgr = mgr
 
         # Get binary base (if necessary) and rebase hooks
         self.addr_off = self.get_address_offset(view)
-        self.find = [addr + self.addr_off for addr in find]
-        self.avoid = [addr + self.addr_off for addr in avoid]
+        self.find = [addr + self.addr_off for addr in mgr.list_find_hooks()]
+        self.avoid = [addr + self.addr_off for addr in mgr.list_avoid_hooks()]
         self.custom_hooks = [
-            (addr + self.addr_off, func)
-            for addr, func in view.session_data.mui_custom_hooks.items()
+            (addr + self.addr_off, func) for addr, func in mgr.list_custom_hooks().items()
         ]
-        self.global_hooks = list(view.session_data.mui_global_hooks.values())
+        self.global_hooks = list(mgr.list_global_hooks().values())
 
         # Write the binary to disk so that the Manticore API can read it
         self.binary = tempfile.NamedTemporaryFile()
@@ -125,6 +127,8 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for func in self.global_hooks:
                 exec(func, {"bv": bv, "m": m})
 
+            self.load_libraries(m, find_f, avoid_f)
+
             def run_every(callee: Callable, duration: int = 3) -> Callable:
                 """
                 Returns a function that calls <callee> every <duration> seconds
@@ -192,14 +196,11 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
         return addr_off
 
-
-class UnicornEmulatePlugin(Plugin):
-    """Manticore plugin to speed up emulation using unicorn until `start`"""
-
-    def __init__(self, start: int):
-        super().__init__()
-        self.start = start
-
-    def will_run_callback(self, ready_states):
-        for state in ready_states:
-            state.cpu.emulate_until(self.start)
+    def load_libraries(self, m: Manticore, find_f: Callable, avoid_f: Callable) -> None:
+        """Load hooks from shared libraries and rebase hooks"""
+        for lib_name in self.view.session_data.mui_libs:
+            print(f"Loading hooks from external library: {lib_name}")
+            lib_bv = open_view(lib_name, options={"ui.log.minLevel": "ErrorLog"})
+            lib_mgr = NativeHookManager(lib_bv)
+            lib_mgr.load_existing_hooks()
+            m.register_plugin(RebaseHooksPlugin(lib_mgr, find_f, avoid_f))
