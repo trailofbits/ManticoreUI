@@ -52,36 +52,10 @@ class UINotification(UIContextNotification):
 
     def OnBeforeSaveFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> bool:
         """Update settings to reflect the latest session_data"""
-
         bv: BinaryView = frame.getCurrentBinaryView()
-        settings = Settings()
+        mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}find",
-            json.dumps(list(bv.session_data.mui_find)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}avoid",
-            json.dumps(list(bv.session_data.mui_avoid)),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
-            json.dumps(bv.session_data.mui_custom_hooks),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
-
-        settings.set_string(
-            f"{BINJA_HOOK_SETTINGS_PREFIX}global",
-            json.dumps(bv.session_data.mui_global_hooks),
-            view=bv,
-            scope=SettingsScope.SettingsResourceScope,
-        )
+        if mgr:
+            mgr.save_hooks()
 
         return True

@@ -2,6 +2,7 @@ import json
 from typing import Set, Dict, Optional
 from binaryninja import (
     Settings,
+    SettingsScope,
     BinaryView,
     HighlightStandardColor,
 )
@@ -105,7 +106,7 @@ class NativeHookManager:
         return self.bv.session_data.mui_global_hooks
 
     def load_existing_hooks(self) -> None:
-        # restore hook session_data from settings
+        """restore hook session_data from settings"""
         bv = self.bv
         settings = Settings()
 
@@ -143,3 +144,36 @@ class NativeHookManager:
                 self.widget.add_hook(HookType.GLOBAL, 0, name)
 
             self.widget.set_manager(self)
+
+    def save_hooks(self) -> None:
+        """store hook session_data into settings for persistence"""
+        bv = self.bv
+        settings = Settings()
+
+        settings.set_string(
+            f"{BINJA_HOOK_SETTINGS_PREFIX}find",
+            json.dumps(list(bv.session_data.mui_find)),
+            view=bv,
+            scope=SettingsScope.SettingsResourceScope,
+        )
+
+        settings.set_string(
+            f"{BINJA_HOOK_SETTINGS_PREFIX}avoid",
+            json.dumps(list(bv.session_data.mui_avoid)),
+            view=bv,
+            scope=SettingsScope.SettingsResourceScope,
+        )
+
+        settings.set_string(
+            f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
+            json.dumps(bv.session_data.mui_custom_hooks),
+            view=bv,
+            scope=SettingsScope.SettingsResourceScope,
+        )
+
+        settings.set_string(
+            f"{BINJA_HOOK_SETTINGS_PREFIX}global",
+            json.dumps(bv.session_data.mui_global_hooks),
+            view=bv,
+            scope=SettingsScope.SettingsResourceScope,
+        )
