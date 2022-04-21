@@ -1,10 +1,11 @@
 import os
-from typing import Dict, Set
+from typing import Dict, Set, cast
 import unittest
 from unittest.mock import MagicMock
 
 from manticore.native import Manticore
 from mui.native_plugin import RebaseHooksPlugin
+from mui.hook_manager import NativeHookManager
 
 
 class FakeHookManager:
@@ -63,7 +64,7 @@ class RebaseHooksTest(unittest.TestCase):
         with m.locked_context() as context:
             context["find_reached"] = False
 
-        mgr = FakeHookManager(self.LIB_PATH, find_hooks={self.FOO_1})
+        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, find_hooks={self.FOO_1}))
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
@@ -75,7 +76,7 @@ class RebaseHooksTest(unittest.TestCase):
         with m.locked_context() as context:
             context["avoid_reached"] = False
 
-        mgr = FakeHookManager(self.LIB_PATH, avoid_hooks={self.FOO_0})
+        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, avoid_hooks={self.FOO_0}))
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
@@ -101,7 +102,7 @@ class RebaseHooksTest(unittest.TestCase):
 
         m.hook(self.YES)(self.find_f)
 
-        mgr = FakeHookManager(self.LIB_PATH, custom_hooks={self.FOO: custom_code})
+        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, custom_hooks={self.FOO: custom_code}))
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
@@ -125,7 +126,7 @@ class RebaseHooksTest(unittest.TestCase):
             ]
         )
 
-        mgr = FakeHookManager(self.LIB_PATH, global_hooks={"ins_count": custom_code})
+        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, global_hooks={"ins_count": custom_code}))
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
