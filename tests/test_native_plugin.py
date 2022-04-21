@@ -70,18 +70,6 @@ class RebaseHooksTest(unittest.TestCase):
         with m.locked_context() as context:
             self.assertTrue(context["find_reached"])
 
-    def test_rebase_find_no_hit(self) -> None:
-        m = Manticore(self.BIN_PATH, argv=[self.LIB_PATH, str(0xB00B)])
-        with m.locked_context() as context:
-            context["find_reached"] = False
-
-        mgr = FakeHookManager(self.LIB_PATH, find_hooks={self.FOO_1})
-        m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
-        m.run()
-
-        with m.locked_context() as context:
-            self.assertFalse(context["find_reached"])
-
     def test_rebase_avoid(self) -> None:
         m = Manticore(self.BIN_PATH, argv=[self.LIB_PATH, str(0)])
         with m.locked_context() as context:
