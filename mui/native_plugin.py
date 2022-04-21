@@ -50,6 +50,7 @@ class RebaseHooksPlugin(Plugin):
 
                 # Hack: make m.subscribe != None to prevent error in mcore
                 # We don't need subscribe, we just want our hooks to be in m._hooks
+                subscribe = m.subscribe
                 m.subscribe = lambda x, y: None
 
                 for hook_addr in self.avoid:
@@ -62,7 +63,7 @@ class RebaseHooksPlugin(Plugin):
                     exec(func, {"addr": hook_addr + self.base, "bv": None, "m": m})
 
                 # Undo our hack to maintain original manticore behaviour
-                m.subscribe = None
+                m.subscribe = subscribe
 
 
 class UnicornEmulatePlugin(Plugin):
