@@ -102,7 +102,9 @@ class RebaseHooksTest(unittest.TestCase):
 
         m.hook(self.YES)(self.find_f)
 
-        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, custom_hooks={self.FOO: custom_code}))
+        mgr = cast(
+            NativeHookManager, FakeHookManager(self.LIB_PATH, custom_hooks={self.FOO: custom_code})
+        )
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
@@ -126,7 +128,10 @@ class RebaseHooksTest(unittest.TestCase):
             ]
         )
 
-        mgr = cast(NativeHookManager, FakeHookManager(self.LIB_PATH, global_hooks={"ins_count": custom_code}))
+        mgr = cast(
+            NativeHookManager,
+            FakeHookManager(self.LIB_PATH, global_hooks={"ins_count": custom_code}),
+        )
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()
 
