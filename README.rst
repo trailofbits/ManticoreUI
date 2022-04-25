@@ -50,8 +50,15 @@ Development
 Installing currently listed dependencies::
 
     $ make init
-    # For Mac (will be similar for Linux)
-    $ export PYTHONPATH="/Applications/Binary Ninja.app/Contents/Resources/python:/Applications/Binary Ninja.app/Contents/Resources/python3"
+
+    # Linux generic:
+    $ export "PYTHONPATH=${BN_INSTALL_DIR}/python:${BN_INSTALL_DIR}/python3"
+
+    # Linux common (if BN_INSTALL_DIR="/home/$(whoami)/.local/opt/binaryninja"):
+    $ export "PYTHONPATH=/home/$(whoami)/.local/opt/binaryninja/python:/home/$(whoami)/.local/opt/binaryninja/python3"
+
+    # For Mac
+    $ export "PYTHONPATH=/Applications/Binary Ninja.app/Contents/Resources/python:/Applications/Binary Ninja.app/Contents/Resources/python3"
 
 Activating the python virtual environment (do this before running other make commands)::
 
