@@ -33,6 +33,7 @@ import io.grpc.ManagedChannelBuilder;
 import muicore.ManticoreUIGrpc;
 import muicore.ManticoreUIGrpc.ManticoreUIBlockingStub;
 import muicore.ManticoreUIGrpc.ManticoreUIStub;
+import muicore.MUICore.StopServerRequest;
 
 // @formatter:off
 @PluginInfo(
@@ -139,7 +140,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 						@Override
 						public void run() {
-							p.destroy();
+							blockingMUICoreStub.stopServer(StopServerRequest.newBuilder().build());
 						}
 
 					}));

@@ -232,6 +232,37 @@ public final class ManticoreUIGrpc {
     return getTargetAddressNativeMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.StopServerRequest,
+      muicore.MUICore.StopServerResponse> getStopServerMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StopServer",
+      requestType = muicore.MUICore.StopServerRequest.class,
+      responseType = muicore.MUICore.StopServerResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<muicore.MUICore.StopServerRequest,
+      muicore.MUICore.StopServerResponse> getStopServerMethod() {
+    io.grpc.MethodDescriptor<muicore.MUICore.StopServerRequest, muicore.MUICore.StopServerResponse> getStopServerMethod;
+    if ((getStopServerMethod = ManticoreUIGrpc.getStopServerMethod) == null) {
+      synchronized (ManticoreUIGrpc.class) {
+        if ((getStopServerMethod = ManticoreUIGrpc.getStopServerMethod) == null) {
+          ManticoreUIGrpc.getStopServerMethod = getStopServerMethod =
+              io.grpc.MethodDescriptor.<muicore.MUICore.StopServerRequest, muicore.MUICore.StopServerResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StopServer"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.StopServerRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.StopServerResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("StopServer"))
+              .build();
+        }
+      }
+    }
+    return getStopServerMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -329,6 +360,13 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getTargetAddressNativeMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void stopServer(muicore.MUICore.StopServerRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.StopServerResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStopServerMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -380,6 +418,13 @@ public final class ManticoreUIGrpc {
                 muicore.MUICore.AddressRequest,
                 muicore.MUICore.TargetResponse>(
                   this, METHODID_TARGET_ADDRESS_NATIVE)))
+          .addMethod(
+            getStopServerMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                muicore.MUICore.StopServerRequest,
+                muicore.MUICore.StopServerResponse>(
+                  this, METHODID_STOP_SERVER)))
           .build();
     }
   }
@@ -453,6 +498,14 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getTargetAddressNativeMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void stopServer(muicore.MUICore.StopServerRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.StopServerResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getStopServerMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -516,6 +569,13 @@ public final class ManticoreUIGrpc {
     public muicore.MUICore.TargetResponse targetAddressNative(muicore.MUICore.AddressRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getTargetAddressNativeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public muicore.MUICore.StopServerResponse stopServer(muicore.MUICore.StopServerRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getStopServerMethod(), getCallOptions(), request);
     }
   }
 
@@ -588,6 +648,14 @@ public final class ManticoreUIGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getTargetAddressNativeMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.StopServerResponse> stopServer(
+        muicore.MUICore.StopServerRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getStopServerMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_START_NATIVE = 0;
@@ -597,6 +665,7 @@ public final class ManticoreUIGrpc {
   private static final int METHODID_GET_MESSAGE_LIST = 4;
   private static final int METHODID_CHECK_MANTICORE_RUNNING = 5;
   private static final int METHODID_TARGET_ADDRESS_NATIVE = 6;
+  private static final int METHODID_STOP_SERVER = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -642,6 +711,10 @@ public final class ManticoreUIGrpc {
         case METHODID_TARGET_ADDRESS_NATIVE:
           serviceImpl.targetAddressNative((muicore.MUICore.AddressRequest) request,
               (io.grpc.stub.StreamObserver<muicore.MUICore.TargetResponse>) responseObserver);
+          break;
+        case METHODID_STOP_SERVER:
+          serviceImpl.stopServer((muicore.MUICore.StopServerRequest) request,
+              (io.grpc.stub.StreamObserver<muicore.MUICore.StopServerResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -711,6 +784,7 @@ public final class ManticoreUIGrpc {
               .addMethod(getGetMessageListMethod())
               .addMethod(getCheckManticoreRunningMethod())
               .addMethod(getTargetAddressNativeMethod())
+              .addMethod(getStopServerMethod())
               .build();
         }
       }
