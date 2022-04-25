@@ -19,9 +19,6 @@ class RebaseHooksPlugin(Plugin):
         self.custom_hooks = [(addr, func) for addr, func in mgr.list_custom_hooks().items()]
         self.global_hooks = list(mgr.list_global_hooks().values())
 
-        # Close binary view, don't use after this
-        mgr.bv.file.close()
-
     def on_register(self):
         """Called by parent manticore on registration (enable global hooks)"""
         m = self.manticore
