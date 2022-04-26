@@ -16,6 +16,8 @@ from binaryninja import (
 from manticore.core.plugin import StateDescriptor
 from manticore.native import models
 
+from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
+
 
 class MUIState:
     def __init__(self, bv: BinaryView):
@@ -176,3 +178,32 @@ def function_model_analysis_cb(bv: BinaryView) -> None:
         banner += "-> Use 'Add Function Model' to hook these functions"
 
         print(banner)
+
+
+def create_client_stub() -> ManticoreUIStub:
+    return ManticoreUIStub(
+        grpc.insecure_channel(
+            "localhost:50010",
+            options=[
+                (
+                    "grpc.service_config",
+                    json.dumps(
+                        {
+                            "methodConfig": [
+                                {
+                                    "name": [{"service": "muicore.ManticoreUI"}],
+                                    "retryPolicy": {
+                                        "maxAttempts": 5,
+                                        "initialBackoff": "1s",
+                                        "maxBackoff": "10s",
+                                        "backoffMultiplier": 2,
+                                        "retryableStatusCodes": ["UNAVAILABLE"],
+                                    },
+                                }
+                            ]
+                        }
+                    ),
+                )
+            ],
+        )
+    )

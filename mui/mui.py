@@ -43,7 +43,12 @@ from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
 from mui.settings import MUISettings
-from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
+from mui.utils import (
+    highlight_instr,
+    clear_highlight,
+    function_model_analysis_cb,
+    create_client_stub,
+)
 
 from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
 from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
@@ -155,33 +160,7 @@ def solve(bv: BinaryView):
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
             if bv.session_data.mui_client_stub == None:
-                client_stub = ManticoreUIStub(
-                    grpc.insecure_channel(
-                        "localhost:50010",
-                        options=[
-                            (
-                                "grpc.service_config",
-                                json.dumps(
-                                    {
-                                        "methodConfig": [
-                                            {
-                                                "name": [{"service": "muicore.ManticoreUI"}],
-                                                "retryPolicy": {
-                                                    "maxAttempts": 5,
-                                                    "initialBackoff": "1s",
-                                                    "maxBackoff": "10s",
-                                                    "backoffMultiplier": 2,
-                                                    "retryableStatusCodes": ["UNAVAILABLE"],
-                                                },
-                                            }
-                                        ]
-                                    }
-                                ),
-                            )
-                        ],
-                    )
-                )
-                bv.session_data.mui_client_stub = client_stub
+                bv.session_data.mui_client_stub = create_client_stub()
             mcore_instance = bv.session_data.mui_client_stub.StartEVM(
                 EVMArguments(contract_path=bv.file.original_filename)
             )
@@ -200,33 +179,7 @@ def solve(bv: BinaryView):
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
             if bv.session_data.mui_client_stub == None:
-                client_stub = ManticoreUIStub(
-                    grpc.insecure_channel(
-                        "localhost:50010",
-                        options=[
-                            (
-                                "grpc.service_config",
-                                json.dumps(
-                                    {
-                                        "methodConfig": [
-                                            {
-                                                "name": [{"service": "muicore.ManticoreUI"}],
-                                                "retryPolicy": {
-                                                    "maxAttempts": 5,
-                                                    "initialBackoff": "1s",
-                                                    "maxBackoff": "10s",
-                                                    "backoffMultiplier": 2,
-                                                    "retryableStatusCodes": ["UNAVAILABLE"],
-                                                },
-                                            }
-                                        ]
-                                    }
-                                ),
-                            )
-                        ],
-                    )
-                )
-                bv.session_data.mui_client_stub = client_stub
+                bv.session_data.mui_client_stub = create_client_stub()
             mcore_instance = bv.session_data.mui_client_stub.StartNative(
                 NativeArguments(program_path=bv.file.original_filename)
             )
