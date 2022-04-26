@@ -107,6 +107,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "generateReport": (
+                {
+                    "title": "Generate Report",
+                    "description": "Generate summary report at end of solve",
+                    "type": "boolean",
+                    "default": True,
+                },
+                {},
+            ),
         },
         BINJA_HOOK_SETTINGS_PREFIX: {
             "avoid": (

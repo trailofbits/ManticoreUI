@@ -1,3 +1,4 @@
+from pathlib import Path
 import tempfile
 from time import sleep
 from typing import Callable, Set, Optional
@@ -10,9 +11,13 @@ from binaryninja import (
     Endianness,
     Architecture,
     open_view,
+    ReportCollection,
+    PlainTextReport,
+    show_report_collection,
 )
 from manticore.core.state import StateBase
 from manticore.native import Manticore
+from manticore.utils.helpers import PickleSerializer
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
@@ -165,6 +170,15 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished")
                 else:
                     print_timestamp("Manticore finished without reaching find")
+
+            generate_report = settings.get_bool(
+                f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}generateReport", bv
+            )
+            if generate_report:
+                print("Preparing summary report ...")
+                m.finalize()
+                self.show_results(m)
+
         finally:
             bv.session_data.mui_is_running = False
 
@@ -204,3 +218,73 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             lib_mgr = NativeHookManager(lib_bv)
             lib_mgr.load_existing_hooks()
             m.register_plugin(RebaseHooksPlugin(lib_mgr, find_f, avoid_f))
+
+    def show_results(self, m: Manticore) -> None:
+        bv = self.view
+        store = m._output.store
+        keys = set(store.ls("*"))
+        has_key = lambda key: key in keys
+
+        # Show raw results
+        collection = ReportCollection()
+        for key in sorted(store.ls("*")):
+            if key.endswith(".pkl"):
+                continue
+            collection.append(PlainTextReport(key, store.load_value(key)))
+        show_report_collection("results", collection)
+
+        # Summary report
+        summary = ""
+        name = Path(bv.file.filename).name
+        summary += f"# MUI Summary Report: {name}\n\n\n"
+
+        if has_key("command.sh"):
+            s = store.load_value("command.sh")
+            summary += f"## Command-line arguments (command.sh)\n"
+            summary += f"```\n{s}\n```\n"
+
+        if has_key("manticore.yml"):
+            s = store.load_value("manticore.yml")
+            summary += f"## Manticore config (manticore.yml)\n"
+            summary += f"```\n{s}\n```\n"
+
+        if has_key("global.solver_stats"):
+            s = store.load_value("global.solver_stats")
+            summary += f"## Solver Statistics (global.solver_stats)\n"
+            summary += f"```\n{s}\n```\n"
+
+        n_testcase = 0
+        if has_key(".testcase_id"):
+            s = store.load_value(".testcase_id")
+            n_testcase = int(s) + 1
+            summary += f"## Number of testcases\n"
+            summary += f"```\n{s}\n```\n"
+
+        summary += f"# Testcases:\n\n\n"
+        for i in range(n_testcase):
+            prefix = f"test_{i:08x}."
+            prefix_keys = filter(lambda x: x.startswith(prefix), keys)
+            exclude = {"smt", "syscalls", "pkl", "messages"}
+
+            with m._output.store.load_stream(prefix + "pkl", binary=True) as f:
+                state = PickleSerializer().deserialize(f)
+            pc = state.cpu.PC
+            vma_start = bv.start + self.addr_off
+            vma_end = bv.start + bv.length + self.addr_off
+
+            summary += f"### Testcase {i:08x} {'='*30}\n"
+            # HYperlink to BV if within address space
+            if pc >= vma_start and pc < vma_end:
+                summary += f"PC: [{pc:08x}](binaryninja://?expr={pc-self.addr_off:x})\n\n"
+            else:
+                summary += f"PC: {pc:08x}\n\n"
+
+            for key in prefix_keys:
+                suffix = key.split(".")[-1]
+                if suffix in exclude:
+                    continue
+                s = store.load_value(key)
+                summary += f"{suffix}\n"
+                summary += f"```\n{s}\n```\n"
+
+        bv.show_markdown_report("summary", summary)
