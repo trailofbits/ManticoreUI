@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import mui.server_utils.MUICore_pb2 as MUICore__pb2
+from muicore import MUICore_pb2 as muicore_dot_MUICore__pb2
 
 
 class ManticoreUIStub(object):
@@ -16,38 +16,43 @@ class ManticoreUIStub(object):
         """
         self.StartNative = channel.unary_unary(
                 '/muicore.ManticoreUI/StartNative',
-                request_serializer=MUICore__pb2.NativeArguments.SerializeToString,
-                response_deserializer=MUICore__pb2.ManticoreInstance.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.NativeArguments.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
                 )
         self.StartEVM = channel.unary_unary(
                 '/muicore.ManticoreUI/StartEVM',
-                request_serializer=MUICore__pb2.EVMArguments.SerializeToString,
-                response_deserializer=MUICore__pb2.ManticoreInstance.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.EVMArguments.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
                 )
         self.Terminate = channel.unary_unary(
                 '/muicore.ManticoreUI/Terminate',
-                request_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
-                response_deserializer=MUICore__pb2.TerminateResponse.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.TerminateResponse.FromString,
                 )
         self.GetStateList = channel.unary_unary(
                 '/muicore.ManticoreUI/GetStateList',
-                request_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
-                response_deserializer=MUICore__pb2.MUIStateList.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.MUIStateList.FromString,
                 )
         self.GetMessageList = channel.unary_unary(
                 '/muicore.ManticoreUI/GetMessageList',
-                request_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
-                response_deserializer=MUICore__pb2.MUIMessageList.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.MUIMessageList.FromString,
                 )
         self.CheckManticoreRunning = channel.unary_unary(
                 '/muicore.ManticoreUI/CheckManticoreRunning',
-                request_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
-                response_deserializer=MUICore__pb2.ManticoreRunningStatus.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.ManticoreRunningStatus.FromString,
                 )
         self.TargetAddressNative = channel.unary_unary(
                 '/muicore.ManticoreUI/TargetAddressNative',
-                request_serializer=MUICore__pb2.AddressRequest.SerializeToString,
-                response_deserializer=MUICore__pb2.TargetResponse.FromString,
+                request_serializer=muicore_dot_MUICore__pb2.AddressRequest.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.TargetResponse.FromString,
+                )
+        self.StopServer = channel.unary_unary(
+                '/muicore.ManticoreUI/StopServer',
+                request_serializer=muicore_dot_MUICore__pb2.StopServerRequest.SerializeToString,
+                response_deserializer=muicore_dot_MUICore__pb2.StopServerResponse.FromString,
                 )
 
 
@@ -96,43 +101,54 @@ class ManticoreUIServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def StopServer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ManticoreUIServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'StartNative': grpc.unary_unary_rpc_method_handler(
                     servicer.StartNative,
-                    request_deserializer=MUICore__pb2.NativeArguments.FromString,
-                    response_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.NativeArguments.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
             ),
             'StartEVM': grpc.unary_unary_rpc_method_handler(
                     servicer.StartEVM,
-                    request_deserializer=MUICore__pb2.EVMArguments.FromString,
-                    response_serializer=MUICore__pb2.ManticoreInstance.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.EVMArguments.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
             ),
             'Terminate': grpc.unary_unary_rpc_method_handler(
                     servicer.Terminate,
-                    request_deserializer=MUICore__pb2.ManticoreInstance.FromString,
-                    response_serializer=MUICore__pb2.TerminateResponse.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.TerminateResponse.SerializeToString,
             ),
             'GetStateList': grpc.unary_unary_rpc_method_handler(
                     servicer.GetStateList,
-                    request_deserializer=MUICore__pb2.ManticoreInstance.FromString,
-                    response_serializer=MUICore__pb2.MUIStateList.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.MUIStateList.SerializeToString,
             ),
             'GetMessageList': grpc.unary_unary_rpc_method_handler(
                     servicer.GetMessageList,
-                    request_deserializer=MUICore__pb2.ManticoreInstance.FromString,
-                    response_serializer=MUICore__pb2.MUIMessageList.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.MUIMessageList.SerializeToString,
             ),
             'CheckManticoreRunning': grpc.unary_unary_rpc_method_handler(
                     servicer.CheckManticoreRunning,
-                    request_deserializer=MUICore__pb2.ManticoreInstance.FromString,
-                    response_serializer=MUICore__pb2.ManticoreRunningStatus.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.ManticoreRunningStatus.SerializeToString,
             ),
             'TargetAddressNative': grpc.unary_unary_rpc_method_handler(
                     servicer.TargetAddressNative,
-                    request_deserializer=MUICore__pb2.AddressRequest.FromString,
-                    response_serializer=MUICore__pb2.TargetResponse.SerializeToString,
+                    request_deserializer=muicore_dot_MUICore__pb2.AddressRequest.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.TargetResponse.SerializeToString,
+            ),
+            'StopServer': grpc.unary_unary_rpc_method_handler(
+                    servicer.StopServer,
+                    request_deserializer=muicore_dot_MUICore__pb2.StopServerRequest.FromString,
+                    response_serializer=muicore_dot_MUICore__pb2.StopServerResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -156,8 +172,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/StartNative',
-            MUICore__pb2.NativeArguments.SerializeToString,
-            MUICore__pb2.ManticoreInstance.FromString,
+            muicore_dot_MUICore__pb2.NativeArguments.SerializeToString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -173,8 +189,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/StartEVM',
-            MUICore__pb2.EVMArguments.SerializeToString,
-            MUICore__pb2.ManticoreInstance.FromString,
+            muicore_dot_MUICore__pb2.EVMArguments.SerializeToString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -190,8 +206,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/Terminate',
-            MUICore__pb2.ManticoreInstance.SerializeToString,
-            MUICore__pb2.TerminateResponse.FromString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+            muicore_dot_MUICore__pb2.TerminateResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -207,8 +223,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/GetStateList',
-            MUICore__pb2.ManticoreInstance.SerializeToString,
-            MUICore__pb2.MUIStateList.FromString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+            muicore_dot_MUICore__pb2.MUIStateList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -224,8 +240,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/GetMessageList',
-            MUICore__pb2.ManticoreInstance.SerializeToString,
-            MUICore__pb2.MUIMessageList.FromString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+            muicore_dot_MUICore__pb2.MUIMessageList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -241,8 +257,8 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/CheckManticoreRunning',
-            MUICore__pb2.ManticoreInstance.SerializeToString,
-            MUICore__pb2.ManticoreRunningStatus.FromString,
+            muicore_dot_MUICore__pb2.ManticoreInstance.SerializeToString,
+            muicore_dot_MUICore__pb2.ManticoreRunningStatus.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -258,7 +274,24 @@ class ManticoreUI(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/TargetAddressNative',
-            MUICore__pb2.AddressRequest.SerializeToString,
-            MUICore__pb2.TargetResponse.FromString,
+            muicore_dot_MUICore__pb2.AddressRequest.SerializeToString,
+            muicore_dot_MUICore__pb2.TargetResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def StopServer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/muicore.ManticoreUI/StopServer',
+            muicore_dot_MUICore__pb2.StopServerRequest.SerializeToString,
+            muicore_dot_MUICore__pb2.StopServerResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
