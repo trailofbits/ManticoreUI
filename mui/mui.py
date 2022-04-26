@@ -2,7 +2,6 @@ import os
 import random
 import string
 import tempfile
-import time
 import subprocess
 import json
 from pathlib import Path
