@@ -4,3 +4,4 @@ crytic-compile>=0.2.0
 capstone @ git+https://github.com/aquynh/capstone.git@1766485c0c32419e9a17d6ad31f9e218ef4f018f#subdirectory=bindings/python
 pyelftools
 unicorn==1.0.2
+grpcio-tools

@@ -2,6 +2,8 @@ import os
 import random
 import string
 import tempfile
+import subprocess
+import json
 from pathlib import Path
 
 from PySide6.QtCore import Qt
@@ -38,7 +40,15 @@ from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
 from mui.settings import MUISettings
-from mui.utils import highlight_instr, clear_highlight, function_model_analysis_cb
+from mui.utils import (
+    highlight_instr,
+    clear_highlight,
+    function_model_analysis_cb,
+    create_client_stub,
+)
+
+from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
+from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
 
 settings = Settings()
 
@@ -50,6 +60,8 @@ BinaryView.set_default_session_data("mui_is_running", False)
 BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
+BinaryView.set_default_session_data("mui_client_stub", None)
+BinaryView.set_default_session_data("server_manticore_instances", set())
 
 
 def find_instr(bv: BinaryView, addr: int):
@@ -140,31 +152,37 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
+            if notif.mui_grpc_server_process == None:
+                notif.mui_grpc_server_process = subprocess.Popen(
+                    [Path(__file__).resolve().parent.parent / "muicore_server"]
+                )
+            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+                notif.mui_client_stub = create_client_stub()
+            mcore_instance = notif.mui_client_stub.StartEVM(
+                EVMArguments(contract_path=bv.file.original_filename)
+            )
+            bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
+            print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
-            s = ManticoreEVMRunner(bv.session_data.mui_evm_source, bv)
-            s.start()
 
     else:
-        if len(bv.session_data.mui_find) == 0 and len(bv.session_data.mui_custom_hooks.keys()) == 0:
-            show_message_box(
-                "Manticore Solve",
-                "You have not specified a goal instruction or custom hook.\n\n"
-                + 'Please right click on the goal instruction and select "Find Path to This Instruction" to '
-                + "continue.",
-                MessageBoxButtonSet.OKButtonSet,
-                MessageBoxIcon.ErrorIcon,
-            )
-            return
-
         dialog = RunDialog(
             DockHandler.getActiveDockHandler().parent(), bv, BINJA_NATIVE_RUN_SETTINGS_PREFIX
         )
 
         if dialog.exec() == QDialog.Accepted:
-            # Start a solver thread for the path associated with the view
+            if notif.mui_grpc_server_process == None:
+                notif.mui_grpc_server_process = subprocess.Popen(
+                    [Path(__file__).resolve().parent.parent / "muicore_server"]
+                )
+            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+                notif.mui_client_stub = create_client_stub()
+            mcore_instance = notif.mui_client_stub.StartNative(
+                NativeArguments(program_path=bv.file.original_filename)
+            )
+            bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
+            print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
-            s = ManticoreNativeRunner(bv.session_data.mui_find, bv.session_data.mui_avoid, bv)
-            s.start()
 
 
 def edit_custom_hook(bv: BinaryView, addr: int):
@@ -260,6 +278,15 @@ def load_evm(bv: BinaryView):
 
 def stop_manticore(bv: BinaryView):
     """Stops the current running manticore instance"""
+    if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+        notif.mui_client_stub = create_client_stub()
+    res = notif.mui_client_stub.Terminate(
+        ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
+    )
+    if res.success:
+        print("Manticore stopped by user.")
+    else:
+        print("Manticore failed to terminate.")
     bv.session_data.mui_is_running = False
 
 
