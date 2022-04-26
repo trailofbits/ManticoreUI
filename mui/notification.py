@@ -1,12 +1,21 @@
 import json
+from subprocess import Popen
+import os
+
+from typing import Optional
 
 from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
 from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
 
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
-from mui.utils import highlight_instr
+from mui.utils import highlight_instr, create_client_stub
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
+
+from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
+from mui.server_utils.MUICore_pb2 import StopServerRequest
+
+from future.utils import native
 
 
 class UINotification(UIContextNotification):
@@ -17,9 +26,17 @@ class UINotification(UIContextNotification):
     def __init__(self):
         UIContextNotification.__init__(self)
         UIContext.registerNotification(self)
+        self.mui_grpc_server_process: Optional[Popen] = None
+        self.mui_client_stub: Optional[ManticoreUIStub] = None
 
     def __del__(self):
         UIContext.unregisterNotification(self)
+
+    def OnContextClose(self, context: UIContext) -> None:
+        if isinstance(self.mui_grpc_server_process, Popen):
+            if not isinstance(self.mui_client_stub, ManticoreUIStub):
+                self.mui_client_stub = create_client_stub
+            self.mui_client_stub.StopServer(StopServerRequest())
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
         """Restore existing settings right after file open"""
