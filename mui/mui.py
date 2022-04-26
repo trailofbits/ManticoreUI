@@ -157,9 +157,9 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen(
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
-            if bv.session_data.mui_client_stub == None:
-                bv.session_data.mui_client_stub = create_client_stub()
-            mcore_instance = bv.session_data.mui_client_stub.StartEVM(
+            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+                notif.mui_client_stub = create_client_stub()
+            mcore_instance = notif.mui_client_stub.StartEVM(
                 EVMArguments(contract_path=bv.file.original_filename)
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
@@ -176,9 +176,9 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen(
                     [Path(__file__).resolve().parent.parent / "muicore_server"]
                 )
-            if bv.session_data.mui_client_stub == None:
-                bv.session_data.mui_client_stub = create_client_stub()
-            mcore_instance = bv.session_data.mui_client_stub.StartNative(
+            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+                notif.mui_client_stub = create_client_stub()
+            mcore_instance = notif.mui_client_stub.StartNative(
                 NativeArguments(program_path=bv.file.original_filename)
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
@@ -279,7 +279,9 @@ def load_evm(bv: BinaryView):
 
 def stop_manticore(bv: BinaryView):
     """Stops the current running manticore instance"""
-    res = bv.session_data.mui_client_stub.Terminate(
+    if not isinstance(notif.mui_client_stub, ManticoreUIStub):
+        notif.mui_client_stub = create_client_stub()
+    res = notif.mui_client_stub.Terminate(
         ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
     )
     if res.success:
