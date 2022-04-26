@@ -7,8 +7,6 @@ import subprocess
 import json
 from pathlib import Path
 
-import grpc
-
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog
 from binaryninja import (
