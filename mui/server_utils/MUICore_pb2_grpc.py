@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from muicore import MUICore_pb2 as muicore_dot_MUICore__pb2
+import mui.server_utils.MUICore_pb2 as muicore_dot_MUICore__pb2
 
 
 class ManticoreUIStub(object):
