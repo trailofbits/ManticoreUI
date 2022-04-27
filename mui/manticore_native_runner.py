@@ -214,10 +214,10 @@ class ManticoreNativeRunner(BackgroundTaskThread):
         """Load hooks from shared libraries and rebase hooks"""
         for lib_name in self.view.session_data.mui_libs:
             print(f"Loading hooks from external library: {lib_name}")
-            lib_bv = open_view(lib_name, options={"ui.log.minLevel": "ErrorLog"})
-            lib_mgr = NativeHookManager(lib_bv)
-            lib_mgr.load_existing_hooks()
-            m.register_plugin(RebaseHooksPlugin(lib_mgr, find_f, avoid_f))
+            with open_view(lib_name, options={"ui.log.minLevel": "ErrorLog"}) as lib_bv:
+                lib_mgr = NativeHookManager(lib_bv)
+                lib_mgr.load_existing_hooks()
+                m.register_plugin(RebaseHooksPlugin(lib_mgr, find_f, avoid_f))
 
     def show_results(self, m: Manticore) -> None:
         bv = self.view

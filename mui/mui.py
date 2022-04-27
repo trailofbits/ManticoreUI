@@ -17,6 +17,7 @@ from binaryninja import (
     Architecture,
     SettingsScope,
     BinaryViewType,
+    core_ui_enabled,
 )
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
@@ -310,17 +311,18 @@ PluginCommand.register(
     manage_shared_libs,
 )
 
-widget.register_dockwidget(
-    StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
-)
+if core_ui_enabled():
+    widget.register_dockwidget(
+        StateListWidget, StateListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
+    )
 
-widget.register_dockwidget(
-    HookListWidget, HookListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
-)
+    widget.register_dockwidget(
+        HookListWidget, HookListWidget.NAME, Qt.RightDockWidgetArea, Qt.Vertical, True
+    )
 
-widget.register_dockwidget(
-    StateGraphWidget, StateGraphWidget.NAME, Qt.TopDockWidgetArea, Qt.Vertical, True
-)
+    widget.register_dockwidget(
+        StateGraphWidget, StateGraphWidget.NAME, Qt.TopDockWidgetArea, Qt.Vertical, True
+    )
 
 # Register MUI settings
 MUISettings.register()
