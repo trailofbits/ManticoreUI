@@ -25,7 +25,6 @@ warn_unused_configs = true
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-warn_unreachable = true
 exclude = [
 	"^mui/server_utils/MUICore_pb2_grpc.py",
 ]
