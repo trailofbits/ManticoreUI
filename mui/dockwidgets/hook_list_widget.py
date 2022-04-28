@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Final, Tuple
+from typing import Dict, Final, Tuple, Optional
 
 from PySide6.QtCore import Qt, Slot, QEvent
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
@@ -31,6 +31,7 @@ class HookListWidget(QWidget, DockContextHandler):
         DockContextHandler.__init__(self, self, name)
 
         self.bv = data
+        self.mgr = None
 
         tree_widget = QTreeWidget()
         self.tree_widget = tree_widget
@@ -83,20 +84,18 @@ class HookListWidget(QWidget, DockContextHandler):
 
             if menu.exec(event.globalPos()):
                 parent = item.parent()
-                parent.removeChild(item)
+                if not self.mgr:
+                    return True
 
                 bv = self.bv
                 if parent == self.find_hooks:
-                    clear_highlight(bv, addr)
-                    bv.session_data.mui_find.remove(addr)
+                    self.mgr.del_find_hook(addr)
                 elif parent == self.avoid_hooks:
-                    clear_highlight(bv, addr)
-                    bv.session_data.mui_avoid.remove(addr)
+                    self.mgr.del_avoid_hook(addr)
                 elif parent == self.custom_hooks:
-                    clear_highlight(bv, addr)
-                    del bv.session_data.mui_custom_hooks[addr]
+                    self.mgr.del_custom_hook(addr)
                 elif parent == self.global_hooks:
-                    del bv.session_data.mui_global_hooks[name]
+                    self.mgr.del_global_hook(name)
                 else:
                     raise Exception("Deleting hook with invalid parent")
 
@@ -112,8 +111,12 @@ class HookListWidget(QWidget, DockContextHandler):
         if addr:
             self.bv.navigate(self.bv.view, addr)
 
-    def add_hook(self, hook_type: HookType, addr: int, name=""):
+    def add_hook(self, hook_type: HookType, addr: int, name="") -> None:
         """Add a hook to its corresponding hook list"""
+        # Prevent repeated entries
+        if (hook_type, addr, name) in self.hook_items:
+            return
+
         parent = None
         if hook_type == HookType.FIND:
             parent = self.find_hooks
@@ -134,21 +137,11 @@ class HookListWidget(QWidget, DockContextHandler):
         item.setData(self.HOOK_NAME_COLUMN, self.HOOK_ROLE, name)
         self.hook_items[(hook_type, addr, name)] = item
 
-    def remove_hook(self, hook_type: HookType, addr: int, name=""):
+    def remove_hook(self, hook_type: HookType, addr: int, name="") -> None:
         """Remove a hook from its corresponding hook list"""
         item = self.hook_items[(hook_type, addr, name)]
         item.parent().removeChild(item)
+        del self.hook_items[(hook_type, addr, name)]
 
-    def load_existing_hooks(self):
-        """Load existing hooks from session data"""
-        for addr in self.bv.session_data.mui_find:
-            self.add_hook(HookType.FIND, addr)
-
-        for addr in self.bv.session_data.mui_avoid:
-            self.add_hook(HookType.AVOID, addr)
-
-        for addr in self.bv.session_data.mui_custom_hooks.keys():
-            self.add_hook(HookType.CUSTOM, addr)
-
-        for name in self.bv.session_data.mui_global_hooks.keys():
-            self.add_hook(HookType.GLOBAL, 0, name)
+    def set_manager(self, mgr) -> None:
+        self.mgr = mgr
