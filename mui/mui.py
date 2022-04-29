@@ -122,9 +122,7 @@ def solve(bv: BinaryView):
 
         if dialog.exec() == QDialog.Accepted:
             if notif.mui_grpc_server_process == None:
-                notif.mui_grpc_server_process = subprocess.Popen(
-                    [Path(__file__).resolve().parent.parent / "muicore_server"]
-                )
+                notif.mui_grpc_server_process = subprocess.Popen("muicore")
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
             mcore_instance = notif.mui_client_stub.StartEVM(
@@ -141,9 +139,7 @@ def solve(bv: BinaryView):
 
         if dialog.exec() == QDialog.Accepted:
             if notif.mui_grpc_server_process == None:
-                notif.mui_grpc_server_process = subprocess.Popen(
-                    [Path(__file__).resolve().parent.parent / "muicore_server"]
-                )
+                notif.mui_grpc_server_process = subprocess.Popen("muicore")
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
             mcore_instance = notif.mui_client_stub.StartNative(
