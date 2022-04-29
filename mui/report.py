@@ -220,6 +220,7 @@ SUMMARY_TEMPLATE = """\
         <td style="padding-right: 10px;">{tc_avoid}</td>
     </tr>
 </table>
+<br>
 <hr>
 <h1>MUI Settings</h1>
 {mui_settings}
