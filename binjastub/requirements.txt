@@ -5,3 +5,4 @@ capstone @ git+https://github.com/aquynh/capstone.git@1766485c0c32419e9a17d6ad31
 pyelftools
 unicorn==1.0.2
 grpcio-tools
+muicore @ git+https://github.com/trailofbits/ManticoreUI-Ghidra.git@866de8c504391725cc0968b31b621a7e412b2cf8#subdirectory=MUICore
