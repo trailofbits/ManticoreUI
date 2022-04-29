@@ -47,8 +47,8 @@ from mui.utils import (
     create_client_stub,
 )
 
-from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
-from mui.server_utils.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
+from muicore.MUICore_pb2_grpc import ManticoreUIStub
+from muicore.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
 
 settings = Settings()
 
