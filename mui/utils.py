@@ -18,7 +18,7 @@ from binaryninja import (
 from manticore.core.plugin import StateDescriptor
 from manticore.native import models
 
-from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
+from muicore.MUICore_pb2_grpc import ManticoreUIStub
 
 
 class MUIState:
