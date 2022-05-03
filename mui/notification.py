@@ -13,8 +13,8 @@ from mui.utils import highlight_instr, create_client_stub
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
 
-from mui.server_utils.MUICore_pb2_grpc import ManticoreUIStub
-from mui.server_utils.MUICore_pb2 import StopServerRequest
+from muicore.MUICore_pb2_grpc import ManticoreUIStub
+from muicore.MUICore_pb2 import StopServerRequest
 
 from future.utils import native
 

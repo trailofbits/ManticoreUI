@@ -5,7 +5,6 @@ include = '\.pyi?$'
 extend-exclude = '''
 /(
   | manticore
-  | mui/server_utils
 )/
 '''
 
@@ -25,10 +24,3 @@ warn_unused_configs = true
 ignore_missing_imports = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-exclude = [
-	"^mui/server_utils/MUICore_pb2_grpc.py",
-]
-
-[[tool.mypy.overrides]]
-module = "mui.server_utils.*"
-follow_imports = "skip"
