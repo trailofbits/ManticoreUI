@@ -107,6 +107,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "additionalArguments": (
+                {
+                    "title": "Additional Arguments",
+                    "description": "CLI-style additional Manticore arguments",
+                    "type": "string",
+                    "default": "",
+                },
+                {},
+            ),
         },
         BINJA_HOOK_SETTINGS_PREFIX: {
             "avoid": (
@@ -344,6 +353,15 @@ class MUISettings:
                     "description": "Avoid exploring constant functions for human transactions",
                     "type": "boolean",
                     "default": False,
+                },
+                {},
+            ),
+            "additionalArguments": (
+                {
+                    "title": "Additional Arguments",
+                    "description": "CLI-style additional Manticore arguments",
+                    "type": "string",
+                    "default": "",
                 },
                 {},
             ),
