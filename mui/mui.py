@@ -143,7 +143,25 @@ def solve(bv: BinaryView):
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
             mcore_instance = notif.mui_client_stub.StartNative(
-                NativeArguments(program_path=bv.file.original_filename)
+                NativeArguments(
+                    program_path=bv.file.original_filename,
+                    binary_args=settings.get_string_list(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}argv", bv
+                    ).copy(),
+                    envp=settings.get_string_list(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}env", bv),
+                    symbolic_files=settings.get_string_list(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}symbolicFiles", bv
+                    ),
+                    concrete_start=settings.get_string(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}concreteStart", bv
+                    ),
+                    stdin_size=str(
+                        settings.get_integer(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}stdinSize", bv)
+                    ),
+                    additional_mcore_args=settings.get_string(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}additionalArguments", bv
+                    ),
+                )
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
