@@ -125,8 +125,43 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen("muicore")
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
+            detectors_string = ""
+            for bool_option in [
+                "txnocoverage",
+                "txnoether",
+                "txpreconstrain",
+                "no_testcases",
+                "only_alive_testcases",
+                "skip_reverts",
+                "explore_balance",
+                "verbose_trace",
+                "limit_loops",
+                "profile",
+                "avoid_constant",
+                "thorough_mode",
+                "exclude_all",
+            ]:
+                if settings.get_bool(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}{bool_option}", bv):
+                    detectors_string += f"--{bool_option} "
+
             mcore_instance = notif.mui_client_stub.StartEVM(
-                EVMArguments(contract_path=bv.file.original_filename)
+                EVMArguments(
+                    contract_path=bv.file.original_filename,
+                    contract_name=settings.get_string(
+                        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}contract_name", bv
+                    ),
+                    solc_bin=settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}solc_path", bv),
+                    tx_limit=str(
+                        settings.get_double(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txlimit", bv)
+                    ),
+                    tx_account=str(
+                        settings.get_double(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txaccount", bv)
+                    ),
+                    detectors_to_exclude=settings.get_string_list(
+                        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}detectors_to_exclude", bv
+                    ),
+                    additional_flags=detectors_string,
+                )
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)

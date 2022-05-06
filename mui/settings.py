@@ -356,15 +356,6 @@ class MUISettings:
                 },
                 {},
             ),
-            "additionalArguments": (
-                {
-                    "title": "Additional Arguments",
-                    "description": "CLI-style additional Manticore arguments",
-                    "type": "string",
-                    "default": "",
-                },
-                {},
-            ),
         },
     }
 
