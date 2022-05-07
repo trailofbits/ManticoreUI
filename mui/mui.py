@@ -97,24 +97,6 @@ def solve(bv: BinaryView):
         and bv.arch == Architecture["EVM"]
         and bv.session_data.mui_evm_source is not None
     ):
-        # set default workspace url
-
-        workspace_url = settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url", bv)
-        if workspace_url == "":
-
-            random_dir_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            workspace_url = str(
-                Path(
-                    bv.session_data.mui_evm_source.parent.resolve(),
-                    random_dir_name,
-                )
-            )
-            settings.set_string(
-                f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url",
-                workspace_url,
-                view=bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
 
         dialog = RunDialog(
             DockHandler.getActiveDockHandler().parent(), bv, BINJA_EVM_RUN_SETTINGS_PREFIX

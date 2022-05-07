@@ -60,7 +60,7 @@ class MUISettings:
             ),
             "emulateUntil": (
                 {
-                    "title": "Emulate until address (in hex)",
+                    "title": "Emulate until address (in hex) (unsupported)",
                     "description": "Emulate using unicorn until address is reached",
                     "type": "string",
                     "default": "",
@@ -69,7 +69,7 @@ class MUISettings:
             ),
             "workspaceURL": (
                 {
-                    "title": "Workspace URL",
+                    "title": "Workspace URL (unsupported)",
                     "description": "Workspace URL to use for manticore",
                     "type": "string",
                     "default": "mem:",
@@ -100,7 +100,7 @@ class MUISettings:
             ),
             "sharedLibraries": (
                 {
-                    "title": "Shared Libraries",
+                    "title": "Shared Libraries (unsupported)",
                     "description": "Shared library bndbs to extract mui hooks from",
                     "type": "string",
                     "default": "[]",
@@ -165,17 +165,6 @@ class MUISettings:
                 },
                 {
                     "is_file_path": True,
-                },
-            ),
-            "workspace_url": (
-                {
-                    "title": "workspace_url",
-                    "description": "Location for the manticore workspace",
-                    "type": "string",
-                    "default": "",
-                },
-                {
-                    "is_dir_path": True,
                 },
             ),
             "contract_name": (
