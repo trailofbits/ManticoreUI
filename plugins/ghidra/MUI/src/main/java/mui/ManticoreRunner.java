@@ -8,7 +8,6 @@ import muicore.MUICore.MUIStateList;
 import muicore.MUICore.ManticoreInstance;
 import muicore.MUICore.ManticoreRunningStatus;
 import muicore.MUICore.TerminateResponse;
-
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -19,6 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.tree.TreePath;
+
+import ghidra.util.Msg;
 
 /**
  * The class representing each instance of Manticore. Used to interact with MUI-Core server and correspondingly update UI elements.
@@ -76,6 +77,7 @@ public class ManticoreRunner {
 
 			@Override
 			public void onError(Throwable arg0) {
+				Msg.error(this, nativeArgs);
 			}
 
 			@Override
@@ -95,15 +97,15 @@ public class ManticoreRunner {
 	}
 
 	public void setIsRunning(boolean b) {
-		isRunning = true;
-	}
-
-	public void setHasStarted(boolean b) {
-		hasStarted = true;
+		isRunning = b;
 	}
 
 	public boolean getHasStarted() {
 		return hasStarted;
+	}
+
+	public void setHasStarted(boolean b) {
+		hasStarted = b;
 	}
 
 	/**
@@ -114,18 +116,24 @@ public class ManticoreRunner {
 		StreamObserver<TerminateResponse> terminateObserver =
 			new StreamObserver<TerminateResponse>() {
 
+				public boolean errored = false;
+
 				@Override
 				public void onCompleted() {
+					if (!errored) {
+						setIsRunning(false);
+						setWasTerminated(true);
+					}
 				}
 
 				@Override
 				public void onError(Throwable arg0) {
+					logText.append(arg0.getMessage() + System.lineSeparator());
+					errored = true;
 				}
 
 				@Override
 				public void onNext(TerminateResponse resp) {
-					wasTerminated = resp.getSuccess();
-					isRunning = !resp.getSuccess();
 				}
 
 			};
@@ -134,6 +142,10 @@ public class ManticoreRunner {
 
 	public boolean getWasTerminated() {
 		return wasTerminated;
+	}
+
+	public void setWasTerminated(boolean b) {
+		wasTerminated = b;
 	}
 
 	/**
@@ -152,6 +164,7 @@ public class ManticoreRunner {
 
 				@Override
 				public void onError(Throwable arg0) {
+					logText.append(arg0.getMessage() + System.lineSeparator());
 				}
 
 				@Override
@@ -196,6 +209,7 @@ public class ManticoreRunner {
 
 			@Override
 			public void onError(Throwable arg0) {
+				logText.append(arg0.getMessage() + System.lineSeparator());
 			}
 
 			@Override
@@ -206,7 +220,7 @@ public class ManticoreRunner {
 				erroredStates = muiStateList.getErroredStatesList();
 				completeStates = muiStateList.getCompleteStatesList();
 
-				if (MUIPlugin.stateList.runnerDisplayed == ManticoreRunner.this) { // tab could've change in between fetch and onNext
+				if (MUIPlugin.stateList.runnerDisplayed == ManticoreRunner.this) { // tab could've changed in between fetch and onNext
 					MUIPlugin.stateList.updateShownStates(ManticoreRunner.this);
 				}
 
@@ -251,6 +265,7 @@ public class ManticoreRunner {
 
 				@Override
 				public void onError(Throwable arg0) {
+					logText.append(arg0.getMessage() + System.lineSeparator());
 				}
 
 				@Override

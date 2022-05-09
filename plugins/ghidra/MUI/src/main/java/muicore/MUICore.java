@@ -4827,12 +4827,6 @@ public final class MUICore {
   public interface TerminateResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:muicore.TerminateResponse)
       com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bool success = 10;</code>
-     * @return The success.
-     */
-    boolean getSuccess();
   }
   /**
    * Protobuf type {@code muicore.TerminateResponse}
@@ -4879,11 +4873,6 @@ public final class MUICore {
             case 0:
               done = true;
               break;
-            case 80: {
-
-              success_ = input.readBool();
-              break;
-            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -4916,17 +4905,6 @@ public final class MUICore {
               muicore.MUICore.TerminateResponse.class, muicore.MUICore.TerminateResponse.Builder.class);
     }
 
-    public static final int SUCCESS_FIELD_NUMBER = 10;
-    private boolean success_;
-    /**
-     * <code>bool success = 10;</code>
-     * @return The success.
-     */
-    @java.lang.Override
-    public boolean getSuccess() {
-      return success_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4941,9 +4919,6 @@ public final class MUICore {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (success_ != false) {
-        output.writeBool(10, success_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -4953,10 +4928,6 @@ public final class MUICore {
       if (size != -1) return size;
 
       size = 0;
-      if (success_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(10, success_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4972,8 +4943,6 @@ public final class MUICore {
       }
       muicore.MUICore.TerminateResponse other = (muicore.MUICore.TerminateResponse) obj;
 
-      if (getSuccess()
-          != other.getSuccess()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4985,9 +4954,6 @@ public final class MUICore {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getSuccess());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5121,8 +5087,6 @@ public final class MUICore {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        success_ = false;
-
         return this;
       }
 
@@ -5149,7 +5113,6 @@ public final class MUICore {
       @java.lang.Override
       public muicore.MUICore.TerminateResponse buildPartial() {
         muicore.MUICore.TerminateResponse result = new muicore.MUICore.TerminateResponse(this);
-        result.success_ = success_;
         onBuilt();
         return result;
       }
@@ -5198,9 +5161,6 @@ public final class MUICore {
 
       public Builder mergeFrom(muicore.MUICore.TerminateResponse other) {
         if (other == muicore.MUICore.TerminateResponse.getDefaultInstance()) return this;
-        if (other.getSuccess() != false) {
-          setSuccess(other.getSuccess());
-        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -5227,37 +5187,6 @@ public final class MUICore {
             mergeFrom(parsedMessage);
           }
         }
-        return this;
-      }
-
-      private boolean success_ ;
-      /**
-       * <code>bool success = 10;</code>
-       * @return The success.
-       */
-      @java.lang.Override
-      public boolean getSuccess() {
-        return success_;
-      }
-      /**
-       * <code>bool success = 10;</code>
-       * @param value The success to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSuccess(boolean value) {
-        
-        success_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool success = 10;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSuccess() {
-        
-        success_ = false;
-        onChanged();
         return this;
       }
       @java.lang.Override
@@ -9239,12 +9168,6 @@ public final class MUICore {
   public interface TargetResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:muicore.TargetResponse)
       com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>bool success = 28;</code>
-     * @return The success.
-     */
-    boolean getSuccess();
   }
   /**
    * Protobuf type {@code muicore.TargetResponse}
@@ -9291,11 +9214,6 @@ public final class MUICore {
             case 0:
               done = true;
               break;
-            case 224: {
-
-              success_ = input.readBool();
-              break;
-            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -9328,17 +9246,6 @@ public final class MUICore {
               muicore.MUICore.TargetResponse.class, muicore.MUICore.TargetResponse.Builder.class);
     }
 
-    public static final int SUCCESS_FIELD_NUMBER = 28;
-    private boolean success_;
-    /**
-     * <code>bool success = 28;</code>
-     * @return The success.
-     */
-    @java.lang.Override
-    public boolean getSuccess() {
-      return success_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -9353,9 +9260,6 @@ public final class MUICore {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (success_ != false) {
-        output.writeBool(28, success_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -9365,10 +9269,6 @@ public final class MUICore {
       if (size != -1) return size;
 
       size = 0;
-      if (success_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(28, success_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -9384,8 +9284,6 @@ public final class MUICore {
       }
       muicore.MUICore.TargetResponse other = (muicore.MUICore.TargetResponse) obj;
 
-      if (getSuccess()
-          != other.getSuccess()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -9397,9 +9295,6 @@ public final class MUICore {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SUCCESS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getSuccess());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9533,8 +9428,6 @@ public final class MUICore {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        success_ = false;
-
         return this;
       }
 
@@ -9561,7 +9454,6 @@ public final class MUICore {
       @java.lang.Override
       public muicore.MUICore.TargetResponse buildPartial() {
         muicore.MUICore.TargetResponse result = new muicore.MUICore.TargetResponse(this);
-        result.success_ = success_;
         onBuilt();
         return result;
       }
@@ -9610,9 +9502,6 @@ public final class MUICore {
 
       public Builder mergeFrom(muicore.MUICore.TargetResponse other) {
         if (other == muicore.MUICore.TargetResponse.getDefaultInstance()) return this;
-        if (other.getSuccess() != false) {
-          setSuccess(other.getSuccess());
-        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -9639,37 +9528,6 @@ public final class MUICore {
             mergeFrom(parsedMessage);
           }
         }
-        return this;
-      }
-
-      private boolean success_ ;
-      /**
-       * <code>bool success = 28;</code>
-       * @return The success.
-       */
-      @java.lang.Override
-      public boolean getSuccess() {
-        return success_;
-      }
-      /**
-       * <code>bool success = 28;</code>
-       * @param value The success to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSuccess(boolean value) {
-        
-        success_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool success = 28;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearSuccess() {
-        
-        success_ = false;
-        onChanged();
         return this;
       }
       @java.lang.Override
@@ -11134,38 +10992,37 @@ public final class MUICore {
       "ore.MUIState\022)\n\016errored_states\030\007 \003(\0132\021.m" +
       "uicore.MUIState\022*\n\017complete_states\030\010 \003(\013" +
       "2\021.muicore.MUIState\"!\n\021ManticoreInstance" +
-      "\022\014\n\004uuid\030\t \001(\t\"$\n\021TerminateResponse\022\017\n\007s" +
-      "uccess\030\n \001(\010\"\255\001\n\017NativeArguments\022\024\n\014prog" +
-      "ram_path\030\013 \001(\t\022\023\n\013binary_args\030\020 \003(\t\022\014\n\004e" +
-      "nvp\030\021 \003(\t\022\026\n\016symbolic_files\030\022 \003(\t\022\026\n\016con" +
-      "crete_start\030\023 \001(\t\022\022\n\nstdin_size\030\024 \001(\t\022\035\n" +
-      "\025additional_mcore_args\030\025 \001(\t\"\254\001\n\014EVMArgu" +
-      "ments\022\025\n\rcontract_path\030\014 \001(\t\022\025\n\rcontract" +
-      "_name\030\r \001(\t\022\020\n\010solc_bin\030\016 \001(\t\022\020\n\010tx_limi" +
-      "t\030\026 \001(\t\022\022\n\ntx_account\030\027 \001(\t\022\034\n\024detectors" +
-      "_to_exclude\030\030 \003(\t\022\030\n\020additional_flags\030\031 " +
-      "\001(\t\"\201\001\n\016AddressRequest\022\017\n\007address\030\032 \001(\004\022" +
-      "0\n\004type\030\033 \001(\0162\".muicore.AddressRequest.T" +
-      "argetType\",\n\nTargetType\022\010\n\004FIND\020\000\022\t\n\005AVO" +
-      "ID\020\001\022\t\n\005CLEAR\020\002\"!\n\016TargetResponse\022\017\n\007suc" +
-      "cess\030\034 \001(\010\",\n\026ManticoreRunningStatus\022\022\n\n" +
-      "is_running\030\017 \001(\010\"\023\n\021StopServerRequest\"\024\n" +
-      "\022StopServerResponse2\326\004\n\013ManticoreUI\022E\n\013S" +
-      "tartNative\022\030.muicore.NativeArguments\032\032.m" +
-      "uicore.ManticoreInstance\"\000\022?\n\010StartEVM\022\025" +
-      ".muicore.EVMArguments\032\032.muicore.Manticor" +
-      "eInstance\"\000\022E\n\tTerminate\022\032.muicore.Manti" +
-      "coreInstance\032\032.muicore.TerminateResponse" +
-      "\"\000\022C\n\014GetStateList\022\032.muicore.ManticoreIn" +
-      "stance\032\025.muicore.MUIStateList\"\000\022G\n\016GetMe" +
-      "ssageList\022\032.muicore.ManticoreInstance\032\027." +
-      "muicore.MUIMessageList\"\000\022V\n\025CheckMantico" +
-      "reRunning\022\032.muicore.ManticoreInstance\032\037." +
-      "muicore.ManticoreRunningStatus\"\000\022I\n\023Targ" +
-      "etAddressNative\022\027.muicore.AddressRequest" +
-      "\032\027.muicore.TargetResponse\"\000\022G\n\nStopServe" +
-      "r\022\032.muicore.StopServerRequest\032\033.muicore." +
-      "StopServerResponse\"\000b\006proto3"
+      "\022\014\n\004uuid\030\t \001(\t\"\023\n\021TerminateResponse\"\255\001\n\017" +
+      "NativeArguments\022\024\n\014program_path\030\013 \001(\t\022\023\n" +
+      "\013binary_args\030\020 \003(\t\022\014\n\004envp\030\021 \003(\t\022\026\n\016symb" +
+      "olic_files\030\022 \003(\t\022\026\n\016concrete_start\030\023 \001(\t" +
+      "\022\022\n\nstdin_size\030\024 \001(\t\022\035\n\025additional_mcore" +
+      "_args\030\025 \001(\t\"\254\001\n\014EVMArguments\022\025\n\rcontract" +
+      "_path\030\014 \001(\t\022\025\n\rcontract_name\030\r \001(\t\022\020\n\010so" +
+      "lc_bin\030\016 \001(\t\022\020\n\010tx_limit\030\026 \001(\t\022\022\n\ntx_acc" +
+      "ount\030\027 \001(\t\022\034\n\024detectors_to_exclude\030\030 \003(\t" +
+      "\022\030\n\020additional_flags\030\031 \001(\t\"\201\001\n\016AddressRe" +
+      "quest\022\017\n\007address\030\032 \001(\004\0220\n\004type\030\033 \001(\0162\".m" +
+      "uicore.AddressRequest.TargetType\",\n\nTarg" +
+      "etType\022\010\n\004FIND\020\000\022\t\n\005AVOID\020\001\022\t\n\005CLEAR\020\002\"\020" +
+      "\n\016TargetResponse\",\n\026ManticoreRunningStat" +
+      "us\022\022\n\nis_running\030\017 \001(\010\"\023\n\021StopServerRequ" +
+      "est\"\024\n\022StopServerResponse2\326\004\n\013ManticoreU" +
+      "I\022E\n\013StartNative\022\030.muicore.NativeArgumen" +
+      "ts\032\032.muicore.ManticoreInstance\"\000\022?\n\010Star" +
+      "tEVM\022\025.muicore.EVMArguments\032\032.muicore.Ma" +
+      "nticoreInstance\"\000\022E\n\tTerminate\022\032.muicore" +
+      ".ManticoreInstance\032\032.muicore.TerminateRe" +
+      "sponse\"\000\022C\n\014GetStateList\022\032.muicore.Manti" +
+      "coreInstance\032\025.muicore.MUIStateList\"\000\022G\n" +
+      "\016GetMessageList\022\032.muicore.ManticoreInsta" +
+      "nce\032\027.muicore.MUIMessageList\"\000\022V\n\025CheckM" +
+      "anticoreRunning\022\032.muicore.ManticoreInsta" +
+      "nce\032\037.muicore.ManticoreRunningStatus\"\000\022I" +
+      "\n\023TargetAddressNative\022\027.muicore.AddressR" +
+      "equest\032\027.muicore.TargetResponse\"\000\022G\n\nSto" +
+      "pServer\022\032.muicore.StopServerRequest\032\033.mu" +
+      "icore.StopServerResponse\"\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -11206,7 +11063,7 @@ public final class MUICore {
     internal_static_muicore_TerminateResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_TerminateResponse_descriptor,
-        new java.lang.String[] { "Success", });
+        new java.lang.String[] { });
     internal_static_muicore_NativeArguments_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_muicore_NativeArguments_fieldAccessorTable = new
@@ -11230,7 +11087,7 @@ public final class MUICore {
     internal_static_muicore_TargetResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_TargetResponse_descriptor,
-        new java.lang.String[] { "Success", });
+        new java.lang.String[] { });
     internal_static_muicore_ManticoreRunningStatus_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_muicore_ManticoreRunningStatus_fieldAccessorTable = new
