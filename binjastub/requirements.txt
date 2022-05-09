@@ -1,4 +1,4 @@
-muicore @ git+https://github.com/trailofbits/ManticoreUI-Ghidra.git@866de8c504391725cc0968b31b621a7e412b2cf8#subdirectory=MUICore
+muicore @ git+https://github.com/trailofbits/ManticoreUI-Ghidra.git@17475db289cebca88599aee67c7c2df4d2649760#subdirectory=MUICore
 pygments>=2.7.0,<2.9.0
 crytic-compile>=0.2.0
 pyelftools
