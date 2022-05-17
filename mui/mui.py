@@ -54,6 +54,7 @@ BinaryView.set_default_session_data("mui_state", None)
 BinaryView.set_default_session_data("mui_evm_source", None)
 BinaryView.set_default_session_data("mui_addr_offset", None)
 BinaryView.set_default_session_data("mui_libs", set())
+BinaryView.set_default_session_data("mui_cur_m", None)
 
 
 def find_instr(bv: BinaryView, addr: int):

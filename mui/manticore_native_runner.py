@@ -11,7 +11,7 @@ from binaryninja import (
     Architecture,
     open_view,
 )
-from manticore.core.state import StateBase
+from manticore.core.state import StateBase, TerminateState
 from manticore.native import Manticore
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
@@ -57,6 +57,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 state_widget.listen_to(bv.session_data.mui_state)
 
             bv.session_data.mui_state.notify_states_changed({})
+            bv.session_data.mui_state.paused_states = set()
 
             settings = Settings()
 
@@ -81,6 +82,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 },
                 introspection_plugin_type=MUIIntrospectionPlugin,
             )
+            bv.session_data.mui_cur_m = m
 
             @m.init
             def init(state):
@@ -127,6 +129,13 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for func in self.global_hooks:
                 exec(func, {"bv": bv, "m": m})
 
+            # Global hook to pause specific states
+            def pause_hook(state: StateBase):
+                if state.id in bv.session_data.mui_state.paused_states:
+                    raise TerminateState("Pausing state")
+
+            m.hook(None)(pause_hook)
+
             self.load_libraries(m, find_f, avoid_f)
 
             def run_every(callee: Callable, duration: int = 3) -> Callable:
@@ -167,6 +176,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished without reaching find")
         finally:
             bv.session_data.mui_is_running = False
+            bv.session_data.mui_cur_m = None
 
     def get_address_offset(self, bv: BinaryView):
         """Offsets addresses to take into consideration position independent executables (PIE)"""

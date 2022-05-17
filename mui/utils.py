@@ -26,6 +26,7 @@ class MUIState:
                 [typing.Dict[int, StateDescriptor], typing.Dict[int, StateDescriptor]], None
             ]
         ] = []
+        self.paused_states: typing.Set[int] = set()
 
     def get_state(self, state_id: int) -> typing.Optional[StateDescriptor]:
         """Get the state descriptor for a given id"""
