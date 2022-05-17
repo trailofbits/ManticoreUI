@@ -1,6 +1,6 @@
 import tempfile
 from time import sleep
-from typing import Callable, Set, Optional
+from typing import Callable, Optional
 
 from binaryninja import (
     BackgroundTaskThread,
@@ -19,6 +19,7 @@ from mui.dockwidgets import widget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
+from mui.report import NativeResultReport
 from mui.utils import MUIState, print_timestamp
 from mui.native_plugin import RebaseHooksPlugin, UnicornEmulatePlugin
 
@@ -103,6 +104,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 m.register_plugin(UnicornEmulatePlugin(emulate_until))
 
             def avoid_f(state: StateBase):
+                state.context["abandon_code"] = "avoid"
                 state.abandon()
 
             for addr in self.avoid:
@@ -116,6 +118,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 with m.locked_context() as context:
                     context["find_reached"] = True
                     m.kill()
+                state.context["abandon_code"] = "find"
                 state.abandon()
 
             for addr in self.find:
@@ -165,6 +168,15 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                     print_timestamp("Manticore finished")
                 else:
                     print_timestamp("Manticore finished without reaching find")
+
+            generate_report = settings.get_bool(
+                f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}generateReport", bv
+            )
+            if generate_report:
+                print("Preparing workspace report ...")
+                report = NativeResultReport(bv, m, self)
+                report.show_report()
+
         finally:
             bv.session_data.mui_is_running = False
 
