@@ -92,6 +92,7 @@ class StateListWidget(QWidget, DockContextHandler):
             m = bv.session_data.mui_cur_m
             if action:
                 if action.text() == "Pause":
+                    # Add dummy busy state to prevent from manticore finishing
                     if not bv.session_data.mui_state.paused_states:
                         with m._lock:
                             m._busy_states.append(-1)
@@ -101,6 +102,7 @@ class StateListWidget(QWidget, DockContextHandler):
                     bv.session_data.mui_state.paused_states.remove(state_id)
                     with m._lock:
                         m._revive_state(state_id)
+                        # Remove dummy busy state if no more paused states
                         if not bv.session_data.mui_state.paused_states:
                             m._busy_states.remove(-1)
                         m._lock.notify_all()
