@@ -97,24 +97,6 @@ def solve(bv: BinaryView):
         and bv.arch == Architecture["EVM"]
         and bv.session_data.mui_evm_source is not None
     ):
-        # set default workspace url
-
-        workspace_url = settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url", bv)
-        if workspace_url == "":
-
-            random_dir_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            workspace_url = str(
-                Path(
-                    bv.session_data.mui_evm_source.parent.resolve(),
-                    random_dir_name,
-                )
-            )
-            settings.set_string(
-                f"{BINJA_EVM_RUN_SETTINGS_PREFIX}workspace_url",
-                workspace_url,
-                view=bv,
-                scope=SettingsScope.SettingsResourceScope,
-            )
 
         dialog = RunDialog(
             DockHandler.getActiveDockHandler().parent(), bv, BINJA_EVM_RUN_SETTINGS_PREFIX
@@ -125,8 +107,43 @@ def solve(bv: BinaryView):
                 notif.mui_grpc_server_process = subprocess.Popen("muicore")
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
+            detectors_string = ""
+            for bool_option in [
+                "txnocoverage",
+                "txnoether",
+                "txpreconstrain",
+                "no_testcases",
+                "only_alive_testcases",
+                "skip_reverts",
+                "explore_balance",
+                "verbose_trace",
+                "limit_loops",
+                "profile",
+                "avoid_constant",
+                "thorough_mode",
+                "exclude_all",
+            ]:
+                if settings.get_bool(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}{bool_option}", bv):
+                    detectors_string += f"--{bool_option} "
+
             mcore_instance = notif.mui_client_stub.StartEVM(
-                EVMArguments(contract_path=bv.file.original_filename)
+                EVMArguments(
+                    contract_path=bv.file.original_filename,
+                    contract_name=settings.get_string(
+                        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}contract_name", bv
+                    ),
+                    solc_bin=settings.get_string(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}solc_path", bv),
+                    tx_limit=str(
+                        settings.get_double(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txlimit", bv)
+                    ),
+                    tx_account=str(
+                        settings.get_double(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}txaccount", bv)
+                    ),
+                    detectors_to_exclude=settings.get_string_list(
+                        f"{BINJA_EVM_RUN_SETTINGS_PREFIX}detectors_to_exclude", bv
+                    ),
+                    additional_flags=detectors_string,
+                )
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
@@ -143,7 +160,25 @@ def solve(bv: BinaryView):
             if not isinstance(notif.mui_client_stub, ManticoreUIStub):
                 notif.mui_client_stub = create_client_stub()
             mcore_instance = notif.mui_client_stub.StartNative(
-                NativeArguments(program_path=bv.file.original_filename)
+                NativeArguments(
+                    program_path=bv.file.original_filename,
+                    binary_args=settings.get_string_list(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}argv", bv
+                    ).copy(),
+                    envp=settings.get_string_list(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}env", bv),
+                    symbolic_files=settings.get_string_list(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}symbolicFiles", bv
+                    ),
+                    concrete_start=settings.get_string(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}concreteStart", bv
+                    ),
+                    stdin_size=str(
+                        settings.get_integer(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}stdinSize", bv)
+                    ),
+                    additional_mcore_args=settings.get_string(
+                        f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}additionalArguments", bv
+                    ),
+                )
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
