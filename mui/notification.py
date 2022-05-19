@@ -9,7 +9,7 @@ from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFra
 
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX, BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.hook_manager import NativeHookManager
-from mui.utils import highlight_instr, create_client_stub
+from mui.utils import highlight_instr
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
 from mui.mui_connection import MUIConnection
