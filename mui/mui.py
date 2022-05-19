@@ -44,10 +44,10 @@ from mui.utils import (
     highlight_instr,
     clear_highlight,
     function_model_analysis_cb,
-    create_client_stub,
 )
 from mui.mui_connection import MUIConnection
 
+import grpc
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 from muicore.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
 
@@ -104,8 +104,6 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-            mui_connection.ensure_server_process()
-            mui_connection.ensure_client_stub()
 
             detectors_string = ""
             for bool_option in [
@@ -126,6 +124,10 @@ def solve(bv: BinaryView):
                 if settings.get_bool(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}{bool_option}", bv):
                     detectors_string += f"--{bool_option} "
 
+            mui_connection.ensure_server_process()
+            mui_connection.ensure_client_stub()
+
+            assert isinstance(mui_connection.client_stub, ManticoreUIStub)
             mcore_instance = mui_connection.client_stub.StartEVM(
                 EVMArguments(
                     contract_path=bv.file.original_filename,
@@ -148,6 +150,9 @@ def solve(bv: BinaryView):
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
+            mui_connection.fetch_messages_and_states(
+                mcore_instance, widget.get_dockwidget(bv, StateListWidget.NAME)
+            )
 
     else:
         dialog = RunDialog(
@@ -158,6 +163,7 @@ def solve(bv: BinaryView):
             mui_connection.ensure_server_process()
             mui_connection.ensure_client_stub()
 
+            assert isinstance(mui_connection.client_stub, ManticoreUIStub)
             mcore_instance = mui_connection.client_stub.StartNative(
                 NativeArguments(
                     program_path=bv.file.original_filename,
@@ -182,6 +188,9 @@ def solve(bv: BinaryView):
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
             print("Manticore instance created on the server with uuid=" + mcore_instance.uuid)
             bv.session_data.mui_is_running = True
+            mui_connection.fetch_messages_and_states(
+                mcore_instance, widget.get_dockwidget(bv, StateListWidget.NAME)
+            )
 
 
 def edit_custom_hook(bv: BinaryView, addr: int):
@@ -276,14 +285,16 @@ def stop_manticore(bv: BinaryView):
 
     mui_connection.ensure_server_process()
     mui_connection.ensure_client_stub()
-    res = mui_connection.client_stub.Terminate(
-        ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
-    )
-    if res.success:
+    try:
+        assert isinstance(mui_connection.client_stub, ManticoreUIStub)
+        res = mui_connection.client_stub.Terminate(
+            ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
+        )
         print("Manticore stopped by user.")
-    else:
+        bv.session_data.mui_is_running = False
+    except grpc.RpcError as e:
         print("Manticore failed to terminate.")
-    bv.session_data.mui_is_running = False
+        print(e)
 
 
 def avoid_instr_is_valid(bv: BinaryView, addr: int):

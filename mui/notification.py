@@ -36,6 +36,7 @@ class UINotification(UIContextNotification):
     def OnContextClose(self, context: UIContext) -> None:
         if isinstance(self.mui_connection.grpc_server_process, Popen):
             self.mui_connection.ensure_client_stub()
+            assert isinstance(self.mui_connection.client_stub, ManticoreUIStub)
             self.mui_connection.client_stub.StopServer(StopServerRequest())
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:

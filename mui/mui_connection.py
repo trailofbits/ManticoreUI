@@ -6,14 +6,15 @@ import time
 
 from binaryninja import BinaryView
 
+from mui.dockwidgets import widget
+from mui.dockwidgets.state_list_widget import StateListWidget
+
 import grpc
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 from muicore.MUICore_pb2 import (
     ManticoreInstance,
     MUIMessageList,
-    MUILogMessage,
     MUIStateList,
-    MUIState,
 )
 
 
@@ -27,16 +28,16 @@ class MUIConnection:
             not isinstance(self.grpc_server_process, Popen)
             or self.grpc_server_process.poll() is None
         ):
-            self.initialize_server_process()
+            self.initialise_server_process()
 
     def ensure_client_stub(self) -> None:
         if not isinstance(self.client_stub, ManticoreUIStub):
-            self.initialize_client_stub()
+            self.initialise_client_stub()
 
-    def initialize_server_process(self) -> None:
-        self.mui_grpc_server_process = Popen("muicore")
+    def initialise_server_process(self) -> None:
+        self.grpc_server_process = Popen("muicore")
 
-    def initialize_client_stub(self) -> None:
+    def initialise_client_stub(self) -> None:
         print("Initializing fresh Manticore server client stub")
         self.client_stub = ManticoreUIStub(
             grpc.insecure_channel(
@@ -65,27 +66,40 @@ class MUIConnection:
             )
         )
 
-    def fetch_messages_and_states(self, mcore_instance: ManticoreInstance) -> None:
-        self.ensure_server_process()
-        self.ensure_client_stub()
-
+    def fetch_messages_and_states(
+        self, mcore_instance: ManticoreInstance, state_widget: StateListWidget
+    ) -> None:
         def fetcher(mcore_instance: ManticoreInstance):
+
             while True:
                 try:
+                    self.ensure_server_process()
+                    self.ensure_client_stub()
+
+                    assert isinstance(self.client_stub, ManticoreUIStub)
+
+                    message_list: MUIMessageList = self.client_stub.GetMessageList(mcore_instance)
+                    state_lists: MUIStateList = self.client_stub.GetStateList(mcore_instance)
+
+                    state_widget.refresh_state_list(
+                        state_lists.active_states,
+                        state_lists.waiting_states,
+                        state_lists.forked_states,
+                        state_lists.errored_states,
+                        state_lists.complete_states,
+                    )
+                    for log_message in message_list.messages:
+                        print(log_message.content)
+
                     status = self.client_stub.CheckManticoreRunning(mcore_instance)
                     if not status.is_running:
                         break
 
-                    message_list: MUIMessageList = self.client_stub.GetMessageList(mcore_instance)
-                    state_lists = self.client_stub.GetStateList(mcore_instance)
-
-                    for log_message in message_list.messages:
-                        print(log_message.content)
-
                 except grpc.RpcError as e:
                     print(e)
                     break
-                time.sleep(3)
+
+                time.sleep(1)
 
         mthread = Thread(target=fetcher, args=(mcore_instance,), daemon=True)
         mthread.name = "mui-binja-" + mcore_instance.uuid
