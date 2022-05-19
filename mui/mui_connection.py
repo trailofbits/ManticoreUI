@@ -28,16 +28,16 @@ class MUIConnection:
             not isinstance(self.grpc_server_process, Popen)
             or self.grpc_server_process.poll() is None
         ):
-            self.initialise_server_process()
+            self.initialize_server_process()
 
     def ensure_client_stub(self) -> None:
         if not isinstance(self.client_stub, ManticoreUIStub):
-            self.initialise_client_stub()
+            self.initialize_client_stub()
 
-    def initialise_server_process(self) -> None:
+    def initialize_server_process(self) -> None:
         self.grpc_server_process = Popen("muicore")
 
-    def initialise_client_stub(self) -> None:
+    def initialize_client_stub(self) -> None:
         print("Initializing fresh Manticore server client stub")
         self.client_stub = ManticoreUIStub(
             grpc.insecure_channel(
@@ -99,7 +99,7 @@ class MUIConnection:
                     print(e)
                     break
 
-                time.sleep(1)
+                time.sleep(2)
 
         mthread = Thread(target=fetcher, args=(mcore_instance,), daemon=True)
         mthread.name = "mui-binja-" + mcore_instance.uuid
