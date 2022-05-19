@@ -46,6 +46,7 @@ from mui.utils import (
     function_model_analysis_cb,
     create_client_stub,
 )
+from mui.mui_connection import MUIConnection
 
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 from muicore.MUICore_pb2 import NativeArguments, EVMArguments, ManticoreInstance
@@ -103,10 +104,9 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-            if notif.mui_grpc_server_process == None:
-                notif.mui_grpc_server_process = subprocess.Popen("muicore")
-            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
-                notif.mui_client_stub = create_client_stub()
+            mui_connection.ensure_server_process()
+            mui_connection.ensure_client_stub()
+
             detectors_string = ""
             for bool_option in [
                 "txnocoverage",
@@ -126,7 +126,7 @@ def solve(bv: BinaryView):
                 if settings.get_bool(f"{BINJA_EVM_RUN_SETTINGS_PREFIX}{bool_option}", bv):
                     detectors_string += f"--{bool_option} "
 
-            mcore_instance = notif.mui_client_stub.StartEVM(
+            mcore_instance = mui_connection.client_stub.StartEVM(
                 EVMArguments(
                     contract_path=bv.file.original_filename,
                     contract_name=settings.get_string(
@@ -155,11 +155,10 @@ def solve(bv: BinaryView):
         )
 
         if dialog.exec() == QDialog.Accepted:
-            if notif.mui_grpc_server_process == None:
-                notif.mui_grpc_server_process = subprocess.Popen("muicore")
-            if not isinstance(notif.mui_client_stub, ManticoreUIStub):
-                notif.mui_client_stub = create_client_stub()
-            mcore_instance = notif.mui_client_stub.StartNative(
+            mui_connection.ensure_server_process()
+            mui_connection.ensure_client_stub()
+
+            mcore_instance = mui_connection.client_stub.StartNative(
                 NativeArguments(
                     program_path=bv.file.original_filename,
                     binary_args=settings.get_string_list(
@@ -274,9 +273,10 @@ def load_evm(bv: BinaryView):
 
 def stop_manticore(bv: BinaryView):
     """Stops the current running manticore instance"""
-    if not isinstance(notif.mui_client_stub, ManticoreUIStub):
-        notif.mui_client_stub = create_client_stub()
-    res = notif.mui_client_stub.Terminate(
+
+    mui_connection.ensure_server_process()
+    mui_connection.ensure_client_stub()
+    res = mui_connection.client_stub.Terminate(
         ManticoreInstance(uuid=bv.session_data.server_manticore_instances.pop())
     )
     if res.success:
@@ -379,11 +379,14 @@ if core_ui_enabled():
         StateGraphWidget, StateGraphWidget.NAME, Qt.TopDockWidgetArea, Qt.Vertical, True
     )
 
+# Create Manticore Server Connection
+mui_connection = MUIConnection()
+
 # Register MUI settings
 MUISettings.register()
 
 # Register notification as a global so it doesn't get destructed
-notif = UINotification()
+notif = UINotification(mui_connection)
 
 # Register analysis completion callback
 BinaryViewType.add_binaryview_initial_analysis_completion_event(function_model_analysis_cb)

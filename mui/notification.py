@@ -12,6 +12,7 @@ from mui.hook_manager import NativeHookManager
 from mui.utils import highlight_instr, create_client_stub
 from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.dockwidgets import widget
+from mui.mui_connection import MUIConnection
 
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 from muicore.MUICore_pb2 import StopServerRequest
@@ -24,20 +25,18 @@ class UINotification(UIContextNotification):
     This class allows us to monitor various UI events and add listeners.
     """
 
-    def __init__(self):
+    def __init__(self, mui_connection: MUIConnection):
         UIContextNotification.__init__(self)
         UIContext.registerNotification(self)
-        self.mui_grpc_server_process: Optional[Popen] = None
-        self.mui_client_stub: Optional[ManticoreUIStub] = None
+        self.mui_connection = mui_connection
 
     def __del__(self):
         UIContext.unregisterNotification(self)
 
     def OnContextClose(self, context: UIContext) -> None:
-        if isinstance(self.mui_grpc_server_process, Popen):
-            if not isinstance(self.mui_client_stub, ManticoreUIStub):
-                self.mui_client_stub = create_client_stub
-            self.mui_client_stub.StopServer(StopServerRequest())
+        if isinstance(self.mui_connection.grpc_server_process, Popen):
+            self.mui_connection.ensure_client_stub()
+            self.mui_connection.client_stub.StopServer(StopServerRequest())
 
     def OnAfterOpenFile(self, context: UIContext, file: FileContext, frame: ViewFrame) -> None:
         """Restore existing settings right after file open"""

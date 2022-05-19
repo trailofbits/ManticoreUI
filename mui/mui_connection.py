@@ -66,6 +66,9 @@ class MUIConnection:
         )
 
     def fetch_messages_and_states(self, mcore_instance: ManticoreInstance) -> None:
+        self.ensure_server_process()
+        self.ensure_client_stub()
+
         def fetcher(mcore_instance: ManticoreInstance):
             while True:
                 try:
