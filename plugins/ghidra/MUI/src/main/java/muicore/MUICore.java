@@ -1384,6 +1384,12 @@ public final class MUICore {
      * @return The stateId.
      */
     int getStateId();
+
+    /**
+     * <code>uint64 pc = 10;</code>
+     * @return The pc.
+     */
+    long getPc();
   }
   /**
    * Protobuf type {@code muicore.MUIState}
@@ -1435,6 +1441,11 @@ public final class MUICore {
               stateId_ = input.readInt32();
               break;
             }
+            case 80: {
+
+              pc_ = input.readUInt64();
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -1478,6 +1489,17 @@ public final class MUICore {
       return stateId_;
     }
 
+    public static final int PC_FIELD_NUMBER = 10;
+    private long pc_;
+    /**
+     * <code>uint64 pc = 10;</code>
+     * @return The pc.
+     */
+    @java.lang.Override
+    public long getPc() {
+      return pc_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -1495,6 +1517,9 @@ public final class MUICore {
       if (stateId_ != 0) {
         output.writeInt32(3, stateId_);
       }
+      if (pc_ != 0L) {
+        output.writeUInt64(10, pc_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -1507,6 +1532,10 @@ public final class MUICore {
       if (stateId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, stateId_);
+      }
+      if (pc_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(10, pc_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1525,6 +1554,8 @@ public final class MUICore {
 
       if (getStateId()
           != other.getStateId()) return false;
+      if (getPc()
+          != other.getPc()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1538,6 +1569,9 @@ public final class MUICore {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + STATE_ID_FIELD_NUMBER;
       hash = (53 * hash) + getStateId();
+      hash = (37 * hash) + PC_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getPc());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1673,6 +1707,8 @@ public final class MUICore {
         super.clear();
         stateId_ = 0;
 
+        pc_ = 0L;
+
         return this;
       }
 
@@ -1700,6 +1736,7 @@ public final class MUICore {
       public muicore.MUICore.MUIState buildPartial() {
         muicore.MUICore.MUIState result = new muicore.MUICore.MUIState(this);
         result.stateId_ = stateId_;
+        result.pc_ = pc_;
         onBuilt();
         return result;
       }
@@ -1750,6 +1787,9 @@ public final class MUICore {
         if (other == muicore.MUICore.MUIState.getDefaultInstance()) return this;
         if (other.getStateId() != 0) {
           setStateId(other.getStateId());
+        }
+        if (other.getPc() != 0L) {
+          setPc(other.getPc());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1807,6 +1847,37 @@ public final class MUICore {
       public Builder clearStateId() {
         
         stateId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long pc_ ;
+      /**
+       * <code>uint64 pc = 10;</code>
+       * @return The pc.
+       */
+      @java.lang.Override
+      public long getPc() {
+        return pc_;
+      }
+      /**
+       * <code>uint64 pc = 10;</code>
+       * @param value The pc to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPc(long value) {
+        
+        pc_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 pc = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPc() {
+        
+        pc_ = 0L;
         onChanged();
         return this;
       }
@@ -10984,45 +11055,46 @@ public final class MUICore {
     java.lang.String[] descriptorData = {
       "\n\rMUICore.proto\022\007muicore\" \n\rMUILogMessag" +
       "e\022\017\n\007content\030\001 \001(\t\":\n\016MUIMessageList\022(\n\010" +
-      "messages\030\002 \003(\0132\026.muicore.MUILogMessage\"\034" +
-      "\n\010MUIState\022\020\n\010state_id\030\003 \001(\005\"\344\001\n\014MUIStat" +
-      "eList\022(\n\ractive_states\030\004 \003(\0132\021.muicore.M" +
-      "UIState\022)\n\016waiting_states\030\005 \003(\0132\021.muicor" +
-      "e.MUIState\022(\n\rforked_states\030\006 \003(\0132\021.muic" +
-      "ore.MUIState\022)\n\016errored_states\030\007 \003(\0132\021.m" +
-      "uicore.MUIState\022*\n\017complete_states\030\010 \003(\013" +
-      "2\021.muicore.MUIState\"!\n\021ManticoreInstance" +
-      "\022\014\n\004uuid\030\t \001(\t\"\023\n\021TerminateResponse\"\255\001\n\017" +
-      "NativeArguments\022\024\n\014program_path\030\013 \001(\t\022\023\n" +
-      "\013binary_args\030\020 \003(\t\022\014\n\004envp\030\021 \003(\t\022\026\n\016symb" +
-      "olic_files\030\022 \003(\t\022\026\n\016concrete_start\030\023 \001(\t" +
-      "\022\022\n\nstdin_size\030\024 \001(\t\022\035\n\025additional_mcore" +
-      "_args\030\025 \001(\t\"\254\001\n\014EVMArguments\022\025\n\rcontract" +
-      "_path\030\014 \001(\t\022\025\n\rcontract_name\030\r \001(\t\022\020\n\010so" +
-      "lc_bin\030\016 \001(\t\022\020\n\010tx_limit\030\026 \001(\t\022\022\n\ntx_acc" +
-      "ount\030\027 \001(\t\022\034\n\024detectors_to_exclude\030\030 \003(\t" +
-      "\022\030\n\020additional_flags\030\031 \001(\t\"\201\001\n\016AddressRe" +
-      "quest\022\017\n\007address\030\032 \001(\004\0220\n\004type\030\033 \001(\0162\".m" +
-      "uicore.AddressRequest.TargetType\",\n\nTarg" +
-      "etType\022\010\n\004FIND\020\000\022\t\n\005AVOID\020\001\022\t\n\005CLEAR\020\002\"\020" +
-      "\n\016TargetResponse\",\n\026ManticoreRunningStat" +
-      "us\022\022\n\nis_running\030\017 \001(\010\"\023\n\021StopServerRequ" +
-      "est\"\024\n\022StopServerResponse2\326\004\n\013ManticoreU" +
-      "I\022E\n\013StartNative\022\030.muicore.NativeArgumen" +
-      "ts\032\032.muicore.ManticoreInstance\"\000\022?\n\010Star" +
-      "tEVM\022\025.muicore.EVMArguments\032\032.muicore.Ma" +
-      "nticoreInstance\"\000\022E\n\tTerminate\022\032.muicore" +
-      ".ManticoreInstance\032\032.muicore.TerminateRe" +
-      "sponse\"\000\022C\n\014GetStateList\022\032.muicore.Manti" +
-      "coreInstance\032\025.muicore.MUIStateList\"\000\022G\n" +
-      "\016GetMessageList\022\032.muicore.ManticoreInsta" +
-      "nce\032\027.muicore.MUIMessageList\"\000\022V\n\025CheckM" +
-      "anticoreRunning\022\032.muicore.ManticoreInsta" +
-      "nce\032\037.muicore.ManticoreRunningStatus\"\000\022I" +
-      "\n\023TargetAddressNative\022\027.muicore.AddressR" +
-      "equest\032\027.muicore.TargetResponse\"\000\022G\n\nSto" +
-      "pServer\022\032.muicore.StopServerRequest\032\033.mu" +
-      "icore.StopServerResponse\"\000b\006proto3"
+      "messages\030\002 \003(\0132\026.muicore.MUILogMessage\"(" +
+      "\n\010MUIState\022\020\n\010state_id\030\003 \001(\005\022\n\n\002pc\030\n \001(\004" +
+      "\"\344\001\n\014MUIStateList\022(\n\ractive_states\030\004 \003(\013" +
+      "2\021.muicore.MUIState\022)\n\016waiting_states\030\005 " +
+      "\003(\0132\021.muicore.MUIState\022(\n\rforked_states\030" +
+      "\006 \003(\0132\021.muicore.MUIState\022)\n\016errored_stat" +
+      "es\030\007 \003(\0132\021.muicore.MUIState\022*\n\017complete_" +
+      "states\030\010 \003(\0132\021.muicore.MUIState\"!\n\021Manti" +
+      "coreInstance\022\014\n\004uuid\030\t \001(\t\"\023\n\021TerminateR" +
+      "esponse\"\255\001\n\017NativeArguments\022\024\n\014program_p" +
+      "ath\030\013 \001(\t\022\023\n\013binary_args\030\020 \003(\t\022\014\n\004envp\030\021" +
+      " \003(\t\022\026\n\016symbolic_files\030\022 \003(\t\022\026\n\016concrete" +
+      "_start\030\023 \001(\t\022\022\n\nstdin_size\030\024 \001(\t\022\035\n\025addi" +
+      "tional_mcore_args\030\025 \001(\t\"\254\001\n\014EVMArguments" +
+      "\022\025\n\rcontract_path\030\014 \001(\t\022\025\n\rcontract_name" +
+      "\030\r \001(\t\022\020\n\010solc_bin\030\016 \001(\t\022\020\n\010tx_limit\030\026 \001" +
+      "(\t\022\022\n\ntx_account\030\027 \001(\t\022\034\n\024detectors_to_e" +
+      "xclude\030\030 \003(\t\022\030\n\020additional_flags\030\031 \001(\t\"\201" +
+      "\001\n\016AddressRequest\022\017\n\007address\030\032 \001(\004\0220\n\004ty" +
+      "pe\030\033 \001(\0162\".muicore.AddressRequest.Target" +
+      "Type\",\n\nTargetType\022\010\n\004FIND\020\000\022\t\n\005AVOID\020\001\022" +
+      "\t\n\005CLEAR\020\002\"\020\n\016TargetResponse\",\n\026Manticor" +
+      "eRunningStatus\022\022\n\nis_running\030\017 \001(\010\"\023\n\021St" +
+      "opServerRequest\"\024\n\022StopServerResponse2\326\004" +
+      "\n\013ManticoreUI\022E\n\013StartNative\022\030.muicore.N" +
+      "ativeArguments\032\032.muicore.ManticoreInstan" +
+      "ce\"\000\022?\n\010StartEVM\022\025.muicore.EVMArguments\032" +
+      "\032.muicore.ManticoreInstance\"\000\022E\n\tTermina" +
+      "te\022\032.muicore.ManticoreInstance\032\032.muicore" +
+      ".TerminateResponse\"\000\022C\n\014GetStateList\022\032.m" +
+      "uicore.ManticoreInstance\032\025.muicore.MUISt" +
+      "ateList\"\000\022G\n\016GetMessageList\022\032.muicore.Ma" +
+      "nticoreInstance\032\027.muicore.MUIMessageList" +
+      "\"\000\022V\n\025CheckManticoreRunning\022\032.muicore.Ma" +
+      "nticoreInstance\032\037.muicore.ManticoreRunni" +
+      "ngStatus\"\000\022I\n\023TargetAddressNative\022\027.muic" +
+      "ore.AddressRequest\032\027.muicore.TargetRespo" +
+      "nse\"\000\022G\n\nStopServer\022\032.muicore.StopServer" +
+      "Request\032\033.muicore.StopServerResponse\"\000b\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -11045,7 +11117,7 @@ public final class MUICore {
     internal_static_muicore_MUIState_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_MUIState_descriptor,
-        new java.lang.String[] { "StateId", });
+        new java.lang.String[] { "StateId", "Pc", });
     internal_static_muicore_MUIStateList_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_muicore_MUIStateList_fieldAccessorTable = new
