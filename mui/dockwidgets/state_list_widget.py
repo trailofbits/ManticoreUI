@@ -23,6 +23,10 @@ class StateListWidget(QWidget, DockContextHandler):
     # role used to store state id on qt items
     STATE_ID_ROLE: Final[int] = Qt.UserRole
 
+    # Context menu labels
+    CTX_MENU_PAUSE: Final[str] = "Pause"
+    CTX_MENU_RESUME: Final[str] = "Resume"
+
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
@@ -78,27 +82,27 @@ class StateListWidget(QWidget, DockContextHandler):
             if state_id == None:
                 return True
 
-            menu = QMenu()
-            if item.parent() == self.paused_states:
-                menu.addAction("Resume")
-            else:
-                menu.addAction("Pause")
-            action = menu.exec(event.globalPos())
-
             # Pause/Resume only while running
             if not bv.session_data.mui_is_running or not bv.session_data.mui_cur_m:
                 return True
 
+            menu = QMenu()
+            if item.parent() == self.paused_states:
+                menu.addAction(StateListWidget.CTX_MENU_RESUME)
+            else:
+                menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+            action = menu.exec(event.globalPos())
+
             m = bv.session_data.mui_cur_m
             if action:
-                if action.text() == "Pause":
+                if action.text() == StateListWidget.CTX_MENU_PAUSE:
                     # Add dummy busy state to prevent from manticore finishing
                     if not bv.session_data.mui_state.paused_states:
                         with m._lock:
                             m._busy_states.append(-1)
                             m._lock.notify_all()
                     bv.session_data.mui_state.paused_states.add(state_id)
-                elif action.text() == "Resume":
+                elif action.text() == StateListWidget.CTX_MENU_RESUME:
                     bv.session_data.mui_state.paused_states.remove(state_id)
                     with m._lock:
                         m._revive_state(state_id)
