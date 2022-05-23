@@ -1,8 +1,8 @@
 from typing import Dict, Final, Optional
 
 from PySide6 import QtCore
-from PySide6.QtCore import Slot, Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
+from PySide6.QtCore import Slot, Qt, QEvent
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
 from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
@@ -23,6 +23,10 @@ class StateListWidget(QWidget, DockContextHandler):
     # role used to store state id on qt items
     STATE_ID_ROLE: Final[int] = Qt.UserRole
 
+    # Context menu labels
+    CTX_MENU_PAUSE: Final[str] = "Pause"
+    CTX_MENU_RESUME: Final[str] = "Resume"
+
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
@@ -34,8 +38,10 @@ class StateListWidget(QWidget, DockContextHandler):
         tree_widget.headerItem().setText(0, "State List")
         self.tree_widget = tree_widget
         tree_widget.itemDoubleClicked.connect(self.on_click)
+        tree_widget.installEventFilter(self)
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
+        self.paused_states = QTreeWidgetItem(None, ["Paused"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
         self.forked_states = QTreeWidgetItem(None, ["Forked"])
         self.complete_states = QTreeWidgetItem(None, ["Complete"])
@@ -43,6 +49,7 @@ class StateListWidget(QWidget, DockContextHandler):
 
         self.state_lists = [
             self.active_states,
+            self.paused_states,
             self.waiting_states,
             self.forked_states,
             self.complete_states,
@@ -57,6 +64,56 @@ class StateListWidget(QWidget, DockContextHandler):
         self.setLayout(layout)
 
         self.state_items: Dict[int, QTreeWidgetItem] = {}
+
+    def eventFilter(self, source, event) -> bool:
+        """Event filter to create state management context menu"""
+        bv = self.bv
+        if event.type() == QEvent.ContextMenu and source is self.tree_widget:
+            pos = source.viewport().mapFromParent(event.pos())
+            item = source.itemAt(pos)
+
+            # Right clicked outside an item
+            if not item:
+                return True
+
+            state_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
+
+            # State list instead of individual state
+            if state_id == None:
+                return True
+
+            # Pause/Resume only while running
+            if not bv.session_data.mui_is_running or not bv.session_data.mui_cur_m:
+                return True
+
+            menu = QMenu()
+            if item.parent() == self.paused_states:
+                menu.addAction(StateListWidget.CTX_MENU_RESUME)
+            else:
+                menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+            action = menu.exec(event.globalPos())
+
+            m = bv.session_data.mui_cur_m
+            if action:
+                if action.text() == StateListWidget.CTX_MENU_PAUSE:
+                    # Add dummy busy state to prevent from manticore finishing
+                    if not bv.session_data.mui_state.paused_states:
+                        with m._lock:
+                            m._busy_states.append(-1)
+                            m._lock.notify_all()
+                    bv.session_data.mui_state.paused_states.add(state_id)
+                elif action.text() == StateListWidget.CTX_MENU_RESUME:
+                    bv.session_data.mui_state.paused_states.remove(state_id)
+                    with m._lock:
+                        m._revive_state(state_id)
+                        # Remove dummy busy state if no more paused states
+                        if not bv.session_data.mui_state.paused_states:
+                            m._busy_states.remove(-1)
+                        m._lock.notify_all()
+
+            return True
+
+        return super().eventFilter(source, event)
 
     @Slot(QTreeWidgetItem, int)
     def on_click(self, item: QTreeWidgetItem, col: int):
@@ -111,7 +168,9 @@ class StateListWidget(QWidget, DockContextHandler):
             return self.forked_states
         elif state.status == StateStatus.stopped:
             # Only want killed states in the errored list
-            if state.state_list == StateLists.killed:
+            if state.state_id in self.bv.session_data.mui_state.paused_states:
+                return self.paused_states
+            elif state.state_list == StateLists.killed:
                 return self.error_states
             else:
                 return self.complete_states
