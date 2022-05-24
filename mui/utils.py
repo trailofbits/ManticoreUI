@@ -95,6 +95,11 @@ class MUIState:
         self._unregister_state_callback(state.id, self.state_pause_hook)
         raise TerminateState("Pausing state")
 
+    def state_kill_hook(self, state: StateBase):
+        """Global manticore hook that kills the state (runs once and self-removes)"""
+        self._unregister_state_callback(state.id, self.state_kill_hook)
+        state.abandon()
+
     def _register_state_callback(self, state_id: int, callback: typing.Callable):
         """Registers a callback to be called by a specific state"""
         callbacks = self.state_callbacks.get(state_id, set())
@@ -132,6 +137,18 @@ class MUIState:
                 if not self.paused_states:
                     m._busy_states.remove(-1)
                 m._lock.notify_all()
+    
+    def kill_state(self, state_id: int):
+        bv = self.bv
+        m = bv.session_data.mui_cur_m
+        # Only kill when running
+        if bv.session_data.mui_is_running and m:
+            if state_id in self.paused_states:
+                self.paused_states.remove(state_id)
+                if not self.paused_states:
+                    m._busy_states.remove(-1)
+            else:
+                self._register_state_callback(state_id, self.state_kill_hook)
 
 
 

@@ -24,6 +24,7 @@ class StateListWidget(QWidget, DockContextHandler):
     STATE_ID_ROLE: Final[int] = Qt.UserRole
 
     # Context menu labels
+    CTX_MENU_KILL: Final[str] = "Kill"
     CTX_MENU_PAUSE: Final[str] = "Pause"
     CTX_MENU_RESUME: Final[str] = "Resume"
 
@@ -87,10 +88,14 @@ class StateListWidget(QWidget, DockContextHandler):
                 return True
 
             menu = QMenu()
-            if item.parent() == self.paused_states:
-                menu.addAction(StateListWidget.CTX_MENU_RESUME)
-            else:
-                menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+            # Options for active states:
+            if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
+                menu.addAction(StateListWidget.CTX_MENU_KILL)
+                if item.parent() == self.paused_states:
+                    menu.addAction(StateListWidget.CTX_MENU_RESUME)
+                else:
+                    menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+
             action = menu.exec(event.globalPos())
 
             m = bv.session_data.mui_cur_m
@@ -99,6 +104,8 @@ class StateListWidget(QWidget, DockContextHandler):
                     bv.session_data.mui_state.pause_state(state_id)
                 elif action.text() == StateListWidget.CTX_MENU_RESUME:
                     bv.session_data.mui_state.resume_state(state_id)
+                elif action.text() == StateListWidget.CTX_MENU_KILL:
+                    bv.session_data.mui_state.kill_state(state_id)
 
             return True
 
