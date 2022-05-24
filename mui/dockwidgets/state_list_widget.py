@@ -42,16 +42,16 @@ class StateListWidget(QWidget, DockContextHandler):
         tree_widget.installEventFilter(self)
 
         self.active_states = QTreeWidgetItem(None, ["Active"])
-        self.paused_states = QTreeWidgetItem(None, ["Paused"])
         self.waiting_states = QTreeWidgetItem(None, ["Waiting"])
+        self.paused_states = QTreeWidgetItem(None, ["Paused"])
         self.forked_states = QTreeWidgetItem(None, ["Forked"])
         self.complete_states = QTreeWidgetItem(None, ["Complete"])
         self.error_states = QTreeWidgetItem(None, ["Errored"])
 
         self.state_lists = [
             self.active_states,
-            self.paused_states,
             self.waiting_states,
+            self.paused_states,
             self.forked_states,
             self.complete_states,
             self.error_states,
