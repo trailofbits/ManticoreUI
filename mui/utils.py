@@ -83,13 +83,13 @@ class MUIState:
             callback(old_states, new_states)
 
         self.states = new_states
-    
+
     def state_callback_hook(self, state: StateBase):
         """Global hook that calls any callbacks that are tied to specific states"""
         callbacks = self.state_callbacks.get(state.id, set())
         for callback in callbacks:
             callback(state)
-    
+
     def state_pause_hook(self, state: StateBase):
         """Global manticore hook that pauses the state (runs once and self-removes)"""
         self._unregister_state_callback(state.id, self.state_pause_hook)
@@ -111,7 +111,7 @@ class MUIState:
         callbacks = self.state_callbacks.get(state_id, set())
         if callbacks and callback in callbacks:
             callbacks.remove(callback)
-    
+
     def pause_state(self, state_id: int):
         bv = self.bv
         m = bv.session_data.mui_cur_m
@@ -137,7 +137,7 @@ class MUIState:
                 if not self.paused_states:
                     m._busy_states.remove(-1)
                 m._lock.notify_all()
-    
+
     def kill_state(self, state_id: int):
         bv = self.bv
         m = bv.session_data.mui_cur_m
@@ -149,7 +149,6 @@ class MUIState:
                     m._busy_states.remove(-1)
             else:
                 self._register_state_callback(state_id, self.state_kill_hook)
-
 
 
 def highlight_instr(bv: BinaryView, addr: int, color: HighlightStandardColor) -> None:
