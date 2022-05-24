@@ -84,35 +84,35 @@ class MUIState:
 
         self.states = new_states
 
-    def state_callback_hook(self, state: StateBase):
+    def state_callback_hook(self, state: StateBase) -> None:
         """Global hook that calls any callbacks that are tied to specific states"""
         callbacks = self.state_callbacks.get(state.id, set())
         for callback in callbacks:
             callback(state)
 
-    def state_pause_hook(self, state: StateBase):
+    def state_pause_hook(self, state: StateBase) -> None:
         """Global manticore hook that pauses the state (runs once and self-removes)"""
         self._unregister_state_callback(state.id, self.state_pause_hook)
         raise TerminateState("Pausing state")
 
-    def state_kill_hook(self, state: StateBase):
+    def state_kill_hook(self, state: StateBase) -> None:
         """Global manticore hook that kills the state (runs once and self-removes)"""
         self._unregister_state_callback(state.id, self.state_kill_hook)
         state.abandon()
 
-    def _register_state_callback(self, state_id: int, callback: typing.Callable):
+    def _register_state_callback(self, state_id: int, callback: typing.Callable) -> None:
         """Registers a callback to be called by a specific state"""
         callbacks = self.state_callbacks.get(state_id, set())
         callbacks.add(callback)
         self.state_callbacks[state_id] = callbacks
 
-    def _unregister_state_callback(self, state_id: int, callback: typing.Callable):
+    def _unregister_state_callback(self, state_id: int, callback: typing.Callable) -> None:
         """Registers a callback to be called by a specific state"""
         callbacks = self.state_callbacks.get(state_id, set())
         if callbacks and callback in callbacks:
             callbacks.remove(callback)
 
-    def pause_state(self, state_id: int):
+    def pause_state(self, state_id: int) -> None:
         bv = self.bv
         m = bv.session_data.mui_cur_m
         # Only pause when running
@@ -125,7 +125,7 @@ class MUIState:
             self._register_state_callback(state_id, self.state_pause_hook)
             self.paused_states.add(state_id)
 
-    def resume_state(self, state_id: int):
+    def resume_state(self, state_id: int) -> None:
         bv = self.bv
         m = bv.session_data.mui_cur_m
         # Only resume when running
@@ -138,7 +138,7 @@ class MUIState:
                     m._busy_states.remove(-1)
                 m._lock.notify_all()
 
-    def kill_state(self, state_id: int):
+    def kill_state(self, state_id: int) -> None:
         bv = self.bv
         m = bv.session_data.mui_cur_m
         # Only kill when running
