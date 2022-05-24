@@ -35,7 +35,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
         if self.curr_id is not None:
             self.update_graph(self.curr_id)
 
-    def update_graph(self, state_id: int) -> None:
+    def update_graph(self, state_id: int, state_pc: int) -> None:
         """Update graph to display a certain state"""
 
         self.curr_id = state_id
