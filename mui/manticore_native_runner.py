@@ -132,12 +132,8 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for func in self.global_hooks:
                 exec(func, {"bv": bv, "m": m})
 
-            # Global hook to pause specific states
-            def pause_hook(state: StateBase):
-                if state.id in bv.session_data.mui_state.paused_states:
-                    raise TerminateState("Pausing state")
-
-            m.hook(None)(pause_hook)
+            # Global hook for mui_state to add state-specific hooks
+            m.hook(None)(bv.session_data.mui_state.state_callback_hook)
 
             self.load_libraries(m, find_f, avoid_f)
 
