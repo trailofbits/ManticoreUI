@@ -77,7 +77,7 @@ public class ManticoreRunner {
 
 			@Override
 			public void onError(Throwable arg0) {
-				Msg.error(this, nativeArgs);
+				logText.append(arg0.getMessage() + System.lineSeparator());
 			}
 
 			@Override
