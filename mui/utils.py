@@ -109,7 +109,7 @@ class MUIState:
     def _unregister_state_callback(self, state_id: int, callback: typing.Callable) -> None:
         """Registers a callback to be called by a specific state"""
         callbacks = self.state_callbacks.get(state_id, set())
-        if callbacks and callback in callbacks:
+        if callback in callbacks:
             callbacks.remove(callback)
 
     def pause_state(self, state_id: int) -> None:
@@ -146,7 +146,9 @@ class MUIState:
             if state_id in self.paused_states:
                 self.paused_states.remove(state_id)
                 if not self.paused_states:
-                    m._busy_states.remove(-1)
+                    with m._lock:
+                        m._busy_states.remove(-1)
+                        m._lock.notify_all()
             else:
                 self._register_state_callback(state_id, self.state_kill_hook)
 

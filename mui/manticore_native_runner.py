@@ -132,7 +132,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             for func in self.global_hooks:
                 exec(func, {"bv": bv, "m": m})
 
-            # Global hook for mui_state to add state-specific hooks
+            # Global hook for mui_state to add state-specific callbacks
             m.hook(None)(bv.session_data.mui_state.state_callback_hook)
 
             self.load_libraries(m, find_f, avoid_f)
