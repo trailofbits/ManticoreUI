@@ -3,13 +3,14 @@ from typing import Dict, Final, List, Optional
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget
-from binaryninja import BinaryView, show_message_box, MessageBoxButtonSet, MessageBoxIcon
+from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
 from manticore.utils.enums import StateStatus, StateLists
 
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
+from mui.utils import MUIStateData, navigate_to_state
 
 from muicore.MUICore_pb2 import MUIState
 
@@ -68,35 +69,33 @@ class StateListWidget(QWidget, DockContextHandler):
     @Slot(QTreeWidgetItem, int)
     def on_select(self, item: QTreeWidgetItem, col: int):
         """Persist selected tree item across refreshes if it is a state"""
-        item_data = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE)
+
+        item_data: Optional[MUIStateData] = item.data(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE
+        )
+
         # do nothing on non-state items
         if item_data is None:
             return
 
-        self.selected_state_id = item_data[0]
+        self.selected_state_id = item_data.id
 
     @Slot(QTreeWidgetItem, int)
     def on_doubleclick(self, item: QTreeWidgetItem, col: int):
         """Jump to the current PC of a given state when double clicked"""
 
-        item_data = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE)
+        item_data: Optional[MUIStateData] = item.data(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE
+        )
 
         # do nothing on non-state items
         if item_data is None:
             return
 
         graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
-        graph_widget.update_graph(item_data[0], item_data[1])
+        graph_widget.update_graph(item_data)
 
-        if item_data[1] is not None:
-            self.bv.navigate(self.bv.view, item_data[1])
-        else:
-            show_message_box(
-                "[MUI] No instruction information available",
-                f"State {item_data[0]} doesn't contain any instruction information.",
-                MessageBoxButtonSet.OKButtonSet,
-                MessageBoxIcon.ErrorIcon,
-            )
+        navigate_to_state(self.bv, item_data)
 
     def refresh_state_list(
         self,
@@ -124,7 +123,7 @@ class StateListWidget(QWidget, DockContextHandler):
                 item.setData(
                     StateListWidget.STATE_NAME_COLUMN,
                     StateListWidget.STATE_DATA_ROLE,
-                    (state.state_id, state.state_pc),
+                    MUIStateData(state.state_id, state.state_pc),
                 )
                 if self.selected_state_id == state.state_id:
                     item.setSelected(True)

@@ -1,5 +1,5 @@
 import os
-import typing
+from typing import Callable, List, Optional, Final
 from pathlib import Path
 from datetime import datetime
 from inspect import getmembers, isfunction
@@ -19,16 +19,21 @@ from manticore.native import models
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 
 
-def navigate_to_state(self, state_id: int) -> None:
-    """Navigate to the current instruction of a given state"""
-    addr = self.get_state_address(state_id)
+@dataclass(frozen=True)
+class MUIStateData:
+    id: int
+    pc: Optional[int]
 
-    if addr is not None:
-        self.bv.navigate(self.bv.view, addr)
+
+def navigate_to_state(bv: BinaryView, state_data: MUIStateData) -> None:
+    """Navigate to the current instruction of a given state"""
+
+    if state_data.pc is not None:
+        bv.navigate(bv.view, state_data.pc)
     else:
         show_message_box(
             "[MUI] No instruction information available",
-            f"State {state_id} doesn't contain any instruction information.",
+            f"State {state_data.id} doesn't contain any instruction information.",
             MessageBoxButtonSet.OKButtonSet,
             MessageBoxIcon.ErrorIcon,
         )
@@ -72,10 +77,10 @@ def print_timestamp(*args, **kw):
 @dataclass
 class MUIFunctionModel:
     name: str
-    func: typing.Callable
+    func: Callable
 
 
-def get_function_models() -> typing.List[MUIFunctionModel]:
+def get_function_models() -> List[MUIFunctionModel]:
     """
     Returns available function models
     ref: https://github.com/trailofbits/manticore/blob/master/docs/native.rst#function-models

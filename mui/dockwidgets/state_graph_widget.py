@@ -5,6 +5,7 @@ from binaryninja import FlowGraph, FlowGraphNode, EdgePenStyle, ThemeColor, Edge
 from binaryninja.binaryview import BinaryView
 from binaryninjaui import ViewFrame, DockContextHandler, FlowGraphWidget
 from manticore.core.plugin import StateDescriptor
+from mui.utils import MUIStateData
 
 
 class StateGraphWidget(QWidget, DockContextHandler):
@@ -35,7 +36,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
         if self.curr_id is not None:
             self.update_graph(self.curr_id)
 
-    def update_graph(self, state_id: int, state_pc: int) -> None:
+    def update_graph(self, state_data: MUIStateData) -> None:
         """Update graph to display a certain state"""
 
         self.curr_id = state_id
