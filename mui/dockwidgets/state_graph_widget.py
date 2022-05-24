@@ -6,8 +6,6 @@ from binaryninja.binaryview import BinaryView
 from binaryninjaui import ViewFrame, DockContextHandler, FlowGraphWidget
 from manticore.core.plugin import StateDescriptor
 
-from mui.utils import MUIState
-
 
 class StateGraphWidget(QWidget, DockContextHandler):
 
@@ -42,7 +40,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
         self.curr_id = state_id
 
-        mui_state: MUIState = self.bv.session_data.mui_state
+        mui_state = self.bv.session_data.mui_state
 
         graph = FlowGraph()
 
@@ -82,7 +80,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
         # print(graph_widget.flow_graph.setGraph(graph))
 
     def _get_lines(self, state_id: int) -> typing.List:
-        mui_state: MUIState = self.bv.session_data.mui_state
+        mui_state = self.bv.session_data.mui_state
 
         addr = mui_state.get_state_address(state_id)
         if addr is None or len(self.bv.get_basic_blocks_at(addr)) < 1:
