@@ -26,6 +26,7 @@ message MUIMessageList{
 message MUIState {
     int32 state_id = 3;
     uint64 pc = 10;
+    int32 parent_id = 28;
 }
 
 message MUIStateList{
