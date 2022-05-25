@@ -90,11 +90,11 @@ class StateListWidget(QWidget, DockContextHandler):
             menu = QMenu()
             # Options for active states
             if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
-                menu.addAction(StateListWidget.CTX_MENU_KILL)
                 if item.parent() == self.paused_states:
                     menu.addAction(StateListWidget.CTX_MENU_RESUME)
                 else:
                     menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+                menu.addAction(StateListWidget.CTX_MENU_KILL)
 
             action = menu.exec(event.globalPos())
 
