@@ -38,7 +38,6 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
     def update_graph(self, state_data: MUIStateData) -> None:
         """Update graph to display a certain state"""
-        print("REACHED HERE")
         self.selected_state = state_data
         curr_state = state_data
         graph = FlowGraph()
@@ -46,14 +45,13 @@ class StateGraphWidget(QWidget, DockContextHandler):
         if state_data is None:
             return
 
-        print("REACHED HERE2")
-
         curr = FlowGraphNode(graph)
         curr.lines = self._get_lines(state_data)
         graph.append(curr)
+        cnt = 0
+        while isinstance(curr_state.parent_id, int):
 
-        while isinstance(state_data.parent_id, int):
-            prev_state = self.bv.session_data.mui_states.get(state_data.parent_id)
+            prev_state = self.bv.session_data.mui_states.get(curr_state.parent_id)
 
             if prev_state is None:
                 break
@@ -64,10 +62,10 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
             prev.add_outgoing_edge(BranchType.UnconditionalBranch, curr)
 
-            if False:
+            if self.expand_graph:
                 for each_id in prev_state.children_ids:
-                    each = self.bv.session_data.mui_states.get(each_id)
-                    if each != curr_state.state_id:
+                    if each_id != curr_state.id:
+                        each = self.bv.session_data.mui_states.get(each_id)
                         child = FlowGraphNode(graph)
                         child.lines = self._get_lines(each)
                         graph.append(child)
@@ -75,6 +73,9 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
             curr = prev
             curr_state = prev_state
+            cnt += 1
+            if cnt == 3:
+                break
 
         self.flow_graph.setGraph(graph)
         # print(graph_widget.flow_graph.setGraph(graph))
