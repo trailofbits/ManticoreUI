@@ -120,7 +120,10 @@ class StateListWidget(QWidget, DockContextHandler):
             for state in states:
                 item = QTreeWidgetItem(widget, [f"State {state.state_id}"])
                 self.bv.session_data.mui_states[state.state_id] = MUIStateData(
-                    state.state_id, state.pc, state.parent_id, set(state.children_ids)
+                    state.state_id,
+                    state.pc if state.pc else None,
+                    state.parent_id if state.parent_id != -1 else None,
+                    set(state.children_ids),
                 )
                 item.setData(
                     StateListWidget.STATE_NAME_COLUMN,

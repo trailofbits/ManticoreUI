@@ -48,12 +48,11 @@ class StateGraphWidget(QWidget, DockContextHandler):
         curr = FlowGraphNode(graph)
         curr.lines = self._get_lines(state_data)
         graph.append(curr)
-        cnt = 0
         while isinstance(curr_state.parent_id, int):
 
             prev_state = self.bv.session_data.mui_states.get(curr_state.parent_id)
 
-            if prev_state is None:
+            if prev_state is None or prev_state.id == curr_state.id:
                 break
 
             prev = FlowGraphNode(graph)
@@ -73,9 +72,6 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
             curr = prev
             curr_state = prev_state
-            cnt += 1
-            if cnt == 3:
-                break
 
         self.flow_graph.setGraph(graph)
         # print(graph_widget.flow_graph.setGraph(graph))
