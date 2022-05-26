@@ -1,5 +1,5 @@
 import os
-from typing import Callable, List, Optional, Final
+from typing import Callable, List, Optional, Final, Set
 from pathlib import Path
 from datetime import datetime
 from inspect import getmembers, isfunction
@@ -19,10 +19,12 @@ from manticore.native import models
 from muicore.MUICore_pb2_grpc import ManticoreUIStub
 
 
-@dataclass(frozen=True)
+@dataclass()
 class MUIStateData:
     id: int
     pc: Optional[int]
+    parent_id: Optional[int]
+    children_ids: Set[int]
 
 
 def navigate_to_state(bv: BinaryView, state_data: MUIStateData) -> None:

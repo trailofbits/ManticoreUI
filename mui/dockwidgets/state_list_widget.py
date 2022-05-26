@@ -44,8 +44,6 @@ class StateListWidget(QWidget, DockContextHandler):
         layout.addWidget(tree_widget)
         self.setLayout(layout)
 
-        self.state_pcs: Dict[int, Optional[int]] = {}
-
         self.selected_state_id: Optional[int] = None
 
     def _initialize_headers(self):
@@ -106,7 +104,6 @@ class StateListWidget(QWidget, DockContextHandler):
         complete: List[MUIState],
     ):
         self.tree_widget.clear()
-        self.state_pcs.clear()
         self._initialize_headers()
 
         sl_map = {
@@ -117,13 +114,18 @@ class StateListWidget(QWidget, DockContextHandler):
             self.complete_states: complete,
         }
 
+        self.bv.session_data.mui_states = {}
+
         for widget, states in sl_map.items():
             for state in states:
                 item = QTreeWidgetItem(widget, [f"State {state.state_id}"])
+                self.bv.session_data.mui_states[state.state_id] = MUIStateData(
+                    state.state_id, state.pc, state.parent_id, set(state.children_ids)
+                )
                 item.setData(
                     StateListWidget.STATE_NAME_COLUMN,
                     StateListWidget.STATE_DATA_ROLE,
-                    MUIStateData(state.state_id, state.state_pc),
+                    self.bv.session_data.mui_states[state.state_id],
                 )
                 if self.selected_state_id == state.state_id:
                     item.setSelected(True)

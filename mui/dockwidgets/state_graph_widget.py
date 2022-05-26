@@ -1,16 +1,16 @@
-import typing
+from typing import Final, List, Optional
 from PySide6.QtGui import QMouseEvent, QShortcut, QKeySequence, Qt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QLabel, QWidget, QDockWidget
 from binaryninja import FlowGraph, FlowGraphNode, EdgePenStyle, ThemeColor, EdgeStyle, BranchType
 from binaryninja.binaryview import BinaryView
 from binaryninjaui import ViewFrame, DockContextHandler, FlowGraphWidget
 from manticore.core.plugin import StateDescriptor
-from mui.utils import MUIStateData
+from mui.utils import MUIStateData, navigate_to_state
 
 
 class StateGraphWidget(QWidget, DockContextHandler):
 
-    NAME: typing.Final[str] = "Manticore State Graph Explorer"
+    NAME: Final[str] = "Manticore State Graph Explorer"
 
     def __init__(self, name: str, parent: ViewFrame, bv: BinaryView):
         QWidget.__init__(self, parent)
@@ -18,7 +18,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
 
         self.bv = bv
         self.expand_graph: bool = False
-        self.curr_id: typing.Optional[int] = None
+        self.selected_state: Optional[MUIStateData] = None
 
         vlayout = QVBoxLayout()
 
@@ -33,41 +33,40 @@ class StateGraphWidget(QWidget, DockContextHandler):
     def on_tab(self) -> None:
         """Toggle expand_graph"""
         self.expand_graph = not self.expand_graph
-        if self.curr_id is not None:
-            self.update_graph(self.curr_id)
+        if self.selected_state is not None:
+            self.update_graph(self.selected_state)
 
     def update_graph(self, state_data: MUIStateData) -> None:
         """Update graph to display a certain state"""
-
-        self.curr_id = state_id
-
-        mui_state = self.bv.session_data.mui_state
-
+        print("REACHED HERE")
+        self.selected_state = state_data
+        curr_state = state_data
         graph = FlowGraph()
 
-        curr_state = mui_state.get_state(state_id)
-
-        if curr_state is None:
+        if state_data is None:
             return
 
+        print("REACHED HERE2")
+
         curr = FlowGraphNode(graph)
-        curr.lines = self._get_lines(state_id)
+        curr.lines = self._get_lines(state_data)
         graph.append(curr)
 
-        while curr_state.parent is not None:
-            prev_state = mui_state.get_state(curr_state.parent)
+        while isinstance(state_data.parent_id, int):
+            prev_state = self.bv.session_data.mui_states.get(state_data.parent_id)
 
             if prev_state is None:
                 break
 
             prev = FlowGraphNode(graph)
-            prev.lines = self._get_lines(prev_state.state_id)
+            prev.lines = self._get_lines(prev_state)
             graph.append(prev)
 
             prev.add_outgoing_edge(BranchType.UnconditionalBranch, curr)
 
-            if self.expand_graph:
-                for each in prev_state.children:
+            if False:
+                for each_id in prev_state.children_ids:
+                    each = self.bv.session_data.mui_states.get(each_id)
                     if each != curr_state.state_id:
                         child = FlowGraphNode(graph)
                         child.lines = self._get_lines(each)
@@ -80,15 +79,13 @@ class StateGraphWidget(QWidget, DockContextHandler):
         self.flow_graph.setGraph(graph)
         # print(graph_widget.flow_graph.setGraph(graph))
 
-    def _get_lines(self, state_id: int) -> typing.List:
-        mui_state = self.bv.session_data.mui_state
-
-        addr = mui_state.get_state_address(state_id)
+    def _get_lines(self, state_data: MUIStateData) -> List:
+        addr = state_data.pc
         if addr is None or len(self.bv.get_basic_blocks_at(addr)) < 1:
-            return [f"State {state_id}", "???"]
+            return [f"State {state_data.id}", "???"]
         else:
             return [
-                f"State {state_id}",
+                f"State {state_data.id}",
                 [
                     line
                     for line in self.bv.get_basic_blocks_at(addr)[0].get_disassembly_text()
@@ -110,4 +107,4 @@ class MUIFlowGraphWidget(FlowGraphWidget):
         if node is not None:
             state_id = int(str(node.lines[0]).split(" ")[-1])
 
-            self.bv.session_data.mui_state.navigate_to_state(state_id)
+            navigate_to_state(self.bv, self.bv.session_data.mui_states.get(state_id))
