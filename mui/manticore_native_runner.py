@@ -59,6 +59,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
             bv.session_data.mui_state.notify_states_changed({})
             bv.session_data.mui_state.paused_states = set()
+            bv.session_data.mui_state.state_callbacks = dict()
 
             settings = Settings()
 
