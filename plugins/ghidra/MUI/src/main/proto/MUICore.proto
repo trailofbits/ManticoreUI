@@ -27,6 +27,7 @@ message MUIState {
     int32 state_id = 3;
     uint64 pc = 10;
     int32 parent_id = 28;
+    repeated int32 children_ids = 29;
 }
 
 message MUIStateList{
