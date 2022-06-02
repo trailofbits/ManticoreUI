@@ -10,6 +10,7 @@ from manticore.utils.enums import StateStatus, StateLists
 
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
+from mui.utils import MUIStateData, navigate_to_state
 
 from muicore.MUICore_pb2 import MUIState
 
@@ -22,7 +23,7 @@ class StateListWidget(QWidget, DockContextHandler):
     STATE_NAME_COLUMN: Final[int] = 0
 
     # role used to store state id on qt items
-    STATE_ID_ROLE: Final[int] = Qt.UserRole
+    STATE_DATA_ROLE: Final[int] = Qt.UserRole
 
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
@@ -42,8 +43,6 @@ class StateListWidget(QWidget, DockContextHandler):
         layout = QVBoxLayout()
         layout.addWidget(tree_widget)
         self.setLayout(layout)
-
-        self.state_pcs: Dict[int, Optional[int]] = {}
 
         self.selected_state_id: Optional[int] = None
 
@@ -68,22 +67,33 @@ class StateListWidget(QWidget, DockContextHandler):
     @Slot(QTreeWidgetItem, int)
     def on_select(self, item: QTreeWidgetItem, col: int):
         """Persist selected tree item across refreshes if it is a state"""
-        item_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
+
+        item_data: Optional[MUIStateData] = item.data(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE
+        )
+
         # do nothing on non-state items
-        if item_id is None:
+        if item_data is None:
             return
 
-        self.selected_state_id = item_id
+        self.selected_state_id = item_data.id
 
     @Slot(QTreeWidgetItem, int)
     def on_doubleclick(self, item: QTreeWidgetItem, col: int):
         """Jump to the current PC of a given state when double clicked"""
 
-        item_id = item.data(StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE)
+        item_data: Optional[MUIStateData] = item.data(
+            StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_DATA_ROLE
+        )
 
         # do nothing on non-state items
-        if item_id is None:
+        if item_data is None:
             return
+
+        graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
+        graph_widget.update_graph(item_data)
+
+        navigate_to_state(self.bv, item_data)
 
     def refresh_state_list(
         self,
@@ -94,7 +104,6 @@ class StateListWidget(QWidget, DockContextHandler):
         complete: List[MUIState],
     ):
         self.tree_widget.clear()
-        self.state_pcs.clear()
         self._initialize_headers()
 
         sl_map = {
@@ -105,15 +114,24 @@ class StateListWidget(QWidget, DockContextHandler):
             self.complete_states: complete,
         }
 
+        self.bv.session_data.mui_states = {}
+
         for widget, states in sl_map.items():
             for state in states:
                 item = QTreeWidgetItem(widget, [f"State {state.state_id}"])
+                self.bv.session_data.mui_states[state.state_id] = MUIStateData(
+                    state.state_id,
+                    state.pc if state.pc else None,
+                    state.parent_id if state.parent_id != -1 else None,
+                    set(state.children_ids),
+                )
                 item.setData(
-                    StateListWidget.STATE_NAME_COLUMN, StateListWidget.STATE_ID_ROLE, state.state_id
+                    StateListWidget.STATE_NAME_COLUMN,
+                    StateListWidget.STATE_DATA_ROLE,
+                    self.bv.session_data.mui_states[state.state_id],
                 )
                 if self.selected_state_id == state.state_id:
                     item.setSelected(True)
-                self.state_pcs[state.state_id] = state.pc
 
         self._refresh_list_counts()
 
