@@ -15,12 +15,13 @@ from binaryninja import (
 )
 from manticore.core.plugin import StateDescriptor
 from manticore.core.state import StateBase, TerminateState
-from manticore.native import models
+from manticore.native import models, Manticore
 
 
 class MUIState:
-    def __init__(self, bv: BinaryView):
+    def __init__(self, bv: BinaryView, m: Manticore):
         self.bv = bv
+        self.m = m
         self.states: typing.Dict[int, StateDescriptor] = {}
         self.state_change_listeners: typing.List[
             typing.Callable[
@@ -114,7 +115,7 @@ class MUIState:
 
     def pause_state(self, state_id: int) -> None:
         bv = self.bv
-        m = bv.session_data.mui_cur_m
+        m = self.m
         # Only pause when running
         if bv.session_data.mui_is_running and m:
             # Add dummy busy state to prevent manticore from finishing
@@ -127,7 +128,7 @@ class MUIState:
 
     def resume_state(self, state_id: int) -> None:
         bv = self.bv
-        m = bv.session_data.mui_cur_m
+        m = self.m
         # Only resume when running
         if bv.session_data.mui_is_running and m:
             self.paused_states.remove(state_id)
@@ -140,7 +141,7 @@ class MUIState:
 
     def kill_state(self, state_id: int) -> None:
         bv = self.bv
-        m = bv.session_data.mui_cur_m
+        m = self.m
         # Only kill when running
         if bv.session_data.mui_is_running and m:
             if state_id in self.paused_states:

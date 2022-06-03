@@ -33,6 +33,7 @@ class StateListWidget(QWidget, DockContextHandler):
         DockContextHandler.__init__(self, self, name)
 
         self.bv = data
+        self.mui_state: Optional[MUIState] = None
 
         tree_widget = QTreeWidget()
         tree_widget.setColumnCount(1)
@@ -84,7 +85,7 @@ class StateListWidget(QWidget, DockContextHandler):
                 return True
 
             # Pause/Resume only while running
-            if not bv.session_data.mui_is_running or not bv.session_data.mui_cur_m:
+            if not bv.session_data.mui_is_running:
                 return True
 
             menu = QMenu()
@@ -98,14 +99,14 @@ class StateListWidget(QWidget, DockContextHandler):
 
             action = menu.exec(event.globalPos())
 
-            m = bv.session_data.mui_cur_m
             if action:
-                if action.text() == StateListWidget.CTX_MENU_PAUSE:
-                    bv.session_data.mui_state.pause_state(state_id)
-                elif action.text() == StateListWidget.CTX_MENU_RESUME:
-                    bv.session_data.mui_state.resume_state(state_id)
-                elif action.text() == StateListWidget.CTX_MENU_KILL:
-                    bv.session_data.mui_state.kill_state(state_id)
+                if self.mui_state:
+                    if action.text() == StateListWidget.CTX_MENU_PAUSE:
+                        self.mui_state.pause_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_RESUME:
+                        self.mui_state.resume_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_KILL:
+                        self.mui_state.kill_state(state_id)
 
             return True
 
@@ -121,14 +122,15 @@ class StateListWidget(QWidget, DockContextHandler):
         if item_id is None:
             return
 
-        # print(self.bv.session_data.mui_state.get_state(item_id))
         graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
         graph_widget.update_graph(item_id)
 
-        self.bv.session_data.mui_state.navigate_to_state(item_id)
+        if self.mui_state:
+            self.mui_state.navigate_to_state(item_id)
 
-    def listen_to(self, mui_state: MUIState):
+    def set_mui_state(self, mui_state: MUIState):
         """Register this widget with a MUI State object and set up event listeners"""
+        self.mui_state = mui_state
         mui_state.on_state_change(self.on_state_change)
 
     def on_state_change(
@@ -164,7 +166,7 @@ class StateListWidget(QWidget, DockContextHandler):
             return self.forked_states
         elif state.status == StateStatus.stopped:
             # Only want killed states in the errored list
-            if state.state_id in self.bv.session_data.mui_state.paused_states:
+            if self.mui_state and state.state_id in self.mui_state.paused_states:
                 return self.paused_states
             elif state.state_list == StateLists.killed:
                 return self.error_states
@@ -210,3 +212,4 @@ class StateListWidget(QWidget, DockContextHandler):
             title_without_count = title_without_count[: title_without_count.rfind("(") - 1]
 
         header_item.setText(0, f"{title_without_count} ({total_count})")
+    
