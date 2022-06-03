@@ -198,7 +198,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             h_addr = bv.symbols["__elf_header"][0].address
             h_type = bv.types["Elf64_Header"]
             header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3:  # ET_DYN
+            if int(header["type"].value) == 3:  # ET_DYN
                 addr_off = BASE_DYN_ADDR
             else:
                 addr_off = 0
@@ -206,7 +206,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             h_addr = bv.symbols["__elf_header"][0].address
             h_type = bv.types["Elf32_Header"]
             header = TypedDataAccessor(h_type, h_addr, bv, Endianness.LittleEndian)
-            if header["type"].value == 3:  # ET_DYN
+            if int(header["type"].value) == 3:  # ET_DYN
                 addr_off = BASE_DYN_ADDR_32
             else:
                 addr_off = 0
