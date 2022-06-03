@@ -46,7 +46,7 @@ import muicore.MUICore.StopServerRequest;
 // @formatter:on
 public class MUIPlugin extends ProgramPlugin {
 
-	public static MUISetupProvider provider;
+	public static MUISetupProvider setup;
 	public static MUILogProvider log;
 	public static MUIPopupMenu popup;
 	public static MUIStateListProvider stateList;
@@ -73,13 +73,13 @@ public class MUIPlugin extends ProgramPlugin {
 		log = new MUILogProvider(tool, pluginName);
 		popup = new MUIPopupMenu(tool, pluginName);
 		stateList = new MUIStateListProvider(tool, pluginName);
-		provider = new MUISetupProvider(tool, pluginName);
+		setup = new MUISetupProvider(tool, pluginName);
 
 		showSetup = new DockingAction("Run Manticore", pluginName) {
 
 			@Override
 			public void actionPerformed(ActionContext context) {
-				provider.setVisible(true);
+				setup.setVisible(true);
 			}
 		};
 
@@ -162,7 +162,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 	@Override
 	protected void programActivated(Program p) {
-		provider.setProgram(p);
+		setup.setProgram(p);
 		popup.setProgram(p);
 	}
 }

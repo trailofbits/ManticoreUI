@@ -4,7 +4,9 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
+import muicore.MUICore.Hook;
 import muicore.MUICore.NativeArguments;
+import muicore.MUICore.Hook.HookType;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -28,7 +30,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	private String programPath;
 	private JPanel formPanel;
 
-	public static JLabel findAvoidUnimplementedLbl;
+	public MUIHookListComponent setupHookList;
 
 	private HashMap<String, JTextField> formOptions;
 
@@ -169,7 +171,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	 */
 	private void buildMainPanel() {
 		mainPanel = new JPanel(new BorderLayout());
-		mainPanel.setMinimumSize(new Dimension(900, 500));
+		mainPanel.setMinimumSize(new Dimension(900, 800));
 
 		mainPanel.add(formPanel, BorderLayout.CENTER);
 
@@ -183,6 +185,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		moreArgs.setLineWrap(true);
 		moreArgs.setWrapStyleWord(true);
 		moreArgsPanel.add(moreArgs, BorderLayout.CENTER);
+
+		setupHookList = new MUIHookListComponent();
+		setupHookList.setSize(new Dimension(900, 100));
+		setupHookList.setMaximumSize(new Dimension(900, 300));
+		moreArgsPanel.add(setupHookList, BorderLayout.SOUTH);
 
 		bottomPanel.add(moreArgsPanel, BorderLayout.CENTER);
 
@@ -202,6 +209,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 							.setStdinSize(formOptions.get("native.stdin_size").getText())
 							.setConcreteStart(formOptions.get("data").getText())
 							.setAdditionalMcoreArgs(moreArgs.getText())
+							.addAllHooks(setupHookList.getAllMUIHooks())
 							.build();
 
 					ManticoreRunner runner = new ManticoreRunner();
@@ -210,6 +218,8 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 					MUIPlugin.log.setVisible(true);
 					MUIPlugin.stateList.setVisible(true);
 					MUIPlugin.log.addLogTab(runner);
+
+					setupHookList.clearHooks();
 				}
 			});
 		bottomPanel.add(runBtn, BorderLayout.SOUTH);

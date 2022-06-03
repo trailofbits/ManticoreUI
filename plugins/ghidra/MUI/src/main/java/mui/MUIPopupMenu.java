@@ -1,7 +1,6 @@
 package mui;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import docking.action.MenuData;
@@ -10,8 +9,7 @@ import ghidra.app.context.ListingContextAction;
 import ghidra.app.plugin.core.colorizer.ColorizingService;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import muicore.MUICore.AddressRequest;
-import muicore.MUICore.AddressRequest.Builder;
+import muicore.MUICore.Hook.HookType;
 import ghidra.program.model.address.Address;
 
 /**
@@ -22,14 +20,9 @@ public class MUIPopupMenu extends ListingContextAction {
 	private static Program program;
 	public static PluginTool pluginTool;
 
-	private HashSet<Address> findAddresses;
-	private HashSet<Address> avoidAddresses;
-
 	public MUIPopupMenu(PluginTool tool, String name) {
 		super(name, name);
 		pluginTool = tool;
-		findAddresses = new HashSet<Address>();
-		avoidAddresses = new HashSet<Address>();
 		setupMenu();
 	}
 
@@ -69,23 +62,17 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
-					Builder reqBuilder = AddressRequest.newBuilder()
-							.setAddress(Long.parseLong(selectedAddr.toString(), 16));
+					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr, HookType.AVOID);
 
-					if (findAddresses.contains(selectedAddr)) {
-						findAddresses.remove(selectedAddr);
+					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr,
+						HookType.FIND)) {
 						unsetColor(selectedAddr);
-						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
-						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 					}
 					else {
-						findAddresses.add(selectedAddr);
-						avoidAddresses.remove(selectedAddr);
+						MUIPlugin.setup.setupHookList.addHook(selectedAddr, HookType.FIND);
 						setColor(selectedAddr, Color.GREEN);
-						reqBuilder.setType(AddressRequest.TargetType.FIND);
-						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
-
 					}
+
 				}
 			};
 
@@ -102,23 +89,17 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
-					Builder reqBuilder = AddressRequest.newBuilder()
-							.setAddress(Long.parseLong(selectedAddr.toString(), 16));
+					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr, HookType.FIND);
 
-					if (avoidAddresses.contains(selectedAddr)) {
-						avoidAddresses.remove(selectedAddr);
+					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr,
+						HookType.AVOID)) {
 						unsetColor(selectedAddr);
-						reqBuilder.setType(AddressRequest.TargetType.CLEAR);
-						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
-
 					}
 					else {
-						avoidAddresses.add(selectedAddr);
-						findAddresses.remove(selectedAddr);
+						MUIPlugin.setup.setupHookList.addHook(selectedAddr, HookType.AVOID);
 						setColor(selectedAddr, Color.RED);
-						reqBuilder.setType(AddressRequest.TargetType.AVOID);
-						MUIPlugin.asyncMUICoreStub.targetAddressNative(reqBuilder.build(), null);
 					}
+
 				}
 			};
 
