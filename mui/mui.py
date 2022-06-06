@@ -228,7 +228,7 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
         code = "\n".join(
             [
                 f"from manticore.native.models import {fname}",
-                "global bv,m,addr",
+                "global m,addr",
                 "def hook(state):",
                 f"    print('{fname} function model')",
                 f"    state.invoke_model({fname})",
