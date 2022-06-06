@@ -179,6 +179,7 @@ def solve(bv: BinaryView):
                     additional_mcore_args=settings.get_string(
                         f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}additionalArguments", bv
                     ),
+                    hooks=bv.session_data.mui_hook_mgr.list_hooks_for_server(),
                 )
             )
             bv.session_data.server_manticore_instances.add(mcore_instance.uuid)
