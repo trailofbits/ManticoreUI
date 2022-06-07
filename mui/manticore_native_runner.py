@@ -22,7 +22,12 @@ from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.report import NativeResultReport
 from mui.utils import MUIState, print_timestamp
-from mui.native_plugin import RebaseHooksPlugin, UnicornEmulatePlugin
+from mui.native_plugin import (
+    ModuleMappingPlugin,
+    RebaseHooksPlugin,
+    TraceBlockPlugin,
+    UnicornEmulatePlugin,
+)
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
@@ -75,7 +80,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             )
 
             # set up state and clear UI
-            mui_state = MUIState(bv, m)
+            mui_state = MUIState(bv, m, self.binary.name)
 
             state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
             state_widget.set_mui_state(mui_state)
@@ -134,6 +139,12 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             m.hook(None)(mui_state.state_callback_hook)
 
             self.load_libraries(m, find_f, avoid_f)
+
+            # Optional tracing plugin
+            trace = settings.get_bool(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}trace", bv)
+            if trace:
+                m.register_plugin(TraceBlockPlugin(mui_state))
+                m.register_plugin(ModuleMappingPlugin(mui_state))
 
             def run_every(callee: Callable, duration: int = 3) -> Callable:
                 """

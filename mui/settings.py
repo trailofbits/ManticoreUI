@@ -116,6 +116,15 @@ class MUISettings:
                 },
                 {},
             ),
+            "trace": (
+                {
+                    "title": "Trace instructions",
+                    "description": "Enable block-level tracing of executed instructions",
+                    "type": "boolean",
+                    "default": False,
+                },
+                {},
+            ),
         },
         BINJA_HOOK_SETTINGS_PREFIX: {
             "avoid": (

@@ -27,6 +27,8 @@ class StateListWidget(QWidget, DockContextHandler):
     CTX_MENU_KILL: Final[str] = "Kill"
     CTX_MENU_PAUSE: Final[str] = "Pause"
     CTX_MENU_RESUME: Final[str] = "Resume"
+    CTX_MENU_TRACE: Final[str] = "Show Trace"
+    CTX_MENU_UNTRACE: Final[str] = "Hide Trace"
 
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
@@ -84,18 +86,30 @@ class StateListWidget(QWidget, DockContextHandler):
             if state_id == None:
                 return True
 
-            # Pause/Resume only while running
-            if not bv.session_data.mui_is_running:
-                return True
-
             menu = QMenu()
-            # Options for active states
-            if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
-                if item.parent() == self.paused_states:
-                    menu.addAction(StateListWidget.CTX_MENU_RESUME)
+
+            # Options while running
+            if bv.session_data.mui_is_running:
+                # Options for active states
+                if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
+                    if item.parent() == self.paused_states:
+                        menu.addAction(StateListWidget.CTX_MENU_RESUME)
+                    else:
+                        menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+                    menu.addAction(StateListWidget.CTX_MENU_KILL)
+
+            # Options regardless of manticore running
+            # Options for states not currently executing
+            if item.parent() in [
+                self.paused_states,
+                self.forked_states,
+                self.complete_states,
+                self.error_states,
+            ]:
+                if self.mui_state and self.mui_state.current_highlight_state() == state_id:
+                    menu.addAction(StateListWidget.CTX_MENU_UNTRACE)
                 else:
-                    menu.addAction(StateListWidget.CTX_MENU_PAUSE)
-                menu.addAction(StateListWidget.CTX_MENU_KILL)
+                    menu.addAction(StateListWidget.CTX_MENU_TRACE)
 
             action = menu.exec(event.globalPos())
 
@@ -107,6 +121,10 @@ class StateListWidget(QWidget, DockContextHandler):
                         self.mui_state.resume_state(state_id)
                     elif action.text() == StateListWidget.CTX_MENU_KILL:
                         self.mui_state.kill_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_TRACE:
+                        self.mui_state.highlight_trace(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_UNTRACE:
+                        self.mui_state.clear_highlight_trace()
 
             return True
 
@@ -130,6 +148,10 @@ class StateListWidget(QWidget, DockContextHandler):
 
     def set_mui_state(self, mui_state: MUIState):
         """Register this widget with a MUI State object and set up event listeners"""
+        if self.mui_state:
+            self.mui_state.clear_highlight_trace()
+            self.on_state_change(self.mui_state.states, mui_state.states)
+
         self.mui_state = mui_state
         mui_state.on_state_change(self.on_state_change)
 
@@ -212,4 +234,3 @@ class StateListWidget(QWidget, DockContextHandler):
             title_without_count = title_without_count[: title_without_count.rfind("(") - 1]
 
         header_item.setText(0, f"{title_without_count} ({total_count})")
-    
