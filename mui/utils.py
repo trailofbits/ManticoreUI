@@ -227,7 +227,7 @@ def clear_highlight(bv: BinaryView, addr: int) -> None:
 
 
 def clear_highlight_block(bv: BinaryView, addr: int) -> None:
-    """Remove instruction highlight"""
+    """Removes highlight from all instructions in block containing a given address"""
     blocks = bv.get_basic_blocks_at(addr)
     for block in blocks:
         block.set_auto_highlight(HighlightColor(HighlightStandardColor.NoHighlightColor))

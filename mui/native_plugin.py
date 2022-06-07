@@ -157,6 +157,8 @@ class ModuleMapping:
 
 
 class ModuleMappingPlugin(Plugin):
+    """Manticore plugin to get the memory mappings of loaded modules"""
+
     def __init__(self, mui_state: MUIState):
         super().__init__()
         self.module_mappings: Dict[str, ModuleMapping] = mui_state.module_mappings
