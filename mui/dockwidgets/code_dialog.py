@@ -25,7 +25,7 @@ class CodeDialog(QDialog):
         self.editor.setPlainText(
             "\n".join(
                 [
-                    "global bv,m,addr",
+                    "global m,addr",
                     "def hook(state):",
                     "    print('custom hook reached')",
                     "    print(bv)",

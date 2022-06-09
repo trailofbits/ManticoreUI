@@ -1,5 +1,5 @@
 import json
-from typing import Set, Dict, Optional
+from typing import List, Set, Dict, Optional
 from binaryninja import (
     Settings,
     SettingsScope,
@@ -9,6 +9,8 @@ from binaryninja import (
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
 from mui.utils import clear_highlight, highlight_instr
+
+from muicore.MUICore_pb2 import Hook
 
 
 class NativeHookManager:
@@ -177,3 +179,38 @@ class NativeHookManager:
             view=bv,
             scope=SettingsScope.SettingsResourceScope,
         )
+
+    def list_hooks_for_server(self) -> List[Hook]:
+        hook_list = []
+        hook_list.extend(
+            list(
+                map(
+                    lambda addr: Hook(type=Hook.HookType.FIND, address=addr), self.list_find_hooks()
+                )
+            )
+        )
+        hook_list.extend(
+            list(
+                map(
+                    lambda addr: Hook(type=Hook.HookType.AVOID, address=addr),
+                    self.list_avoid_hooks(),
+                )
+            )
+        )
+        hook_list.extend(
+            list(
+                map(
+                    lambda dat: Hook(type=Hook.HookType.CUSTOM, address=dat[0], func_text=dat[1]),
+                    self.list_custom_hooks().items(),
+                )
+            )
+        )
+        hook_list.extend(
+            list(
+                map(
+                    lambda dat: Hook(type=Hook.HookType.CUSTOM, func_text=dat[1]),
+                    self.list_global_hooks().items(),
+                )
+            )
+        )
+        return hook_list

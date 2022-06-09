@@ -101,7 +101,7 @@ class GlobalHookDialog(QDialog):
             dialog.set_text(
                 "\n".join(
                     [
-                        "global bv,m",
+                        "global m",
                         "def hook(state):",
                         "    pass",
                         "m.hook(None)(hook)",
