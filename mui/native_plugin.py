@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from operator import mod
 from typing import Callable, Dict, List, Tuple
 from os.path import realpath
 from manticore.core.plugin import Plugin
@@ -129,6 +128,10 @@ class TraceBlockPlugin(Plugin):
         "LOOP",
         "LOOPNZ",
     }
+
+    def will_run_callback(self, ready_states):
+        for state in ready_states:
+            state.context["is_block_start"] = True
 
     def did_execute_instruction_callback(self, state, pc, _target_pc, instruction):
         # If previous instruction was a BLOCK_INS, current pc should be a new block
