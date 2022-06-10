@@ -86,6 +86,11 @@ class TraceBlockPlugin(Plugin):
         self.mui_state = mui_state
 
     # Instructions that jump to new block
+    """
+    Set manually generated from
+    https://github.com/trailofbits/manticore/blob/master/manticore/native/cpu/x86.py
+    selecting all instructions that directly assign to `cpu.PC` (branch instructions)
+    """
     BLOCK_INS = {
         "CALL",
         "RET",
