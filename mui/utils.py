@@ -1,3 +1,4 @@
+from ctypes import Structure, c_uint16, c_uint32
 import os
 import typing
 from pathlib import Path
@@ -200,6 +201,19 @@ class MUIState:
         """Returns the state_id of the current state with trace highlighting"""
         return self._current_highlight_trace[0]
 
+    def save_trace(self, state_id: int, filename: str):
+        """Saves trace data of state to file"""
+        trace = self.state_trace.get(state_id, set())
+
+        if not trace:
+            print(
+                f"No trace data found for state {state_id}. Did you enable tracing in run options?"
+            )
+            return
+
+        drcov = DrCovTrace(self.bv, trace, list(self.module_mappings.values()), self.filename)
+        drcov.write_to_file(filename)
+
 
 def highlight_instr(bv: BinaryView, addr: int, color: HighlightStandardColor) -> None:
     """Highlight instruction at a given address"""
@@ -315,3 +329,71 @@ def function_model_analysis_cb(bv: BinaryView) -> None:
         banner += "-> Use 'Add Function Model' to hook these functions"
 
         print(banner)
+
+
+# Adapted from https://www.ayrx.me/drcov-file-format
+class BasicBlock(Structure):
+    _fields_ = [("start", c_uint32), ("size", c_uint16), ("mod_id", c_uint16)]
+
+
+class DrCovTrace:
+    def __init__(
+        self,
+        bv: BinaryView,
+        trace: typing.Set[int],
+        module_mappings: typing.List[typing.Any],
+        filename: str,
+    ):
+        self.bv = bv
+        self.trace = trace
+        self.module_mappings = module_mappings
+        self.filename = filename
+        self._process_trace()
+
+    def _process_trace(self) -> None:
+        self.basic_blocks: typing.List[BasicBlock] = []
+        for block_addr in self.trace:
+            for mod_id, module_map in enumerate(self.module_mappings):
+                if module_map.start <= block_addr and block_addr < module_map.end:
+                    # Module is main binary
+                    if module_map.name == self.filename:
+                        addr = block_addr - module_map.start + self.bv.start
+                        for basic_block in self.bv.get_basic_blocks_at(addr):
+                            start = basic_block.start - self.bv.start
+                            size = basic_block.end - basic_block.start
+                            self.basic_blocks.append(BasicBlock(start, size, mod_id))
+                    # External libraries / modules
+                    else:
+                        start = block_addr - module_map.start
+                        size = 1  # Inaccurate basic block size for external modules
+                        self.basic_blocks.append(BasicBlock(start, size, mod_id))
+
+    def write_to_file(self, file_path: str) -> None:
+        """
+        Generate binary file according to DrCov File Format.
+        ref:
+        - https://github.com/qilingframework/qiling/blob/master/qiling/extensions/coverage/formats/drcov.py
+        - https://dynamorio.org/page_drcov.html
+        """
+        drcov_version = 2
+        drcov_flavor = "drcov"
+
+        with open(file_path, "wb") as f:
+            f.write(f"DRCOV VERSION: {drcov_version}\n".encode())
+            f.write(f"DRCOV FLAVOR: {drcov_flavor}\n".encode())
+            f.write(
+                f"Module Table: version {drcov_version}, count {len(self.module_mappings)}\n".encode()
+            )
+            f.write("Columns: id, base, end, entry, path\n".encode())
+            for mod_id, module_map in enumerate(self.module_mappings):
+                path = (
+                    self.bv.file.original_filename
+                    if module_map.name == self.filename
+                    else module_map.name
+                )
+                f.write(
+                    f"{mod_id}, {module_map.start}, {module_map.end}, 0, {path}\n".encode()
+                )
+            f.write(f"BB Table: {len(self.basic_blocks)} bbs\n".encode())
+            for basic_block in self.basic_blocks:
+                f.write(bytes(basic_block))
