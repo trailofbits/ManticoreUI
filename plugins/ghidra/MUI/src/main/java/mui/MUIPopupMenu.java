@@ -3,6 +3,10 @@ package mui;
 import java.awt.Color;
 import java.util.HashSet;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import docking.action.MenuData;
 import ghidra.app.context.ListingActionContext;
 import ghidra.app.context.ListingContextAction;
@@ -62,14 +66,16 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
-					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr, HookType.AVOID);
+					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
+						HookType.AVOID);
 
-					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr,
+					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
 						HookType.FIND)) {
 						unsetColor(selectedAddr);
 					}
 					else {
-						MUIPlugin.setup.setupHookList.addHook(selectedAddr, HookType.FIND);
+						MUIPlugin.setup.setupHookList.addHook(
+							new MUIHookUserObject(HookType.FIND, selectedAddr, null));
 						setColor(selectedAddr, Color.GREEN);
 					}
 
@@ -89,14 +95,16 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 
-					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr, HookType.FIND);
+					MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
+						HookType.FIND);
 
-					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr,
+					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
 						HookType.AVOID)) {
 						unsetColor(selectedAddr);
 					}
 					else {
-						MUIPlugin.setup.setupHookList.addHook(selectedAddr, HookType.AVOID);
+						MUIPlugin.setup.setupHookList.addHook(
+							new MUIHookUserObject(HookType.AVOID, selectedAddr, null));
 						setColor(selectedAddr, Color.RED);
 					}
 
@@ -110,6 +118,30 @@ public class MUIPopupMenu extends ListingContextAction {
 
 		pluginTool.addAction(avoidInstruction);
 
+		ListingContextAction addCustomHookAtInstruction =
+			new ListingContextAction("Add Custom Hook at Instruction", "MUI") {
+				@Override
+				protected void actionPerformed(ListingActionContext context) {
+					Address selectedAddr = context.getLocation().getAddress();
+					JTextArea textArea = new JTextArea(
+						"global m, addr\ndef hook(state):\n    pass\nm.hook(addr)(hook)");
+					JScrollPane scrollPane = new JScrollPane(textArea);
+					int result = JOptionPane.showConfirmDialog(null, scrollPane,
+						"Create Custom Hook at " + selectedAddr.toString(),
+						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+					if (result == JOptionPane.OK_OPTION) {
+						String func_text = textArea.getText();
+						MUIPlugin.setup.setupHookList.addHook(new MUIHookUserObject(HookType.CUSTOM,
+							selectedAddr, func_text));
+					}
+				}
+			};
+		addCustomHookAtInstruction.setPopupMenuData(new MenuData(new String[] {
+			"MUI",
+			"Add Custom Hook at Instruction",
+		}));
+
+		pluginTool.addAction(addCustomHookAtInstruction);
 	}
 
 	/** 

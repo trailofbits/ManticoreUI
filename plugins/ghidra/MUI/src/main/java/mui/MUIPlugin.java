@@ -15,6 +15,9 @@
  */
 package mui;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
 import docking.ActionContext;
@@ -28,12 +31,14 @@ import ghidra.framework.ApplicationConfiguration;
 import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
+import ghidra.util.Msg;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import muicore.ManticoreUIGrpc;
 import muicore.ManticoreUIGrpc.ManticoreUIBlockingStub;
 import muicore.ManticoreUIGrpc.ManticoreUIStub;
 import muicore.MUICore.StopServerRequest;
+import muicore.MUICore.Hook.HookType;
 
 // @formatter:off
 @PluginInfo(
@@ -58,6 +63,7 @@ public class MUIPlugin extends ProgramPlugin {
 	private DockingAction showSetup;
 	private DockingAction showLog;
 	private DockingAction showStateList;
+	private DockingAction showCreateGlobalHookDialog;
 
 	/**
 	 * The main extension constructor, initializes the plugin's components and sets up the "MUI" MenuBar tab.
@@ -100,13 +106,34 @@ public class MUIPlugin extends ProgramPlugin {
 
 		};
 
+		showCreateGlobalHookDialog = new DockingAction("Create Global Hook", pluginName) {
+
+			@Override
+			public void actionPerformed(ActionContext context) {
+				JTextArea textArea =
+					new JTextArea("global m\ndef hook(state):\n    pass\nm.hook(None)(hook)");
+				JScrollPane scrollPane = new JScrollPane(textArea);
+				int result = JOptionPane.showConfirmDialog(null, scrollPane, "Create Global Hook",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+				if (result == JOptionPane.OK_OPTION) {
+					String func_text = textArea.getText();
+					setup.setupHookList
+							.addHook(new MUIHookUserObject(HookType.GLOBAL, func_text));
+				}
+			}
+
+		};
+
 		showSetup.setMenuBarData(new MenuData(new String[] { "MUI", "Run Manticore" }));
 		showLog.setMenuBarData(new MenuData(new String[] { "MUI", "Show Log" }));
 		showStateList.setMenuBarData(new MenuData(new String[] { "MUI", "Show State List" }));
+		showCreateGlobalHookDialog
+				.setMenuBarData(new MenuData(new String[] { "MUI", "Create Global Hook" }));
 
 		tool.addAction(showSetup);
 		tool.addAction(showLog);
 		tool.addAction(showStateList);
+		tool.addAction(showCreateGlobalHookDialog);
 	}
 
 	/**
