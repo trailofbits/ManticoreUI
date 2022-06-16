@@ -1,9 +1,13 @@
-name: CI
+name: binaryninja-ci
 on:
   push:
+    paths:
+      - 'plugins/binaryninja/**'
     branches:
       - 'master'
   pull_request:
+    paths:
+      - 'plugins/binaryninja/**'
     branches:
       - '*'
 
