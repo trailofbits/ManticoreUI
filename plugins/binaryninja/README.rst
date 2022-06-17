@@ -1,5 +1,5 @@
 ===
-MUI
+Manticore UI Binary Ninja Plugin
 ===
 
 .. image:: https://raw.githubusercontent.com/trailofbits/manticore/master/docs/images/manticore.png
@@ -7,7 +7,7 @@ MUI
     :align: center
     :alt: Manticore
 
-With the Manticore User Interface (MUI) project, we provide a graphical user interface plugin for `Binary Ninja <https://binary.ninja/>`_ to allow users to easily interact with and view progress of the `Manticore symbolic execution engine <https://github.com/trailofbits/manticore>`_ for analysis of smart contracts and native binaries.
+This directory provides a graphical user interface plugin for `Binary Ninja <https://binary.ninja/>`_ to allow users to easily interact with and view progress of the `Manticore symbolic execution engine <https://github.com/trailofbits/manticore>`_ for analysis of smart contracts and native binaries.
 
 ❗ATTENTION❗ This project is under active development and may be unstable or unusable. Please open an issue if you have any difficulties using the existing features. New feature development will be considered on a case by case basis.
 
@@ -16,12 +16,12 @@ Requirements
 
 Aside from the Python requirements, we require the following:
 
-* Binary Ninja (latest development version) with GUI
+* Binary Ninja (latest version) with GUI
 
 Installation
 ------------
 
-MUI requires a copy of Binary Ninja with a GUI. Currently we are testing against the latest ``dev`` release(s) (``2.4.2901-dev`` at time of writing).
+MUI requires a copy of Binary Ninja with a GUI. We are currently developing against the latest release(s) (``3.1.3469`` at time of writing).
 
 Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux, and it requires the installation of `ethersplay <https://github.com/crytic/ethersplay>`_.
 

@@ -38,4 +38,5 @@ jobs:
           python3 -m venv mui-env
           source mui-env/bin/activate
           pip install .
+          chmod 775 tests/solc
           just test
