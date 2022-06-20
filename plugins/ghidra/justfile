@@ -4,5 +4,8 @@ format:
 lint:
   gradle -p MUI spotlessCheck
 
+build:
+  gradle -p MUI buildExtension
+
 install:
   gradle -p MUI install
