@@ -1,0 +1,42 @@
+name: server-ci
+on:
+  pull_request:
+    paths:
+      - 'server/**'
+    branches:
+      - '*'
+  push:
+    paths:
+      - 'server/**'
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: 'Install tools'
+        run: |
+          # just command runner https://github.com/casey/just#pre-built-binaries
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "${HOME}/.local/bin"
+
+      - name: 'Lint MUI Server'
+        working-directory: server
+        run: |
+          pip install -r requirements-dev.txt
+          just lint
+
+      - name: 'Test MUI Server'
+        working-directory: server
+        run: |
+          python3 -m venv mui-env
+          source mui-env/bin/activate
+          pip install .
+          chmod 775 tests/solc
+          just test
