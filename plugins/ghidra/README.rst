@@ -101,8 +101,8 @@ Development
 -----------
 
 1. Fork and clone the repo
-2. Install the [GhidraDev plugin](https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraBuild/EclipsePlugins/GhidraDev/GhidraDevPlugin/GhidraDev_README.html) in Eclipse
+2. Install the `GhidraDev plugin <https://github.com/NationalSecurityAgency/ghidra/blob/master/GhidraBuild/EclipsePlugins/GhidraDev/GhidraDevPlugin/GhidraDev_README.html>`_ in Eclipse
 3. Import the project via `File -> Import -> General -> Projects from Folder or Archive`
 4. Link your installation of Ghidra via `GhidraDev -> Link Ghidra`. The necessary `.project` and `.pydevproject` files will be generated for Eclipse.
-5. Format your code with the included `MUI/GhidraEclipseFormatter.xml` (taken from upstream Ghidra) by running `just format` with the tool [just](https://github.com/casey/just).
+5. Format your code with the included `MUI/GhidraEclipseFormatter.xml` (taken from upstream Ghidra) by running `just format` with the tool `just <https://github.com/casey/just>`_.
 6. When you first build the plugin, a gradle will download the `muicore_server` binary used to wrap Manticore UI functionality and the protobuf compiler binary will generate the `ManticoreUIGrpc.java` and `MUICore.java` files to serialize messages for communication with the server.
