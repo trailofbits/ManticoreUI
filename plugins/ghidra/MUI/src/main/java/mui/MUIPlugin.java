@@ -65,12 +65,16 @@ public class MUIPlugin extends ProgramPlugin {
 	private DockingAction showStateList;
 	private DockingAction showCreateGlobalHookDialog;
 
+	public static PluginTool pluginTool;
+
 	/**
 	 * The main extension constructor, initializes the plugin's components and sets up the "MUI" MenuBar tab.
 	 * @throws Exception 
 	 */
 	public MUIPlugin(PluginTool tool) throws Exception {
 		super(tool, true, true);
+
+		pluginTool = tool;
 
 		startMUICoreServer();
 		initMUICoreStubs();

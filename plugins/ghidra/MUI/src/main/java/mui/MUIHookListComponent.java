@@ -2,7 +2,6 @@ package mui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import ghidra.app.services.GoToService;
 import muicore.MUICore.Hook;
 import muicore.MUICore.Hook.HookType;
 
@@ -128,6 +128,20 @@ public class MUIHookListComponent extends JPanel {
 							hookListPopupMenu.show(hookListTree, e.getX(), e.getY());
 						}
 					}
+				}
+				else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+					TreePath path = hookListTree.getClosestPathForLocation(e.getX(), e.getY());
+					if (path != null) {
+						DefaultMutableTreeNode node =
+							(DefaultMutableTreeNode) path.getLastPathComponent();
+						if (node.getUserObject() instanceof MUIHookUserObject &&
+							((MUIHookUserObject) node.getUserObject()).type != HookType.GLOBAL) {
+							GoToService goToService =
+								MUIPlugin.pluginTool.getService(GoToService.class);
+							goToService.goTo(((MUIHookUserObject) node.getUserObject()).address);
+						}
+					}
+
 				}
 			}
 		});
