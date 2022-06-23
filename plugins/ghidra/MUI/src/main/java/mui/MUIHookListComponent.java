@@ -72,9 +72,7 @@ public class MUIHookListComponent extends JPanel {
 		hookListView.setMinimumSize(new Dimension(0, 0));
 		hookListTree.setPreferredSize(new Dimension(900, 100));
 
-		hookListPopupMenu = new JPopupMenu();
-
-		hookListPopupMenu.add(new JMenuItem(new AbstractAction("Delete Hook") {
+		JMenuItem deleteOption = new JMenuItem(new AbstractAction("Delete Hook") {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -92,7 +90,18 @@ public class MUIHookListComponent extends JPanel {
 				}
 			}
 
-		}));
+		});
+
+		JMenuItem editOption = new JMenuItem(new AbstractAction("Edit Hook Function Text") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightClickedHook != null) {
+					MUIHookCodeDialogLauncher.showEdit(rightClickedHook);
+				}
+			}
+
+		});
 
 		hookListTree.addMouseListener(new MouseInputAdapter() {
 			@Override
@@ -104,6 +113,18 @@ public class MUIHookListComponent extends JPanel {
 							(DefaultMutableTreeNode) path.getLastPathComponent();
 						if (node.getUserObject() instanceof MUIHookUserObject) {
 							rightClickedHook = (MUIHookUserObject) node.getUserObject();
+							hookListPopupMenu = new JPopupMenu();
+							switch (rightClickedHook.type) {
+								case CUSTOM:
+								case GLOBAL:
+									hookListPopupMenu.add(editOption);
+								case FIND:
+								case AVOID:
+									hookListPopupMenu.add(deleteOption);
+									break;
+								default:
+									break;
+							}
 							hookListPopupMenu.show(hookListTree, e.getX(), e.getY());
 						}
 					}
