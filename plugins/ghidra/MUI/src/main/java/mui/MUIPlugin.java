@@ -110,16 +110,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 			@Override
 			public void actionPerformed(ActionContext context) {
-				JTextArea textArea =
-					new JTextArea("global m\ndef hook(state):\n    pass\nm.hook(None)(hook)");
-				JScrollPane scrollPane = new JScrollPane(textArea);
-				int result = JOptionPane.showConfirmDialog(null, scrollPane, "Create Global Hook",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (result == JOptionPane.OK_OPTION) {
-					String func_text = textArea.getText();
-					setup.setupHookList
-							.addHook(new MUIHookUserObject(HookType.GLOBAL, func_text));
-				}
+				MUIHookCodeDialogLauncher.showCreateGlobal();
 			}
 
 		};

@@ -122,18 +122,7 @@ public class MUIPopupMenu extends ListingContextAction {
 			new ListingContextAction("Add Custom Hook at Instruction", "MUI") {
 				@Override
 				protected void actionPerformed(ListingActionContext context) {
-					Address selectedAddr = context.getLocation().getAddress();
-					JTextArea textArea = new JTextArea(
-						"global m, addr\ndef hook(state):\n    pass\nm.hook(addr)(hook)");
-					JScrollPane scrollPane = new JScrollPane(textArea);
-					int result = JOptionPane.showConfirmDialog(null, scrollPane,
-						"Create Custom Hook at " + selectedAddr.toString(),
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-					if (result == JOptionPane.OK_OPTION) {
-						String func_text = textArea.getText();
-						MUIPlugin.setup.setupHookList.addHook(new MUIHookUserObject(HookType.CUSTOM,
-							selectedAddr, func_text));
-					}
+					MUIHookCodeDialogLauncher.showCreateCustom(context.getLocation().getAddress());
 				}
 			};
 		addCustomHookAtInstruction.setPopupMenuData(new MenuData(new String[] {
