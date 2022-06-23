@@ -1,0 +1,46 @@
+name: binaryninja-ci
+on:
+  push:
+    paths:
+      - 'plugins/binaryninja/**'
+    branches:
+      - 'master'
+  pull_request:
+    paths:
+      - 'plugins/binaryninja/**'
+    branches:
+      - '*'
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: [3.8]
+        os: [ubuntu-20.04, macos-10.15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+        with:
+          custom_cache_key_element: v2
+
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+        # the package installation will only be executed when the
+        # requirements-files have changed.
+      - run: pip install -r plugins/binaryninja/requirements-dev.txt -r plugins/binaryninja/binjastub/requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - name: Lint
+        run: make -C plugins/binaryninja lint

@@ -1,0 +1,6 @@
+muicore @ git+https://github.com/trailofbits/ManticoreUI.git@binja-migration/master#subdirectory=server
+pygments>=2.7.0,<2.9.0
+crytic-compile==0.2.2
+pyelftools
+unicorn==1.0.2
+grpcio-tools==1.46.3

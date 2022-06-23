@@ -1,0 +1,12 @@
+MUI/bin/
+MUI/build/
+MUI/lib/*
+**/.classpath
+**/.settings
+**/.gradle/
+**/.project
+**/.pydevproject
+**/__pycache__/
+**/mcore*/
+**/dist/
+**/.mypy_cache/
