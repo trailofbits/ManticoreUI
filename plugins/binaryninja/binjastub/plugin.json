@@ -1,0 +1,24 @@
+{
+   "pluginmetadataversion": 2,
+   "name": "ManticoreUI",
+   "author": "Trail of Bits",
+   "type": [
+      "ui",
+      "helper"
+   ],
+   "api": [
+      "python3"
+   ],
+   "description": "Graphical user interface to interact with Manticore symbolic execution engine",
+   "longdescription": "",
+   "license": {
+      "name": "AGPL-3.0",
+      "text": "Copyright (C) 2022  Trail of Bits\n\nThis program is free software: you can redistribute it and/or modify\nit under the terms of the GNU Affero General Public License as\npublished by the Free Software Foundation, either version 3 of the\nLicense, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Affero General Public License for more details.\n\nYou should have received a copy of the GNU Affero General Public License\nalong with this program.  If not, see <https://www.gnu.org/licenses/>."
+   },
+   "platforms": [
+      "Darwin",
+      "Linux"
+   ],
+   "version": "v0.1.0",
+   "minimumbinaryninjaversion": 2901
+}
