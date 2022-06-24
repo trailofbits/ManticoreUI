@@ -99,7 +99,6 @@ public class MUIPopupMenu extends ListingContextAction {
 				protected void actionPerformed(ListingActionContext context) {
 					Address selectedAddr = context.getLocation().getAddress();
 					MUIHookCodeDialogLauncher.showCreateCustom(selectedAddr);
-					MUIHookAddressColorizer.setColor(selectedAddr, HookType.CUSTOM);
 				}
 			};
 		addCustomHookAtInstruction.setPopupMenuData(new MenuData(new String[] {

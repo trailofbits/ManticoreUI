@@ -22,6 +22,7 @@ public class MUIHookCodeDialogLauncher {
 		if (result == JOptionPane.OK_OPTION) {
 			MUIPlugin.setup.setupHookList.addHook(new MUIHookUserObject(HookType.CUSTOM,
 				address, textArea.getText()));
+			MUIHookAddressColorizer.setColor(address, HookType.CUSTOM);
 		}
 	}
 
