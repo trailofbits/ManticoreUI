@@ -66,6 +66,7 @@ public class MUIPlugin extends ProgramPlugin {
 	private DockingAction showCreateGlobalHookDialog;
 
 	public static PluginTool pluginTool;
+	public static Program program;
 
 	/**
 	 * The main extension constructor, initializes the plugin's components and sets up the "MUI" MenuBar tab.
@@ -184,7 +185,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 	@Override
 	protected void programActivated(Program p) {
-		setup.setProgram(p);
-		popup.setProgram(p);
+		program = p;
+		setup.setProgramPath(p);
 	}
 }
