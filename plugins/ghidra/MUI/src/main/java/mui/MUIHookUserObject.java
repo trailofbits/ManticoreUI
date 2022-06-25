@@ -47,6 +47,10 @@ public class MUIHookUserObject {
 				break;
 		}
 		return b.build();
+	}
 
+	@Override
+	public String toString() {
+		return name;
 	}
 }

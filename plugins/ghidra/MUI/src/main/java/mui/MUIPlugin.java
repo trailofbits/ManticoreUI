@@ -65,12 +65,16 @@ public class MUIPlugin extends ProgramPlugin {
 	private DockingAction showStateList;
 	private DockingAction showCreateGlobalHookDialog;
 
+	public static PluginTool pluginTool;
+
 	/**
 	 * The main extension constructor, initializes the plugin's components and sets up the "MUI" MenuBar tab.
 	 * @throws Exception 
 	 */
 	public MUIPlugin(PluginTool tool) throws Exception {
 		super(tool, true, true);
+
+		pluginTool = tool;
 
 		startMUICoreServer();
 		initMUICoreStubs();
@@ -110,16 +114,7 @@ public class MUIPlugin extends ProgramPlugin {
 
 			@Override
 			public void actionPerformed(ActionContext context) {
-				JTextArea textArea =
-					new JTextArea("global m\ndef hook(state):\n    pass\nm.hook(None)(hook)");
-				JScrollPane scrollPane = new JScrollPane(textArea);
-				int result = JOptionPane.showConfirmDialog(null, scrollPane, "Create Global Hook",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-				if (result == JOptionPane.OK_OPTION) {
-					String func_text = textArea.getText();
-					setup.setupHookList
-							.addHook(new MUIHookUserObject(HookType.GLOBAL, func_text));
-				}
+				MUIHookCodeDialogLauncher.showCreateGlobal();
 			}
 
 		};
