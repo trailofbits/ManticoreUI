@@ -8,6 +8,10 @@ import muicore.MUICore.Hook.HookType;
 
 public class MUIHookAddressColorizer {
 
+	public static final Color FIND_HIGHLIGHT_COLOR = Color.GREEN;
+	public static final Color AVOID_HIGHLIGHT_COLOR = Color.RED;
+	public static final Color CUSTOM_HIGHLIGHT_COLOR = new Color(120, 150, 255);
+
 	/**
 	 * Sets color in the Listing component for the specified address.
 	 * @param address The address to set color of in the Disassembly Listing.
@@ -16,16 +20,16 @@ public class MUIHookAddressColorizer {
 	public static void setColor(Address address, HookType hookType) {
 		ColorizingService service = MUIPlugin.pluginTool.getService(ColorizingService.class);
 		int tid = MUIPlugin.program.startTransaction("setColor");
-		Color toSet = Color.BLUE;
+		Color toSet = Color.WHITE;
 		switch (hookType) {
 			case FIND:
-				toSet = Color.GREEN;
+				toSet = FIND_HIGHLIGHT_COLOR;
 				break;
 			case AVOID:
-				toSet = Color.RED;
+				toSet = AVOID_HIGHLIGHT_COLOR;
 				break;
 			case CUSTOM:
-				toSet = new Color(120, 150, 255);
+				toSet = CUSTOM_HIGHLIGHT_COLOR;
 				break;
 			default:
 				break;
