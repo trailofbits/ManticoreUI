@@ -21,37 +21,12 @@ import ghidra.program.model.address.Address;
  */
 public class MUIPopupMenu extends ListingContextAction {
 
-	private static Program program;
 	public static PluginTool pluginTool;
 
 	public MUIPopupMenu(PluginTool tool, String name) {
 		super(name, name);
 		pluginTool = tool;
 		setupMenu();
-	}
-
-	/**
-	 * Clears color from the Listing component for the specified address.
-	 * @param address The address to clear color from.
-	 */
-	public static void unsetColor(Address address) {
-		ColorizingService service = pluginTool.getService(ColorizingService.class);
-		int tid = program.startTransaction("unsetColor");
-		service.clearBackgroundColor(address, address);
-		program.endTransaction(tid, true);
-	}
-
-	/**
-	 * Sets color in the Listing component for the specified address.
-	 * @param address The address to clear color from.
-	 * @param color The color to set for the address in the Listing component.
-	 */
-	public static void setColor(Address address, Color color) {
-		ColorizingService service = pluginTool.getService(ColorizingService.class);
-		int tid = program.startTransaction("setColor");
-		service.setBackgroundColor(address, address, color);
-		program.endTransaction(tid, true);
-
 	}
 
 	/**
@@ -71,12 +46,12 @@ public class MUIPopupMenu extends ListingContextAction {
 
 					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
 						HookType.FIND)) {
-						unsetColor(selectedAddr);
+						MUIHookAddressColorizer.clearColor(selectedAddr);
 					}
 					else {
 						MUIPlugin.setup.setupHookList.addHook(
 							new MUIHookUserObject(HookType.FIND, selectedAddr, null));
-						setColor(selectedAddr, Color.GREEN);
+						MUIHookAddressColorizer.setColor(selectedAddr, HookType.FIND);
 					}
 
 				}
@@ -100,12 +75,12 @@ public class MUIPopupMenu extends ListingContextAction {
 
 					if (MUIPlugin.setup.setupHookList.removeHookIfExists(selectedAddr.toString(),
 						HookType.AVOID)) {
-						unsetColor(selectedAddr);
+						MUIHookAddressColorizer.clearColor(selectedAddr);
 					}
 					else {
 						MUIPlugin.setup.setupHookList.addHook(
 							new MUIHookUserObject(HookType.AVOID, selectedAddr, null));
-						setColor(selectedAddr, Color.RED);
+						MUIHookAddressColorizer.setColor(selectedAddr, HookType.AVOID);
 					}
 
 				}
@@ -122,7 +97,8 @@ public class MUIPopupMenu extends ListingContextAction {
 			new ListingContextAction("Add Custom Hook at Instruction", "MUI") {
 				@Override
 				protected void actionPerformed(ListingActionContext context) {
-					MUIHookCodeDialogLauncher.showCreateCustom(context.getLocation().getAddress());
+					Address selectedAddr = context.getLocation().getAddress();
+					MUIHookCodeDialogLauncher.showCreateCustom(selectedAddr);
 				}
 			};
 		addCustomHookAtInstruction.setPopupMenuData(new MenuData(new String[] {
@@ -131,15 +107,6 @@ public class MUIPopupMenu extends ListingContextAction {
 		}));
 
 		pluginTool.addAction(addCustomHookAtInstruction);
-	}
-
-	/** 
-	 * Called once the binary being analyzed in Ghidra has been activated.
-	 * @param p the binary being analyzed in Ghidra
-	 * @see MUIPlugin#programActivated(Program)
-	 */
-	public void setProgram(Program p) {
-		program = p;
 	}
 
 }

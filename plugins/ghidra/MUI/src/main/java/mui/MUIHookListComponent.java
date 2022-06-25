@@ -80,8 +80,8 @@ public class MUIHookListComponent extends JPanel {
 					switch (rightClickedHook.type) {
 						case FIND:
 						case AVOID:
-							MUIPlugin.popup.unsetColor(rightClickedHook.address);
 						case CUSTOM:
+							MUIHookAddressColorizer.clearColor(rightClickedHook.address);
 						case GLOBAL:
 							removeHookIfExists(rightClickedHook.name, rightClickedHook.type);
 						default:

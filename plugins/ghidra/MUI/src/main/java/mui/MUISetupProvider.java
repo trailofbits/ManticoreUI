@@ -4,9 +4,7 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import muicore.MUICore.Hook;
 import muicore.MUICore.NativeArguments;
-import muicore.MUICore.Hook.HookType;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,8 +21,6 @@ import javax.swing.*;
  * Provides the "MUI Setup" component used to set the arguments for and run Manticore.
  */
 public class MUISetupProvider extends ComponentProviderAdapter {
-
-	private Program program;
 
 	private JPanel mainPanel;
 	private String programPath;
@@ -274,9 +270,8 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	 * @param p the binary being analyzed in Ghidra
 	 * @see MUIPlugin#programActivated(Program)
 	 */
-	public void setProgram(Program p) {
-		program = p;
-		programPath = program.getExecutablePath();
+	public void setProgramPath(Program p) {
+		programPath = p.getExecutablePath();
 	}
 
 	@Override
