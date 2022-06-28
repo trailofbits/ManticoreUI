@@ -24,7 +24,7 @@ from manticore.ethereum import ManticoreEVM
 from manticore.native import Manticore
 from manticore.utils.enums import StateLists, StateStatus
 from manticore.utils.helpers import deque
-from manticore.utils.log import CallbackStream, ManticoreContextFilter
+from manticore.utils.log import CallbackStream, ContextFilter
 
 from .evm_utils import setup_detectors_flags
 from .introspect_plugin import MUIIntrospectionPlugin
@@ -90,7 +90,7 @@ class MUIServicer(ManticoreUIServicer):
                 "%(threadName)s %(asctime)s: [%(process)d] %(name)s:%(levelname)s %(message)s"
             )
         )
-        custom_log_handler.addFilter(ManticoreContextFilter())
+        custom_log_handler.addFilter(ContextFilter())
 
         manticore_logger.addHandler(custom_log_handler)
 
