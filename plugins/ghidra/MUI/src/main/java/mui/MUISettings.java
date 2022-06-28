@@ -11,6 +11,7 @@ public class MUISettings {
 	/**
 	 * Map containing key Manticore arguments and their details including input types, defaults, and descriptions.
 	 */
+	//
 	public static Map<String, TreeMap<String, Map<String, Object>[]>> SETTINGS =
 		Map.of(
 			"NATIVE_RUN_SETTINGS",

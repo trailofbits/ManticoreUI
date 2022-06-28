@@ -37,6 +37,7 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		setTitle("MUI Setup");
 		setDefaultWindowPosition(WindowPosition.WINDOW);
 		setVisible(false);
+		//
 	}
 
 	/**

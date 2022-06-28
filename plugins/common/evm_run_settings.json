@@ -1,0 +1,194 @@
+{
+    "settings": {
+        "solc_path": [
+            {
+                "title": "solc path",
+                "description": "Location of the solc binary",
+                "type": "string",
+                "default": ""
+            },
+            {
+                "is_file_path": true
+            }
+        ],
+        "contract_name": [
+            {
+                "title": "contract_name",
+                "description": "The target contract name defined in the source code",
+                "type": "string",
+                "default": ""
+            },
+            {}
+        ],
+        "txlimit": [
+            {
+                "title": "txlimit",
+                "description": "Maximum number of symbolic transactions to run (negative integer means no limit)",
+                "type": "number",
+                "minValue": -2147483648,
+                "maxValue": 2147483647,
+                "default": -1
+            },
+            {}
+        ],
+        "txaccount": [
+            {
+                "title": "txaccount",
+                "description": "Account used as caller in the symbolic transactions, either \\"attacker\\" or \\"owner\\" or \\"combo1\\" (uses both)",
+                "type": "string",
+                "default": "attacker"
+            },
+            {
+                "possible_values": [
+                    "attacker",
+                    "owner",
+                    "combo1"
+                ]
+            }
+        ],
+        "detectors_to_exclude": [
+            {
+                "title": "detectors_to_exclude",
+                "description": "List of detectors that should be excluded",
+                "type": "array",
+                "elementType": "string",
+                "default": []
+            },
+            {
+                "possible_values": [
+                    "delegatecall",
+                    "env-instr",
+                    "ext-call-leak",
+                    "invalid",
+                    "lockdrop",
+                    "overflow",
+                    "reentrancy",
+                    "reentrancy-adv",
+                    "suicidal",
+                    "uninitialized-memory",
+                    "uninitialized-storage",
+                    "unused-return"
+                ],
+                "allow_repeats": false
+            }
+        ],
+        "exclude_all": [
+            {
+                "title": "exclude_all",
+                "description": "Excludes all detectors",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "thorough_mode": [
+            {
+                "title": "thorough_mode",
+                "description": "Configure Manticore for more exhaustive exploration. Evaluate gas, generate testcases for dead states, explore constant functions, and run a small suite of detectors.",
+                "type": "boolean",
+                "default": true
+            },
+            {}
+        ],
+        "txnocoverage": [
+            {
+                "title": "txnocoverage",
+                "description": "Do not use coverage as stopping criteria",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "txnoether": [
+            {
+                "title": "txnoether",
+                "description": "Do not attempt to send ether to contract",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "txpreconstrain": [
+            {
+                "title": "txpreconstrain",
+                "description": "Constrain human transactions to avoid exceptions in the contract function dispatcher",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "no_testcases": [
+            {
+                "title": "no_testcases",
+                "description": "Do not generate testcases for discovered states when analysis finishes",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "only_alive_testcases": [
+            {
+                "title": "only_alive_testcases",
+                "description": "Do not generate testcases for invalid/throwing states when analysis finishes",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "skip_reverts": [
+            {
+                "title": "skip_reverts",
+                "description": "Skip REVERTs",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "explore_balance": [
+            {
+                "title": "explore_balance",
+                "description": "Discard all transactions that results in states where the underlying EVM storage did not change",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "verbose_trace": [
+            {
+                "title": "verbose_trace",
+                "description": "Dump an extra verbose trace for each state",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "limit_loops": [
+            {
+                "title": "limit_loops",
+                "description": "Limit loops depth",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "profile": [
+            {
+                "title": "profile",
+                "description": "Use profiler",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ],
+        "avoid_constant": [
+            {
+                "title": "avoid_constant",
+                "description": "Avoid exploring constant functions for human transactions",
+                "type": "boolean",
+                "default": false
+            },
+            {}
+        ]
+    },
+    "exclusions": {}
+}
