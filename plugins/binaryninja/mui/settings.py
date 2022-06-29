@@ -148,7 +148,7 @@ class MUISettings:
             "custom": (
                 {
                     "title": "Custom Hooks",
-                    "description": "Addresses and python code for custom hooks",
+                    "description": "Names and python code for custom hooks",
                     "type": "string",
                     "default": json.dumps({}),
                 },

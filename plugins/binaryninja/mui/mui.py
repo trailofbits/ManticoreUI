@@ -139,12 +139,14 @@ def solve(bv: BinaryView):
             s.start()
 
 
-def edit_custom_hook(bv: BinaryView, addr: int):
+def edit_custom_hook(bv: BinaryView, addr: int, name=""):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
     mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-    if mgr.has_custom_hook(addr):
-        dialog.set_text(mgr.get_custom_hook(addr))
+    if mgr.has_custom_hook(name):
+        dialog.set_text(mgr.get_custom_hook(name))
+    else:
+        mgr.custom_hook_ctr[addr] += 1
 
     result: QDialog.DialogCode = dialog.exec()
 
@@ -152,10 +154,10 @@ def edit_custom_hook(bv: BinaryView, addr: int):
         code = dialog.text()
         if not code:
             # delete the hook if empty input is provided
-            if mgr.has_custom_hook(addr):
-                mgr.del_custom_hook(addr)
+            if mgr.has_custom_hook(name):
+                mgr.del_custom_hook(name)
         else:
-            mgr.add_custom_hook(addr, code)
+            mgr.add_custom_hook(addr, f"{addr:08x}_{mgr.custom_hook_ctr[addr]:02d}", code)
 
 
 def edit_global_hook(bv: BinaryView):
@@ -184,7 +186,8 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
                 "m.hook(addr)(hook)",
             ]
         )
-        mgr.add_custom_hook(addr, code)
+        mgr.custom_hook_ctr[addr] += 1
+        mgr.add_custom_hook(addr, f"{addr:08x}_{mgr.custom_hook_ctr[addr]:02d}", code)
 
 
 def manage_shared_libs(bv) -> None:
@@ -289,7 +292,7 @@ PluginCommand.register(
     lambda bv: not solve_is_valid(bv),
 )
 PluginCommand.register_for_address(
-    "MUI \\ Add/Edit Custom Hook", "Add/edit a custom hook at the current address", edit_custom_hook
+    "MUI \\ Add Custom Hook", "Add a custom hook at the current address", edit_custom_hook
 )
 PluginCommand.register_for_address(
     "MUI \\ Add Function Model",

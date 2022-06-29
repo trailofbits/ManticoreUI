@@ -102,7 +102,7 @@ class HookListWidget(QWidget, DockContextHandler):
                 elif parent == self.avoid_hooks:
                     self.mgr.del_avoid_hook(addr)
                 elif parent == self.custom_hooks:
-                    self.mgr.del_custom_hook(addr)
+                    self.mgr.del_custom_hook(name)
                 elif parent == self.global_hooks:
                     self.mgr.del_global_hook(name)
                 else:
@@ -113,7 +113,7 @@ class HookListWidget(QWidget, DockContextHandler):
 
                 bv = self.bv
                 if parent == self.custom_hooks:
-                    mui.mui.edit_custom_hook(bv, addr)
+                    mui.mui.edit_custom_hook(bv, addr, name)
                 elif parent == self.global_hooks:
                     dialog = mui.dockwidgets.global_hook_dialog.GlobalHookDialog(
                         DockHandler.getActiveDockHandler().parent(), bv, self.mgr
