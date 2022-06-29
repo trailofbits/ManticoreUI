@@ -391,9 +391,7 @@ class DrCovTrace:
                     if module_map.name == self.filename
                     else module_map.name
                 )
-                f.write(
-                    f"{mod_id}, {module_map.start}, {module_map.end}, 0, {path}\n".encode()
-                )
+                f.write(f"{mod_id}, {module_map.start}, {module_map.end}, 0, {path}\n".encode())
             f.write(f"BB Table: {len(self.basic_blocks)} bbs\n".encode())
             for basic_block in self.basic_blocks:
                 f.write(bytes(basic_block))
