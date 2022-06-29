@@ -3,13 +3,13 @@ on:
   push:
     paths:
       - 'plugins/binaryninja/**'
-    branches:
-      - 'master'
+    branches-ignore:
+      - 'binja-integration/master'
   pull_request:
     paths:
       - 'plugins/binaryninja/**'
-    branches:
-      - '*'
+    branches-ignore:
+      - 'binja-integration/master'
 
 jobs:
   ci:
