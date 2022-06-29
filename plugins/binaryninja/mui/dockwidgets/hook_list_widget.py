@@ -5,9 +5,10 @@ from PySide6.QtCore import Qt, Slot, QEvent
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
 from PySide6.QtGui import QAction
 from binaryninja import BinaryView
-from binaryninjaui import DockContextHandler, ViewFrame
+from binaryninjaui import DockContextHandler, DockHandler, ViewFrame
 
 from mui.utils import clear_highlight
+import mui.dockwidgets.global_hook_dialog
 import mui.mui
 
 
@@ -114,7 +115,10 @@ class HookListWidget(QWidget, DockContextHandler):
                 if parent == self.custom_hooks:
                     mui.mui.edit_custom_hook(bv, addr)
                 elif parent == self.global_hooks:
-                    mui.mui.edit_global_hook(bv)
+                    dialog = mui.dockwidgets.global_hook_dialog.GlobalHookDialog(
+                        DockHandler.getActiveDockHandler().parent(), bv, self.mgr
+                    )
+                    dialog.edit_hook(name)
 
             return True
 
