@@ -3,10 +3,12 @@ from typing import Dict, Final, Tuple, Optional
 
 from PySide6.QtCore import Qt, Slot, QEvent
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
+from PySide6.QtGui import QAction
 from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 
 from mui.utils import clear_highlight
+import mui.mui
 
 
 class HookType(Enum):
@@ -79,11 +81,17 @@ class HookListWidget(QWidget, DockContextHandler):
             if addr == None or name == None:
                 return True
 
+            parent = item.parent()
             menu = QMenu()
             menu.addAction("Delete")
+            if parent == self.custom_hooks or parent == self.global_hooks:
+                menu.addAction("Edit")
 
-            if menu.exec(event.globalPos()):
-                parent = item.parent()
+            action = menu.exec(event.globalPos())
+            if not isinstance(action, QAction):
+                return True
+
+            if action.text() == "Delete":
                 if not self.mgr:
                     return True
 
@@ -98,6 +106,15 @@ class HookListWidget(QWidget, DockContextHandler):
                     self.mgr.del_global_hook(name)
                 else:
                     raise Exception("Deleting hook with invalid parent")
+            elif action.text() == "Edit":
+                if not self.mgr:
+                    return True
+
+                bv = self.bv
+                if parent == self.custom_hooks:
+                    mui.mui.edit_custom_hook(bv, addr)
+                elif parent == self.global_hooks:
+                    mui.mui.edit_global_hook(bv)
 
             return True
 
