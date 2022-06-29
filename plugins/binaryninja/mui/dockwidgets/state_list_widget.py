@@ -2,7 +2,7 @@ from typing import Dict, Final, Optional
 
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Qt, QEvent
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu, QFileDialog
 from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
@@ -29,6 +29,7 @@ class StateListWidget(QWidget, DockContextHandler):
     CTX_MENU_RESUME: Final[str] = "Resume"
     CTX_MENU_TRACE: Final[str] = "Show Trace"
     CTX_MENU_UNTRACE: Final[str] = "Hide Trace"
+    CTX_MENU_SAVE_TRACE: Final[str] = "Save Trace"
 
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
@@ -110,6 +111,7 @@ class StateListWidget(QWidget, DockContextHandler):
                     menu.addAction(StateListWidget.CTX_MENU_UNTRACE)
                 else:
                     menu.addAction(StateListWidget.CTX_MENU_TRACE)
+                menu.addAction(StateListWidget.CTX_MENU_SAVE_TRACE)
 
             action = menu.exec(event.globalPos())
 
@@ -125,6 +127,8 @@ class StateListWidget(QWidget, DockContextHandler):
                         self.mui_state.highlight_trace(state_id)
                     elif action.text() == StateListWidget.CTX_MENU_UNTRACE:
                         self.mui_state.clear_highlight_trace()
+                    elif action.text() == StateListWidget.CTX_MENU_SAVE_TRACE:
+                        self._save_trace(state_id)
 
             return True
 
@@ -234,3 +238,12 @@ class StateListWidget(QWidget, DockContextHandler):
             title_without_count = title_without_count[: title_without_count.rfind("(") - 1]
 
         header_item.setText(0, f"{title_without_count} ({total_count})")
+
+    def _save_trace(self, state_id):
+        """Context menu function to save trace data to file"""
+        if self.mui_state:
+            filename, _ = QFileDialog.getSaveFileName(
+                None, "Save Trace File", "", "DrCov Coverage Log (*.log)"
+            )
+            if filename:
+                self.mui_state.save_trace(state_id, filename)
