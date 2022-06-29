@@ -18,7 +18,7 @@ class NativeHookManager:
     def __init__(self, bv: BinaryView, widget: Optional[HookListWidget] = None):
         self.bv = bv
         self.widget = widget
-        self.custom_hook_ctr = defaultdict(lambda: -1)
+        self.custom_hook_ctr: Dict[int, int] = defaultdict(lambda: -1)
 
     # Add
     def add_find_hook(self, addr: int) -> None:
