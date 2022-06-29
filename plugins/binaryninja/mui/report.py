@@ -120,13 +120,18 @@ class NativeResultReport:
         # Workspace data related to the testcase
         data["workspace_data"] = ""
         prefix_keys = filter(lambda x: x.startswith(prefix), keys)
-        exclude = {"smt", "syscalls", "pkl", "messages"}
+        exclude = {"smt", "syscalls", "pkl", "messages", "trace"}
         for key in prefix_keys:
             suffix = key.split(".")[-1]
             if suffix in exclude:
                 continue
             s = escape(str(store.load_value(key)))
             data["workspace_data"] += KEY_VAL_TEMPLATE.format(key=suffix, value=s)
+
+        # Display formatted trace separately at the end
+        s = store.load_value(prefix + "trace").rstrip().replace("\n", ", ")
+        s = escape(str(f"{{ {s} }}"))
+        data["workspace_data"] += KEY_VAL_TEMPLATE.format(key="trace", value=s)
 
         html = TESTCASE_TEMPLATE.format(**data)
         return HTMLReport(prefix.rstrip("."), html, view=bv)
