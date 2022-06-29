@@ -29,10 +29,11 @@ class HookManagerTest(unittest.TestCase):
 
     def test_add_custom(self) -> None:
         mgr = self.mgr
-        mgr.add_custom_hook(self.MAIN, "# custom hook code")
-        self.assertTrue(mgr.has_custom_hook(self.MAIN))
-        self.assertEqual(mgr.get_custom_hook(self.MAIN), "# custom hook code")
-        self.assertEqual(mgr.list_custom_hooks(), {self.MAIN: "# custom hook code"})
+        name = f"{self.MAIN}_00"
+        mgr.add_custom_hook(self.MAIN, name, "# custom hook code")
+        self.assertTrue(mgr.has_custom_hook(name))
+        self.assertEqual(mgr.get_custom_hook(name), "# custom hook code")
+        self.assertEqual(mgr.list_custom_hooks(), {name: "# custom hook code"})
 
     def test_add_global(self) -> None:
         mgr = self.mgr
@@ -58,10 +59,11 @@ class HookManagerTest(unittest.TestCase):
 
     def test_del_custom(self) -> None:
         mgr = self.mgr
-        mgr.add_custom_hook(self.MAIN, "# custom hook code")
-        mgr.del_custom_hook(self.MAIN)
-        self.assertFalse(mgr.has_custom_hook(self.MAIN))
-        self.assertEqual(mgr.get_custom_hook(self.MAIN), "")
+        name = f"{self.MAIN}_00"
+        mgr.add_custom_hook(self.MAIN, name, "# custom hook code")
+        mgr.del_custom_hook(name)
+        self.assertFalse(mgr.has_custom_hook(name))
+        self.assertEqual(mgr.get_custom_hook(name), "")
         self.assertEqual(mgr.list_custom_hooks(), {})
 
     def test_del_global(self) -> None:
