@@ -37,12 +37,17 @@ class StateGraphWidget(QWidget, DockContextHandler):
         if self.curr_id is not None:
             self.update_graph(self.curr_id)
 
+    def set_mui_state(self, mui_state: MUIState):
+        """Register this widget with a MUI State object"""
+        self.mui_state = mui_state
+        self.flow_graph.set_mui_state(mui_state)
+
     def update_graph(self, state_id: int) -> None:
         """Update graph to display a certain state"""
 
         self.curr_id = state_id
 
-        mui_state: MUIState = self.bv.session_data.mui_state
+        mui_state: MUIState = self.mui_state
 
         graph = FlowGraph()
 
@@ -82,7 +87,7 @@ class StateGraphWidget(QWidget, DockContextHandler):
         # print(graph_widget.flow_graph.setGraph(graph))
 
     def _get_lines(self, state_id: int) -> typing.List:
-        mui_state: MUIState = self.bv.session_data.mui_state
+        mui_state: MUIState = self.mui_state
 
         addr = mui_state.get_state_address(state_id)
         if addr is None or len(self.bv.get_basic_blocks_at(addr)) < 1:
@@ -105,10 +110,15 @@ class MUIFlowGraphWidget(FlowGraphWidget):
 
         self.bv = view
 
+    def set_mui_state(self, mui_state: MUIState):
+        """Register this widget with a MUI State object"""
+        self.mui_state = mui_state
+
     def mouseDoubleClickEvent(self, mouse_event: QMouseEvent):
         node = self.getNodeForMouseEvent(mouse_event)
 
         if node is not None:
             state_id = int(str(node.lines[0]).split(" ")[-1])
 
-            self.bv.session_data.mui_state.navigate_to_state(state_id)
+            if self.mui_state:
+                self.mui_state.navigate_to_state(state_id)

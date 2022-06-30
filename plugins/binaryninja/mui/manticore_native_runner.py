@@ -16,12 +16,18 @@ from manticore.native import Manticore
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
+from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
 from mui.report import NativeResultReport
 from mui.utils import MUIState, print_timestamp
-from mui.native_plugin import RebaseHooksPlugin, UnicornEmulatePlugin
+from mui.native_plugin import (
+    ModuleMappingPlugin,
+    RebaseHooksPlugin,
+    TraceBlockPlugin,
+    UnicornEmulatePlugin,
+)
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):
@@ -49,18 +55,6 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
         try:
             bv = self.view
-
-            # set up state and clear UI
-            state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
-
-            if bv.session_data.mui_state is None:
-                bv.session_data.mui_state = MUIState(bv)
-                state_widget.listen_to(bv.session_data.mui_state)
-
-            bv.session_data.mui_state.notify_states_changed({})
-            bv.session_data.mui_state.paused_states = set()
-            bv.session_data.mui_state.state_callbacks = dict()
-
             settings = Settings()
 
             m = Manticore.linux(
@@ -84,7 +78,15 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 },
                 introspection_plugin_type=MUIIntrospectionPlugin,
             )
-            bv.session_data.mui_cur_m = m
+
+            # set up state and clear UI
+            mui_state = MUIState(bv, m, self.binary.name)
+
+            state_widget: StateListWidget = widget.get_dockwidget(self.view, StateListWidget.NAME)
+            state_widget.set_mui_state(mui_state)
+
+            graph_widget: StateGraphWidget = widget.get_dockwidget(self.view, StateGraphWidget.NAME)
+            graph_widget.set_mui_state(mui_state)
 
             @m.init
             def init(state):
@@ -134,9 +136,15 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 exec(func, {"bv": bv, "m": m})
 
             # Global hook for mui_state to add state-specific callbacks
-            m.hook(None)(bv.session_data.mui_state.state_callback_hook)
+            m.hook(None)(mui_state.state_callback_hook)
 
             self.load_libraries(m, find_f, avoid_f)
+
+            # Optional tracing plugin
+            trace = settings.get_bool(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}trace", bv)
+            if trace:
+                m.register_plugin(TraceBlockPlugin(mui_state))
+                m.register_plugin(ModuleMappingPlugin(mui_state))
 
             def run_every(callee: Callable, duration: int = 3) -> Callable:
                 """
@@ -153,7 +161,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
                 return inner
 
-            m.register_daemon(run_every(bv.session_data.mui_state.notify_states_changed, 1))
+            m.register_daemon(run_every(mui_state.notify_states_changed, 1))
 
             def check_termination(_):
                 """Check if the user wants to termninate manticore"""
@@ -168,7 +176,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 context["find_reached"] = False
             print_timestamp("Manticore started")
             m.run()
-            bv.session_data.mui_state.notify_states_changed(m.introspect())
+            mui_state.notify_states_changed(m.introspect())
             with m.locked_context() as context:
                 if context["find_reached"]:
                     print_timestamp("Manticore finished")
@@ -185,7 +193,6 @@ class ManticoreNativeRunner(BackgroundTaskThread):
 
         finally:
             bv.session_data.mui_is_running = False
-            bv.session_data.mui_cur_m = None
 
     def get_address_offset(self, bv: BinaryView):
         """Offsets addresses to take into consideration position independent executables (PIE)"""

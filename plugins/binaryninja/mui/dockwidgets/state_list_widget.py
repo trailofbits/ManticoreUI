@@ -2,7 +2,7 @@ from typing import Dict, Final, Optional
 
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Qt, QEvent
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu, QFileDialog
 from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
@@ -27,12 +27,16 @@ class StateListWidget(QWidget, DockContextHandler):
     CTX_MENU_KILL: Final[str] = "Kill"
     CTX_MENU_PAUSE: Final[str] = "Pause"
     CTX_MENU_RESUME: Final[str] = "Resume"
+    CTX_MENU_TRACE: Final[str] = "Show Trace"
+    CTX_MENU_UNTRACE: Final[str] = "Hide Trace"
+    CTX_MENU_SAVE_TRACE: Final[str] = "Save Trace"
 
     def __init__(self, name: str, parent: ViewFrame, data: BinaryView):
         QWidget.__init__(self, parent)
         DockContextHandler.__init__(self, self, name)
 
         self.bv = data
+        self.mui_state: Optional[MUIState] = None
 
         tree_widget = QTreeWidget()
         tree_widget.setColumnCount(1)
@@ -83,29 +87,48 @@ class StateListWidget(QWidget, DockContextHandler):
             if state_id == None:
                 return True
 
-            # Pause/Resume only while running
-            if not bv.session_data.mui_is_running or not bv.session_data.mui_cur_m:
-                return True
-
             menu = QMenu()
-            # Options for active states
-            if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
-                if item.parent() == self.paused_states:
-                    menu.addAction(StateListWidget.CTX_MENU_RESUME)
+
+            # Options while running
+            if bv.session_data.mui_is_running:
+                # Options for active states
+                if item.parent() in [self.active_states, self.paused_states, self.waiting_states]:
+                    if item.parent() == self.paused_states:
+                        menu.addAction(StateListWidget.CTX_MENU_RESUME)
+                    else:
+                        menu.addAction(StateListWidget.CTX_MENU_PAUSE)
+                    menu.addAction(StateListWidget.CTX_MENU_KILL)
+
+            # Options regardless of manticore running
+            # Options for states not currently executing
+            if item.parent() in [
+                self.paused_states,
+                self.forked_states,
+                self.complete_states,
+                self.error_states,
+            ]:
+                if self.mui_state and self.mui_state.current_highlight_state() == state_id:
+                    menu.addAction(StateListWidget.CTX_MENU_UNTRACE)
                 else:
-                    menu.addAction(StateListWidget.CTX_MENU_PAUSE)
-                menu.addAction(StateListWidget.CTX_MENU_KILL)
+                    menu.addAction(StateListWidget.CTX_MENU_TRACE)
+                menu.addAction(StateListWidget.CTX_MENU_SAVE_TRACE)
 
             action = menu.exec(event.globalPos())
 
-            m = bv.session_data.mui_cur_m
             if action:
-                if action.text() == StateListWidget.CTX_MENU_PAUSE:
-                    bv.session_data.mui_state.pause_state(state_id)
-                elif action.text() == StateListWidget.CTX_MENU_RESUME:
-                    bv.session_data.mui_state.resume_state(state_id)
-                elif action.text() == StateListWidget.CTX_MENU_KILL:
-                    bv.session_data.mui_state.kill_state(state_id)
+                if self.mui_state:
+                    if action.text() == StateListWidget.CTX_MENU_PAUSE:
+                        self.mui_state.pause_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_RESUME:
+                        self.mui_state.resume_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_KILL:
+                        self.mui_state.kill_state(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_TRACE:
+                        self.mui_state.highlight_trace(state_id)
+                    elif action.text() == StateListWidget.CTX_MENU_UNTRACE:
+                        self.mui_state.clear_highlight_trace()
+                    elif action.text() == StateListWidget.CTX_MENU_SAVE_TRACE:
+                        self._save_trace(state_id)
 
             return True
 
@@ -121,14 +144,19 @@ class StateListWidget(QWidget, DockContextHandler):
         if item_id is None:
             return
 
-        # print(self.bv.session_data.mui_state.get_state(item_id))
         graph_widget: StateGraphWidget = widget.get_dockwidget(self.bv, StateGraphWidget.NAME)
         graph_widget.update_graph(item_id)
 
-        self.bv.session_data.mui_state.navigate_to_state(item_id)
+        if self.mui_state:
+            self.mui_state.navigate_to_state(item_id)
 
-    def listen_to(self, mui_state: MUIState):
+    def set_mui_state(self, mui_state: MUIState):
         """Register this widget with a MUI State object and set up event listeners"""
+        if self.mui_state:
+            self.mui_state.clear_highlight_trace()
+            self.on_state_change(self.mui_state.states, mui_state.states)
+
+        self.mui_state = mui_state
         mui_state.on_state_change(self.on_state_change)
 
     def on_state_change(
@@ -164,7 +192,7 @@ class StateListWidget(QWidget, DockContextHandler):
             return self.forked_states
         elif state.status == StateStatus.stopped:
             # Only want killed states in the errored list
-            if state.state_id in self.bv.session_data.mui_state.paused_states:
+            if self.mui_state and state.state_id in self.mui_state.paused_states:
                 return self.paused_states
             elif state.state_list == StateLists.killed:
                 return self.error_states
@@ -210,3 +238,12 @@ class StateListWidget(QWidget, DockContextHandler):
             title_without_count = title_without_count[: title_without_count.rfind("(") - 1]
 
         header_item.setText(0, f"{title_without_count} ({total_count})")
+
+    def _save_trace(self, state_id):
+        """Context menu function to save trace data to file"""
+        if self.mui_state:
+            filename, _ = QFileDialog.getSaveFileName(
+                None, "Save Trace File", "", "DrCov Coverage Log (*.log)"
+            )
+            if filename:
+                self.mui_state.save_trace(state_id, filename)
