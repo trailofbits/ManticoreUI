@@ -145,10 +145,10 @@ def edit_custom_hook(bv: BinaryView, addr: int, name=""):
 
     if name and mgr.has_custom_hook(CustomHookIdentity.from_name(name)):
         dialog.set_text(mgr.get_custom_hook(CustomHookIdentity.from_name(name)))
-        hook: CustomHookIdentity = CustomHookIdentity.from_name(name)
+        hook = CustomHookIdentity.from_name(name)
     else:
         mgr.custom_hook_ctr[addr] += 1
-        hook: CustomHookIdentity = CustomHookIdentity(addr, mgr.custom_hook_ctr[addr])
+        hook = CustomHookIdentity(addr, mgr.custom_hook_ctr[addr])
 
     result: QDialog.DialogCode = dialog.exec()
 
@@ -189,7 +189,7 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
             ]
         )
         mgr.custom_hook_ctr[addr] += 1
-        mgr.add_custom_hook(addr, f"{addr:08x}_{mgr.custom_hook_ctr[addr]:02d}", code)
+        mgr.add_custom_hook(CustomHookIdentity(addr, mgr.custom_hook_ctr[addr]), code)
 
 
 def manage_shared_libs(bv) -> None:
