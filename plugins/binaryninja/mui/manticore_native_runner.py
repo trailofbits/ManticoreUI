@@ -41,8 +41,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
         self.find = [addr + self.addr_off for addr in mgr.list_find_hooks()]
         self.avoid = [addr + self.addr_off for addr in mgr.list_avoid_hooks()]
         self.custom_hooks = [
-            (int(name[:-3], 16) + self.addr_off, func)
-            for name, func in mgr.list_custom_hooks().items()
+            (hook.address + self.addr_off, func) for hook, func in mgr.list_custom_hooks().items()
         ]
         self.global_hooks = list(mgr.list_global_hooks().values())
 

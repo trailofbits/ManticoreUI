@@ -38,8 +38,8 @@ class UINotification(UIContextNotification):
             highlight_instr(bv, addr, HighlightStandardColor.GreenHighlightColor)
         for addr in mgr.list_avoid_hooks():
             highlight_instr(bv, addr, HighlightStandardColor.RedHighlightColor)
-        for name in mgr.list_custom_hooks():
-            highlight_instr(bv, int(name[:-3], 16), HighlightStandardColor.BlueHighlightColor)
+        for hook in mgr.list_custom_hooks():
+            highlight_instr(bv, hook.address, HighlightStandardColor.BlueHighlightColor)
 
         # restore shared libraries
         settings = Settings()

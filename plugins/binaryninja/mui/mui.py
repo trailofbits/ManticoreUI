@@ -35,7 +35,7 @@ from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.dockwidgets.hook_list_widget import HookListWidget
-from mui.hook_manager import NativeHookManager
+from mui.hook_manager import CustomHookIdentity, NativeHookManager
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
@@ -143,10 +143,12 @@ def edit_custom_hook(bv: BinaryView, addr: int, name=""):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
     mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-    if mgr.has_custom_hook(name):
-        dialog.set_text(mgr.get_custom_hook(name))
+    if name and mgr.has_custom_hook(CustomHookIdentity.from_name(name)):
+        dialog.set_text(mgr.get_custom_hook(CustomHookIdentity.from_name(name)))
+        hook: CustomHookIdentity = CustomHookIdentity.from_name(name)
     else:
         mgr.custom_hook_ctr[addr] += 1
+        hook: CustomHookIdentity = CustomHookIdentity(addr, mgr.custom_hook_ctr[addr])
 
     result: QDialog.DialogCode = dialog.exec()
 
@@ -154,10 +156,10 @@ def edit_custom_hook(bv: BinaryView, addr: int, name=""):
         code = dialog.text()
         if not code:
             # delete the hook if empty input is provided
-            if mgr.has_custom_hook(name):
-                mgr.del_custom_hook(name)
+            if name and mgr.has_custom_hook(hook):
+                mgr.del_custom_hook(hook)
         else:
-            mgr.add_custom_hook(addr, f"{addr:08x}_{mgr.custom_hook_ctr[addr]:02d}", code)
+            mgr.add_custom_hook(hook, code)
 
 
 def edit_global_hook(bv: BinaryView):

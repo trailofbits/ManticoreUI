@@ -10,6 +10,7 @@ from binaryninjaui import DockContextHandler, DockHandler, ViewFrame
 from mui.utils import clear_highlight
 import mui.dockwidgets.global_hook_dialog
 import mui.mui
+import mui.hook_manager
 
 
 class HookType(Enum):
@@ -102,7 +103,7 @@ class HookListWidget(QWidget, DockContextHandler):
                 elif parent == self.avoid_hooks:
                     self.mgr.del_avoid_hook(addr)
                 elif parent == self.custom_hooks:
-                    self.mgr.del_custom_hook(name)
+                    self.mgr.del_custom_hook(mui.hook_manager.CustomHookIdentity.from_name(name))
                 elif parent == self.global_hooks:
                     self.mgr.del_global_hook(name)
                 else:
