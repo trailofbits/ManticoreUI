@@ -1,6 +1,6 @@
 import os
 import unittest
-from mui.hook_manager import NativeHookManager
+from mui.hook_manager import NativeHookManager, CustomHookIdentity
 from binaryninja import open_view
 
 
@@ -29,11 +29,11 @@ class HookManagerTest(unittest.TestCase):
 
     def test_add_custom(self) -> None:
         mgr = self.mgr
-        name = f"{self.MAIN}_00"
-        mgr.add_custom_hook(self.MAIN, name, "# custom hook code")
-        self.assertTrue(mgr.has_custom_hook(name))
-        self.assertEqual(mgr.get_custom_hook(name), "# custom hook code")
-        self.assertEqual(mgr.list_custom_hooks(), {name: "# custom hook code"})
+        hook = CustomHookIdentity(self.MAIN, 0)
+        mgr.add_custom_hook(hook, "# custom hook code")
+        self.assertTrue(mgr.has_custom_hook(hook))
+        self.assertEqual(mgr.get_custom_hook(hook), "# custom hook code")
+        self.assertEqual(mgr.list_custom_hooks(), {hook: "# custom hook code"})
 
     def test_add_global(self) -> None:
         mgr = self.mgr
@@ -59,11 +59,11 @@ class HookManagerTest(unittest.TestCase):
 
     def test_del_custom(self) -> None:
         mgr = self.mgr
-        name = f"{self.MAIN}_00"
-        mgr.add_custom_hook(self.MAIN, name, "# custom hook code")
-        mgr.del_custom_hook(name)
-        self.assertFalse(mgr.has_custom_hook(name))
-        self.assertEqual(mgr.get_custom_hook(name), "")
+        hook = CustomHookIdentity(self.MAIN, 0)
+        mgr.add_custom_hook(hook, "# custom hook code")
+        mgr.del_custom_hook(hook)
+        self.assertFalse(mgr.has_custom_hook(hook))
+        self.assertEqual(mgr.get_custom_hook(hook), "")
         self.assertEqual(mgr.list_custom_hooks(), {})
 
     def test_del_global(self) -> None:
@@ -74,6 +74,18 @@ class HookManagerTest(unittest.TestCase):
         self.assertFalse(mgr.has_global_hook(name))
         self.assertEqual(mgr.get_global_hook(name), "")
         self.assertEqual(mgr.list_global_hooks(), {})
+
+    def test_custom_hook_identity(self) -> None:
+        hook = CustomHookIdentity(self.MAIN, 0)
+        name = f"{self.MAIN:08x}_00"
+        self.assertEqual(hook.to_name(), name)
+        self.assertEqual(hook, CustomHookIdentity.from_name(name))
+
+        mgr = self.mgr
+        mgr.add_custom_hook(hook, "# custom hook code")
+        self.assertEqual(
+            mgr.get_custom_hook(CustomHookIdentity.from_name(name)), "# custom hook code"
+        )
 
 
 if __name__ == "__main__":
