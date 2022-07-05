@@ -1,5 +1,5 @@
 {
-    "settings": {
+    "data": {
         "solc_path": [
             {
                 "title": "solc path",

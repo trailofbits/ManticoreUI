@@ -1,5 +1,4 @@
 import json
-import importlib.resources 
 from typing import Final, Dict, Any, List, Tuple
 
 from binaryninja import Settings
@@ -10,7 +9,7 @@ from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
 )
-from mui.utils import get_default_solc_path
+from mui.utils import get_default_solc_path, read_from_common
 
 
 class MUISettings:
@@ -30,7 +29,7 @@ class MUISettings:
     #     }
     # }
     SETTINGS: Final[Dict[str, Dict[str, Tuple[Dict[str, Any], Dict[str, Any]]]]] = {
-        BINJA_NATIVE_RUN_SETTINGS_PREFIX: json.loads(importlib.resources.read_text("mui.common_resources", "native_run_settings.json"))["settings"],
+        BINJA_NATIVE_RUN_SETTINGS_PREFIX: read_from_common("native_run_settings.json"),
         BINJA_HOOK_SETTINGS_PREFIX: {
             "avoid": (
                 {
