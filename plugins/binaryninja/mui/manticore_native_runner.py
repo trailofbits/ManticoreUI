@@ -59,14 +59,11 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             settings = Settings()
 
             # Load initial state from file
-            initial_state_path = (
-                settings.get_string(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}initialState", bv),
-                16,
-            )
+            initial_state_path = settings.get_string(f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}initialState", bv)
             initial_state: Optional[StateBase] = None
             try:
                 if initial_state_path:
-                    with open("demo.pkl", "rb") as f:
+                    with open(initial_state_path, "rb") as f:
                         initial_state = PickleSerializer().deserialize(f)
             except:
                 pass
