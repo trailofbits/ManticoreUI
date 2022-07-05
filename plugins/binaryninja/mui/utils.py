@@ -267,7 +267,20 @@ def get_default_solc_path():
 
 
 def read_from_common(resource: str) -> typing.Dict[str, typing.Any]:
-    loaded = json.loads(importlib.resources.read_text("mui.common_resources", resource))["data"]
+    try:
+        loaded = json.loads(importlib.resources.read_text("mui.common_resources", "resource"))[
+            "data"
+        ]
+    except FileNotFoundError as e:
+        show_message_box(
+            "Manticore UI Resources",
+            "Common Manticore UI resources not found! The Manticore UI Plugin will not work.\n\n"
+            + "If this is a dev installation, ensure you ran 'make init' to copy in resources from /plugins/common!\n\n"
+            + "If you encounter this message in the release distribution of MUI, raise an issue on https://github.com/trailofbits/ManticoreUI",
+            MessageBoxButtonSet.OKButtonSet,
+            MessageBoxIcon.ErrorIcon,
+        )
+        raise e
     keys_to_exclude = set(loaded["exclusions"].get("binaryninja", []))
     return {k: v for k, v in loaded["data"].items() if k not in keys_to_exclude}
 
