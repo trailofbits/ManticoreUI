@@ -19,7 +19,7 @@ class RebaseHooksPlugin(Plugin):
         # Hooks
         self.find = mgr.list_find_hooks()
         self.avoid = mgr.list_avoid_hooks()
-        self.custom_hooks = [(addr, func) for addr, func in mgr.list_custom_hooks().items()]
+        self.custom_hooks = [(hook.address, func) for hook, func in mgr.list_custom_hooks().items()]
         self.global_hooks = list(mgr.list_global_hooks().values())
 
     def on_register(self):

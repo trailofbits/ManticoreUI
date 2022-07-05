@@ -35,7 +35,7 @@ from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.dockwidgets.hook_list_widget import HookListWidget
-from mui.hook_manager import NativeHookManager
+from mui.hook_manager import CustomHookIdentity, NativeHookManager
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner
 from mui.notification import UINotification
@@ -139,12 +139,16 @@ def solve(bv: BinaryView):
             s.start()
 
 
-def edit_custom_hook(bv: BinaryView, addr: int):
+def edit_custom_hook(bv: BinaryView, addr: int, name=""):
     dialog = CodeDialog(DockHandler.getActiveDockHandler().parent(), bv)
     mgr: NativeHookManager = bv.session_data.mui_hook_mgr
 
-    if mgr.has_custom_hook(addr):
-        dialog.set_text(mgr.get_custom_hook(addr))
+    if name and mgr.has_custom_hook(CustomHookIdentity.from_name(name)):
+        dialog.set_text(mgr.get_custom_hook(CustomHookIdentity.from_name(name)))
+        hook = CustomHookIdentity.from_name(name)
+    else:
+        mgr.custom_hook_ctr[addr] += 1
+        hook = CustomHookIdentity(addr, mgr.custom_hook_ctr[addr])
 
     result: QDialog.DialogCode = dialog.exec()
 
@@ -152,10 +156,10 @@ def edit_custom_hook(bv: BinaryView, addr: int):
         code = dialog.text()
         if not code:
             # delete the hook if empty input is provided
-            if mgr.has_custom_hook(addr):
-                mgr.del_custom_hook(addr)
+            if name and mgr.has_custom_hook(hook):
+                mgr.del_custom_hook(hook)
         else:
-            mgr.add_custom_hook(addr, code)
+            mgr.add_custom_hook(hook, code)
 
 
 def edit_global_hook(bv: BinaryView):
@@ -184,7 +188,8 @@ def add_function_model(bv: BinaryView, addr: int) -> None:
                 "m.hook(addr)(hook)",
             ]
         )
-        mgr.add_custom_hook(addr, code)
+        mgr.custom_hook_ctr[addr] += 1
+        mgr.add_custom_hook(CustomHookIdentity(addr, mgr.custom_hook_ctr[addr]), code)
 
 
 def manage_shared_libs(bv) -> None:
@@ -289,7 +294,7 @@ PluginCommand.register(
     lambda bv: not solve_is_valid(bv),
 )
 PluginCommand.register_for_address(
-    "MUI \\ Add/Edit Custom Hook", "Add/edit a custom hook at the current address", edit_custom_hook
+    "MUI \\ Add Custom Hook", "Add a custom hook at the current address", edit_custom_hook
 )
 PluginCommand.register_for_address(
     "MUI \\ Add Function Model",

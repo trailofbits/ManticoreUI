@@ -3,10 +3,14 @@ from typing import Dict, Final, Tuple, Optional
 
 from PySide6.QtCore import Qt, Slot, QEvent
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
+from PySide6.QtGui import QAction
 from binaryninja import BinaryView
-from binaryninjaui import DockContextHandler, ViewFrame
+from binaryninjaui import DockContextHandler, DockHandler, ViewFrame
 
 from mui.utils import clear_highlight
+import mui.dockwidgets.global_hook_dialog
+import mui.mui
+import mui.hook_manager
 
 
 class HookType(Enum):
@@ -79,11 +83,17 @@ class HookListWidget(QWidget, DockContextHandler):
             if addr == None or name == None:
                 return True
 
+            parent = item.parent()
             menu = QMenu()
             menu.addAction("Delete")
+            if parent == self.custom_hooks or parent == self.global_hooks:
+                menu.addAction("Edit")
 
-            if menu.exec(event.globalPos()):
-                parent = item.parent()
+            action = menu.exec(event.globalPos())
+            if not isinstance(action, QAction):
+                return True
+
+            if action.text() == "Delete":
                 if not self.mgr:
                     return True
 
@@ -93,11 +103,23 @@ class HookListWidget(QWidget, DockContextHandler):
                 elif parent == self.avoid_hooks:
                     self.mgr.del_avoid_hook(addr)
                 elif parent == self.custom_hooks:
-                    self.mgr.del_custom_hook(addr)
+                    self.mgr.del_custom_hook(mui.hook_manager.CustomHookIdentity.from_name(name))
                 elif parent == self.global_hooks:
                     self.mgr.del_global_hook(name)
                 else:
                     raise Exception("Deleting hook with invalid parent")
+            elif action.text() == "Edit":
+                if not self.mgr:
+                    return True
+
+                bv = self.bv
+                if parent == self.custom_hooks:
+                    mui.mui.edit_custom_hook(bv, addr, name)
+                elif parent == self.global_hooks:
+                    dialog = mui.dockwidgets.global_hook_dialog.GlobalHookDialog(
+                        DockHandler.getActiveDockHandler().parent(), bv, self.mgr
+                    )
+                    dialog.edit_hook(name)
 
             return True
 

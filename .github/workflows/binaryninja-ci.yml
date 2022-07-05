@@ -4,12 +4,12 @@ on:
     paths:
       - 'plugins/binaryninja/**'
     branches-ignore:
-      - 'binja-integration/master'
+      - 'binja-migration/master'
   pull_request:
     paths:
       - 'plugins/binaryninja/**'
     branches-ignore:
-      - 'binja-integration/master'
+      - 'binja-migration/master'
 
 jobs:
   ci:

@@ -14,7 +14,7 @@ class FakeHookManager:
         filename: str,
         find_hooks: Set[int] = set(),
         avoid_hooks: Set[int] = set(),
-        custom_hooks: Dict[int, str] = {},
+        custom_hooks: Dict[str, str] = {},
         global_hooks: Dict[str, str] = {},
     ):
         self.bv = MagicMock()
@@ -30,7 +30,7 @@ class FakeHookManager:
     def list_avoid_hooks(self) -> Set[int]:
         return self.avoid_hooks
 
-    def list_custom_hooks(self) -> Dict[int, str]:
+    def list_custom_hooks(self) -> Dict[str, str]:
         return self.custom_hooks
 
     def list_global_hooks(self) -> Dict[str, str]:
@@ -103,7 +103,8 @@ class RebaseHooksTest(unittest.TestCase):
         m.hook(self.YES)(self.find_f)
 
         mgr = cast(
-            NativeHookManager, FakeHookManager(self.LIB_PATH, custom_hooks={self.FOO: custom_code})
+            NativeHookManager,
+            FakeHookManager(self.LIB_PATH, custom_hooks={f"{self.FOO}_00": custom_code}),
         )
         m.register_plugin(RebaseHooksPlugin(mgr, self.find_f, self.avoid_f))
         m.run()

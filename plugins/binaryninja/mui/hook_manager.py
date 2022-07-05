@@ -1,4 +1,7 @@
+from __future__ import annotations
+from dataclasses import dataclass
 import json
+from collections import defaultdict
 from typing import Set, Dict, Optional
 from binaryninja import (
     Settings,
@@ -17,6 +20,7 @@ class NativeHookManager:
     def __init__(self, bv: BinaryView, widget: Optional[HookListWidget] = None):
         self.bv = bv
         self.widget = widget
+        self.custom_hook_ctr: Dict[int, int] = defaultdict(lambda: -1)
 
     # Add
     def add_find_hook(self, addr: int) -> None:
@@ -33,12 +37,12 @@ class NativeHookManager:
         if self.widget:
             self.widget.add_hook(HookType.AVOID, addr)
 
-    def add_custom_hook(self, addr: int, code: str) -> None:
+    def add_custom_hook(self, hook: CustomHookIdentity, code: str) -> None:
         bv = self.bv
-        bv.session_data.mui_custom_hooks[addr] = code
-        highlight_instr(bv, addr, HighlightStandardColor.BlueHighlightColor)
+        bv.session_data.mui_custom_hooks[hook] = code
+        highlight_instr(bv, hook.address, HighlightStandardColor.BlueHighlightColor)
         if self.widget:
-            self.widget.add_hook(HookType.CUSTOM, addr)
+            self.widget.add_hook(HookType.CUSTOM, hook.address, hook.to_name())
 
     def add_global_hook(self, name: str, code: str) -> None:
         self.bv.session_data.mui_global_hooks[name] = code
@@ -60,12 +64,12 @@ class NativeHookManager:
         if self.widget:
             self.widget.remove_hook(HookType.AVOID, addr)
 
-    def del_custom_hook(self, addr: int) -> None:
+    def del_custom_hook(self, hook: CustomHookIdentity) -> None:
         bv = self.bv
-        del bv.session_data.mui_custom_hooks[addr]
-        clear_highlight(bv, addr)
+        del bv.session_data.mui_custom_hooks[hook]
+        clear_highlight(bv, hook.address)
         if self.widget:
-            self.widget.remove_hook(HookType.CUSTOM, addr)
+            self.widget.remove_hook(HookType.CUSTOM, hook.address, hook.to_name())
 
     def del_global_hook(self, name: str) -> None:
         del self.bv.session_data.mui_global_hooks[name]
@@ -79,15 +83,15 @@ class NativeHookManager:
     def has_avoid_hook(self, addr: int) -> bool:
         return addr in self.bv.session_data.mui_avoid
 
-    def has_custom_hook(self, addr: int) -> bool:
-        return addr in self.bv.session_data.mui_custom_hooks
+    def has_custom_hook(self, hook: CustomHookIdentity) -> bool:
+        return hook in self.bv.session_data.mui_custom_hooks
 
     def has_global_hook(self, name: str) -> bool:
         return name in self.bv.session_data.mui_global_hooks
 
     # Get
-    def get_custom_hook(self, addr: int) -> str:
-        return self.bv.session_data.mui_custom_hooks.get(addr, "")
+    def get_custom_hook(self, hook: CustomHookIdentity) -> str:
+        return self.bv.session_data.mui_custom_hooks.get(hook, "")
 
     def get_global_hook(self, name: str) -> str:
         return self.bv.session_data.mui_global_hooks.get(name, "")
@@ -99,7 +103,7 @@ class NativeHookManager:
     def list_avoid_hooks(self) -> Set[int]:
         return self.bv.session_data.mui_avoid
 
-    def list_custom_hooks(self) -> Dict[int, str]:
+    def list_custom_hooks(self) -> Dict[CustomHookIdentity, str]:
         return self.bv.session_data.mui_custom_hooks
 
     def list_global_hooks(self) -> Dict[str, str]:
@@ -117,7 +121,7 @@ class NativeHookManager:
             json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}avoid", bv))
         )
         bv.session_data.mui_custom_hooks = {
-            int(key): item
+            key: item
             for key, item in json.loads(
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
             ).items()
@@ -137,8 +141,8 @@ class NativeHookManager:
             for addr in self.list_avoid_hooks():
                 self.widget.add_hook(HookType.AVOID, addr)
 
-            for addr in self.list_custom_hooks():
-                self.widget.add_hook(HookType.CUSTOM, addr)
+            for hook in self.list_custom_hooks():
+                self.widget.add_hook(HookType.CUSTOM, hook.address, hook.to_name())
 
             for name in self.list_global_hooks():
                 self.widget.add_hook(HookType.GLOBAL, 0, name)
@@ -177,3 +181,19 @@ class NativeHookManager:
             view=bv,
             scope=SettingsScope.SettingsResourceScope,
         )
+
+
+@dataclass(frozen=True)
+class CustomHookIdentity:
+    address: int
+    hook_id: int
+
+    @classmethod
+    def from_name(cls, name: str) -> CustomHookIdentity:
+        return cls(int(name[:-3], 16), int(name[-2:]))
+
+    def to_name(self) -> str:
+        return f"{self.address:08x}_{self.hook_id:02d}"
+
+    def __repr__(self) -> str:
+        return self.to_name()
