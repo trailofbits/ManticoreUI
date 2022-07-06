@@ -15,12 +15,7 @@ import ghidra.util.Msg;
 
 /**
  * Outlines the key manticore arguments to display for the user, as well as
- * their sensible defaults. Should eventually be deprecated for a more
- * interoperable format.
- * 
- * @see <a href=
- *      "https://github.com/trailofbits/ManticoreUI/blob/master/mui/settings.py">Binary
- *      Ninja plugin equivalent</a>
+ * their sensible defaults. Settings loaded from common mui resources files.
  */
 public class MUISettings {
 
