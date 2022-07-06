@@ -283,6 +283,13 @@ def read_from_common(resource: str) -> typing.Dict[str, typing.Any]:
     return {k: v for k, v in loaded["data"].items() if k not in keys_to_exclude}
 
 
+def evm_populate_default_solc_path(
+    evm_settings: typing.Dict[str, typing.Any]
+) -> typing.Dict[str, typing.Any]:
+    evm_settings["solc_path"][0]["default"] = get_default_solc_path()
+    return evm_settings
+
+
 def print_timestamp(*args, **kw):
     """Print with timestamp prefixed (local timezone)"""
     timestamp = datetime.now().astimezone()

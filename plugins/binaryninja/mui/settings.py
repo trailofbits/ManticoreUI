@@ -9,7 +9,7 @@ from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
 )
-from mui.utils import get_default_solc_path, read_from_common
+from mui.utils import evm_populate_default_solc_path, get_default_solc_path, read_from_common
 
 
 class MUISettings:
@@ -68,7 +68,9 @@ class MUISettings:
                 {},
             ),
         },
-        BINJA_EVM_RUN_SETTINGS_PREFIX: read_from_common("evm_run_settings.json"),
+        BINJA_EVM_RUN_SETTINGS_PREFIX: evm_populate_default_solc_path(
+            read_from_common("evm_run_settings.json")
+        ),
     }
 
     PREFIXES: Final[List[str]] = [
