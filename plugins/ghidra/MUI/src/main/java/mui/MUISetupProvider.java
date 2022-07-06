@@ -4,6 +4,7 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
+import ghidra.util.Msg;
 import muicore.MUICore.NativeArguments;
 
 import java.awt.*;
@@ -48,18 +49,17 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	private void buildFormPanel() throws UnsupportedOperationException {
 		formPanel = new JPanel();
 		formPanel.setLayout(
-			new GridLayout(MUISettings.SETTINGS.get("NATIVE_RUN_SETTINGS").size(), 2));
+			new GridLayout(MUISettings.NATIVE_RUN_SETTINGS.size(), 2));
 		formPanel.setMinimumSize(new Dimension(800, 500));
 
 		formOptions = new HashMap<String, JTextField>();
 
-		for (Entry<String, Map<String, Object>[]> option : MUISettings.SETTINGS
-				.get("NATIVE_RUN_SETTINGS")
+		for (Entry<String, List<Map<String, Object>>> option : MUISettings.NATIVE_RUN_SETTINGS
 				.entrySet()) {
 			String name = option.getKey();
 
-			Map<String, Object> prop = option.getValue()[0];
-			Map<String, Object> extra = option.getValue()[1];
+			Map<String, Object> prop = option.getValue().get(0);
+			Map<String, Object> extra = option.getValue().get(1);
 
 			String title = (String) prop.get("title");
 			formPanel.add(new JLabel(title));
@@ -68,10 +68,10 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				formOptions.put(name,
 					createPathInput(prop.get("default").toString()));
 			}
-			else if (prop.get("type") == "string" || prop.get("type") == "number") {
+			else if (prop.get("type").equals("string") || prop.get("type").equals("number")) {
 				formOptions.put(name, createStringNumberInput(prop.get("default").toString()));
 			}
-			else if (prop.get("type") == "array") {
+			else if (prop.get("type").equals("array")) {
 				formOptions.put(name, createArrayInput());
 			}
 			else {
@@ -202,9 +202,9 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 							.addAllBinaryArgs(tokenizeArrayInput(formOptions.get("argv").getText()))
 							.addAllEnvp(tokenizeArrayInput(formOptions.get("env").getText()))
 							.addAllSymbolicFiles(
-								tokenizeArrayInput(formOptions.get("file").getText()))
-							.setStdinSize(formOptions.get("native.stdin_size").getText())
-							.setConcreteStart(formOptions.get("data").getText())
+								tokenizeArrayInput(formOptions.get("symbolicFiles").getText()))
+							.setStdinSize(formOptions.get("stdinSize").getText())
+							.setConcreteStart(formOptions.get("concreteStart").getText())
 							.setAdditionalMcoreArgs(moreArgs.getText())
 							.addAllHooks(setupHookList.getAllMUIHooks())
 							.build();
