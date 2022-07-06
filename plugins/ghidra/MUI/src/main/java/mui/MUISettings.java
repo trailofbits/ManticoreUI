@@ -1,14 +1,10 @@
 package mui;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import ghidra.framework.Application;
 import ghidra.util.Msg;
@@ -39,7 +35,7 @@ public class MUISettings {
 			return res;
 		}
 		catch (Exception e) {
-			Msg.info(MUISettings.class, e.getMessage());
+			Msg.error(MUISettings.class, e.getMessage());
 		}
 		return new TreeMap();
 	}
