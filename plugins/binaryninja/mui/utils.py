@@ -268,9 +268,7 @@ def get_default_solc_path():
 
 def read_from_common(resource: str) -> typing.Dict[str, typing.Any]:
     try:
-        loaded = json.loads(importlib.resources.read_text("mui.common_resources", "resource"))[
-            "data"
-        ]
+        loaded = json.loads(importlib.resources.read_text("mui.common_resources", resource))
     except FileNotFoundError as e:
         show_message_box(
             "Manticore UI Resources",

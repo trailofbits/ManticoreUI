@@ -68,8 +68,11 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				formOptions.put(name,
 					createPathInput(prop.get("default").toString()));
 			}
-			else if (prop.get("type").equals("string") || prop.get("type").equals("number")) {
-				formOptions.put(name, createStringNumberInput(prop.get("default").toString()));
+			else if (prop.get("type").equals("string")) {
+				formOptions.put(name, createStringInput(prop.get("default").toString()));
+			}
+			else if (prop.get("type").equals("number")) {
+				formOptions.put(name, createNumberInput((Double) prop.get("default")));
 			}
 			else if (prop.get("type").equals("array")) {
 				formOptions.put(name, createArrayInput());
@@ -84,13 +87,32 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	}
 
 	/** 
-	 * Creates JTextField for a string/number Manticore argument and adds it to the Setup Panel.
-	 * @param defaultStr The default value of the string/number argument, which should be set in MUISettings.
-	 * @return An editable JTextField through which a user can set a string/number argument.
+	 * Creates JTextField for a string Manticore argument and adds it to the Setup Panel.
+	 * @param defaultStr The default value of the string argument, which should be set in MUISettings.
+	 * @return An editable JTextField through which a user can set a string argument.
 	 */
-	private JTextField createStringNumberInput(String defaultStr) {
+	private JTextField createStringInput(String defaultStr) {
 		JTextField entry = new JTextField();
 		entry.setText(defaultStr);
+		entry.setToolTipText("Only 1 value allowed");
+		formPanel.add(entry);
+		return entry;
+	}
+
+	/** 
+	 * Creates JTextField for a string Manticore argument and adds it to the Setup Panel.
+	 * If default number has no fractional part, the number is displayed without a decimal point. 
+	 * @param defaultNum The default value of the number argument. Gson deserializes all numbers to Double by default.
+	 * @return An editable JTextField through which a user can set a number argument.
+	 */
+	private JTextField createNumberInput(Double defaultNum) {
+		JTextField entry = new JTextField();
+		if ((double) defaultNum.intValue() == defaultNum) {
+			entry.setText(Integer.toString(defaultNum.intValue()));
+		}
+		else {
+			entry.setText(Double.toString(defaultNum));
+		}
 		entry.setToolTipText("Only 1 value allowed");
 		formPanel.add(entry);
 		return entry;
