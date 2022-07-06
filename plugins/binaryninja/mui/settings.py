@@ -68,7 +68,7 @@ class MUISettings:
                 {},
             ),
         },
-        BINJA_EVM_RUN_SETTINGS_PREFIX: {},
+        BINJA_EVM_RUN_SETTINGS_PREFIX: read_from_common("evm_run_settings.json"),
     }
 
     PREFIXES: Final[List[str]] = [

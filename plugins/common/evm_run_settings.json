@@ -34,7 +34,7 @@
         "txaccount": [
             {
                 "title": "txaccount",
-                "description": "Account used as caller in the symbolic transactions, either \\"attacker\\" or \\"owner\\" or \\"combo1\\" (uses both)",
+                "description": "Account used as caller in the symbolic transactions, either \"attacker\" or \"owner\" or \"combo\" (uses both)",
                 "type": "string",
                 "default": "attacker"
             },
