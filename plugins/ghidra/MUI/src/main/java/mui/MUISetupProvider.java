@@ -4,7 +4,6 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import ghidra.util.Msg;
 import muicore.MUICore.NativeArguments;
 
 import java.awt.*;
@@ -38,7 +37,6 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 		setTitle("MUI Setup");
 		setDefaultWindowPosition(WindowPosition.WINDOW);
 		setVisible(false);
-		//
 	}
 
 	/**
