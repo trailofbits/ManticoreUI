@@ -9,4 +9,5 @@ MUI/lib/*
 **/__pycache__/
 **/mcore*/
 **/dist/
+**/os/
 **/.mypy_cache/
