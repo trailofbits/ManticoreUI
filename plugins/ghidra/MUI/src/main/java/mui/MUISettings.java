@@ -24,6 +24,18 @@ import ghidra.util.Msg;
  */
 public class MUISettings {
 
+	/**
+	 * Map containing key Manticore arguments and their details including input
+	 * types, defaults, and descriptions.
+	 */
+	public static Map<String, List<Map<String, Object>>> NATIVE_RUN_SETTINGS =
+		parseRunSettings(loadResource("native_run_settings.json"));
+
+	/**
+	 * Master function that loads in a JSON common resource and deserializes it with Gson
+	 * @param resourceName Filename of the resource to be loaded, which should be in the appropriate directory in MUI/os
+	 * @return A Map of the deserialized JSON data, which should be put through a custom parser/typecaster for desired data to be usable.
+	 */
 	public static Map loadResource(String resourceName) {
 		try {
 			Gson gson = new Gson();
@@ -35,16 +47,13 @@ public class MUISettings {
 			Msg.info(MUISettings.class, e.getMessage());
 		}
 		return new TreeMap();
-
 	}
 
 	/**
-	 * Map containing key Manticore arguments and their details including input
-	 * types, defaults, and descriptions.
+	 * Gson object parser for the native_run_settings.json file.
+	 * @param res Deserialized JSON object.
+	 * @return Map of key Manticore arguments and their details 
 	 */
-	public static Map<String, List<Map<String, Object>>> NATIVE_RUN_SETTINGS =
-		parseRunSettings(loadResource("native_run_settings.json"));
-
 	private static Map<String, List<Map<String, Object>>> parseRunSettings(Map res) {
 		Map<String, List<Map<String, Object>>> data =
 			(Map<String, List<Map<String, Object>>>) res.get("data");
