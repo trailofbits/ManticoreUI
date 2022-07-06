@@ -85,6 +85,15 @@
                 "default": true
             },
             {}
+        ],
+        "trace": [
+            {
+                "title": "Trace instructions",
+                "description": "Enable block-level tracing of executed instructions",
+                "type": "boolean",
+                "default": false
+            },
+            {}
         ]
     },
     "exclusions": {
@@ -92,7 +101,8 @@
             "emulateUntil",
             "workspaceURL",
             "sharedLibraries",
-            "generateReport"
+            "generateReport",
+            "trace"
         ]
     }
 }
