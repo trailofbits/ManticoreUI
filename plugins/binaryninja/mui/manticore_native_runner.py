@@ -12,6 +12,7 @@ from binaryninja import (
     open_view,
 )
 from manticore.core.state import StateBase, TerminateState
+from manticore.utils.helpers import PickleSerializer
 from manticore.native import Manticore
 
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
@@ -57,8 +58,20 @@ class ManticoreNativeRunner(BackgroundTaskThread):
             bv = self.view
             settings = Settings()
 
-            m = Manticore.linux(
-                self.binary.name,
+            # Load initial state from file
+            initial_state_path = settings.get_string(
+                f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}initialState", bv
+            )
+            initial_state: Optional[StateBase] = None
+            try:
+                if initial_state_path:
+                    with open(initial_state_path, "rb") as f:
+                        initial_state = PickleSerializer().deserialize(f)
+            except:
+                pass
+
+            m = Manticore(
+                initial_state if initial_state else self.binary.name,
                 workspace_url=settings.get_string(
                     f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}workspaceURL", bv
                 ),
@@ -67,7 +80,7 @@ class ManticoreNativeRunner(BackgroundTaskThread):
                 concrete_start=settings.get_string(
                     f"{BINJA_NATIVE_RUN_SETTINGS_PREFIX}concreteStart", bv
                 ),
-                envp={
+                env={
                     key: val
                     for key, val in [
                         env.split("=")

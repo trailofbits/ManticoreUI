@@ -98,6 +98,17 @@ class MUISettings:
                 },
                 {},
             ),
+            "initialState": (
+                {
+                    "title": "Initial State",
+                    "description": "Filepath to load an initial state for manticore",
+                    "type": "string",
+                    "default": "",
+                },
+                {
+                    "is_file_path": True,
+                },
+            ),
             "sharedLibraries": (
                 {
                     "title": "Shared Libraries",
