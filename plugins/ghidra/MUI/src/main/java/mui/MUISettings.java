@@ -1,6 +1,7 @@
 package mui;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,8 @@ public class MUISettings {
 	public static Map loadResource(String resourceName) {
 		try {
 			Gson gson = new Gson();
-			String txt = Files.readString(Application.getOSFile(resourceName).toPath());
+			String txt = Files.readString(
+				Path.of(Application.getModuleDataFile(resourceName).getCanonicalPath()));
 			Map res = gson.fromJson(txt, Map.class);
 			return res;
 		}
