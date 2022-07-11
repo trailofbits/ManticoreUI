@@ -9,7 +9,7 @@ from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
 )
-from mui.utils import evm_populate_default_solc_path, get_default_solc_path, read_from_common
+from mui.utils import evm_populate_default_solc_path, read_from_common
 
 
 class MUISettings:

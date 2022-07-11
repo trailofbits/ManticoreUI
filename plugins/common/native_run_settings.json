@@ -68,6 +68,17 @@
             },
             {}
         ],
+        "initialState": [
+                {
+                    "title": "Initial State",
+                    "description": "Filepath to load an initial state for manticore",
+                    "type": "string",
+                    "default": ""
+                },
+                {
+                    "is_file_path": true
+                }
+        ],
         "sharedLibraries": [
             {
                 "title": "Shared Libraries",
@@ -100,6 +111,7 @@
         "ghidra": [
             "emulateUntil",
             "workspaceURL",
+            "initialState",
             "sharedLibraries",
             "generateReport",
             "trace"
