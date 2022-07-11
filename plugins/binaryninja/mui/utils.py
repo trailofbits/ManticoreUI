@@ -5,6 +5,8 @@ from pathlib import Path
 from datetime import datetime
 from inspect import getmembers, isfunction
 from dataclasses import dataclass
+import importlib.resources
+import json
 
 from binaryninja import (
     BinaryView,
@@ -262,6 +264,30 @@ def get_default_solc_path():
             return str(Path(path, "solc"))
 
     return ""
+
+
+def read_from_common(resource: str) -> typing.Dict[str, typing.Any]:
+    try:
+        loaded = json.loads(importlib.resources.read_text("mui.common_resources", resource))
+    except FileNotFoundError as e:
+        show_message_box(
+            "Manticore UI Resources",
+            "Common Manticore UI resources not found! The Manticore UI Plugin will not work.\n\n"
+            + "If this is a dev installation, ensure you ran 'make init' to copy in resources from /plugins/common!\n\n"
+            + "If you encounter this message in the release distribution of MUI, raise an issue on https://github.com/trailofbits/ManticoreUI",
+            MessageBoxButtonSet.OKButtonSet,
+            MessageBoxIcon.ErrorIcon,
+        )
+        raise e
+    keys_to_exclude = set(loaded["exclusions"].get("binaryninja", []))
+    return {k: v for k, v in loaded["data"].items() if k not in keys_to_exclude}
+
+
+def evm_populate_default_solc_path(
+    evm_settings: typing.Dict[str, typing.Any]
+) -> typing.Dict[str, typing.Any]:
+    evm_settings["solc_path"][0]["default"] = get_default_solc_path()
+    return evm_settings
 
 
 def print_timestamp(*args, **kw):

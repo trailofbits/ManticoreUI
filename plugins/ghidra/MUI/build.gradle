@@ -147,6 +147,12 @@ task uninstallPreviousMUI {
 
 build.dependsOn uninstallPreviousMUI
 
+task copyMUICommonResources(type: Copy) {
+    from "$projectDir/../../common/native_run_settings.json"
+    into "$projectDir/data/"
+}
+
+buildExtension.dependsOn copyMUICommonResources
 
 task installZip(type: Exec) {
     dependsOn buildExtension

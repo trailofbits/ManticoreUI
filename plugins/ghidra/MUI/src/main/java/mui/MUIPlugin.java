@@ -31,7 +31,6 @@ import ghidra.framework.ApplicationConfiguration;
 import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
-import ghidra.util.Msg;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import muicore.ManticoreUIGrpc;

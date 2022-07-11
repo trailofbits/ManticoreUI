@@ -19,8 +19,6 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.tree.TreePath;
 
-import ghidra.util.Msg;
-
 /**
  * The class representing each instance of Manticore. Used to interact with MUI-Core server and correspondingly update UI elements.
  */

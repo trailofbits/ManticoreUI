@@ -47,18 +47,17 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	private void buildFormPanel() throws UnsupportedOperationException {
 		formPanel = new JPanel();
 		formPanel.setLayout(
-			new GridLayout(MUISettings.SETTINGS.get("NATIVE_RUN_SETTINGS").size(), 2));
+			new GridLayout(MUISettings.NATIVE_RUN_SETTINGS.size(), 2));
 		formPanel.setMinimumSize(new Dimension(800, 500));
 
 		formOptions = new HashMap<String, JTextField>();
 
-		for (Entry<String, Map<String, Object>[]> option : MUISettings.SETTINGS
-				.get("NATIVE_RUN_SETTINGS")
+		for (Entry<String, List<Map<String, Object>>> option : MUISettings.NATIVE_RUN_SETTINGS
 				.entrySet()) {
 			String name = option.getKey();
 
-			Map<String, Object> prop = option.getValue()[0];
-			Map<String, Object> extra = option.getValue()[1];
+			Map<String, Object> prop = option.getValue().get(0);
+			Map<String, Object> extra = option.getValue().get(1);
 
 			String title = (String) prop.get("title");
 			formPanel.add(new JLabel(title));
@@ -67,10 +66,13 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 				formOptions.put(name,
 					createPathInput(prop.get("default").toString()));
 			}
-			else if (prop.get("type") == "string" || prop.get("type") == "number") {
-				formOptions.put(name, createStringNumberInput(prop.get("default").toString()));
+			else if (prop.get("type").equals("string")) {
+				formOptions.put(name, createStringInput(prop.get("default").toString()));
 			}
-			else if (prop.get("type") == "array") {
+			else if (prop.get("type").equals("number")) {
+				formOptions.put(name, createNumberInput((Double) prop.get("default")));
+			}
+			else if (prop.get("type").equals("array")) {
 				formOptions.put(name, createArrayInput());
 			}
 			else {
@@ -83,13 +85,32 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 	}
 
 	/** 
-	 * Creates JTextField for a string/number Manticore argument and adds it to the Setup Panel.
-	 * @param defaultStr The default value of the string/number argument, which should be set in MUISettings.
-	 * @return An editable JTextField through which a user can set a string/number argument.
+	 * Creates JTextField for a string Manticore argument and adds it to the Setup Panel.
+	 * @param defaultStr The default value of the string argument, which should be set in MUISettings.
+	 * @return An editable JTextField through which a user can set a string argument.
 	 */
-	private JTextField createStringNumberInput(String defaultStr) {
+	private JTextField createStringInput(String defaultStr) {
 		JTextField entry = new JTextField();
 		entry.setText(defaultStr);
+		entry.setToolTipText("Only 1 value allowed");
+		formPanel.add(entry);
+		return entry;
+	}
+
+	/** 
+	 * Creates JTextField for a string Manticore argument and adds it to the Setup Panel.
+	 * If default number has no fractional part, the number is displayed without a decimal point. 
+	 * @param defaultNum The default value of the number argument. Gson deserializes all numbers to Double by default.
+	 * @return An editable JTextField through which a user can set a number argument.
+	 */
+	private JTextField createNumberInput(Double defaultNum) {
+		JTextField entry = new JTextField();
+		if ((double) defaultNum.intValue() == defaultNum) {
+			entry.setText(Integer.toString(defaultNum.intValue()));
+		}
+		else {
+			entry.setText(Double.toString(defaultNum));
+		}
 		entry.setToolTipText("Only 1 value allowed");
 		formPanel.add(entry);
 		return entry;
@@ -201,9 +222,9 @@ public class MUISetupProvider extends ComponentProviderAdapter {
 							.addAllBinaryArgs(tokenizeArrayInput(formOptions.get("argv").getText()))
 							.addAllEnvp(tokenizeArrayInput(formOptions.get("env").getText()))
 							.addAllSymbolicFiles(
-								tokenizeArrayInput(formOptions.get("file").getText()))
-							.setStdinSize(formOptions.get("native.stdin_size").getText())
-							.setConcreteStart(formOptions.get("data").getText())
+								tokenizeArrayInput(formOptions.get("symbolicFiles").getText()))
+							.setStdinSize(formOptions.get("stdinSize").getText())
+							.setConcreteStart(formOptions.get("concreteStart").getText())
 							.setAdditionalMcoreArgs(moreArgs.getText())
 							.addAllHooks(setupHookList.getAllMUIHooks())
 							.build();
