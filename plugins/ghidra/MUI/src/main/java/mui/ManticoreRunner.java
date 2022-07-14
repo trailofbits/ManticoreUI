@@ -1,6 +1,8 @@
 package mui;
 
 import muicore.MUICore.NativeArguments;
+import muicore.MUICore.ControlStateRequest;
+import muicore.MUICore.ControlStateResponse;
 import muicore.MUICore.MUILogMessage;
 import muicore.MUICore.MUIMessageList;
 import muicore.MUICore.MUIState;
@@ -8,6 +10,7 @@ import muicore.MUICore.MUIStateList;
 import muicore.MUICore.ManticoreInstance;
 import muicore.MUICore.ManticoreRunningStatus;
 import muicore.MUICore.TerminateResponse;
+import muicore.MUICore.ControlStateRequest.StateAction;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -36,8 +39,8 @@ public class ManticoreRunner {
 
 	private List<MUIState> activeStates;
 	private List<MUIState> waitingStates;
+	private List<MUIState> pausedStates;
 	private List<MUIState> forkedStates;
-
 	private List<MUIState> erroredStates;
 	private List<MUIState> completeStates;
 
@@ -54,6 +57,7 @@ public class ManticoreRunner {
 
 		activeStates = new ArrayList<MUIState>();
 		waitingStates = new ArrayList<MUIState>();
+		pausedStates = new ArrayList<MUIState>();
 		forkedStates = new ArrayList<MUIState>();
 		erroredStates = new ArrayList<MUIState>();
 		completeStates = new ArrayList<MUIState>();
@@ -214,6 +218,7 @@ public class ManticoreRunner {
 			public void onNext(MUIStateList muiStateList) {
 				activeStates = muiStateList.getActiveStatesList();
 				waitingStates = muiStateList.getWaitingStatesList();
+				pausedStates = muiStateList.getPausedStatesList();
 				forkedStates = muiStateList.getForkedStatesList();
 				erroredStates = muiStateList.getErroredStatesList();
 				completeStates = muiStateList.getCompleteStatesList();
@@ -235,6 +240,10 @@ public class ManticoreRunner {
 
 	public List<MUIState> getWaitingStates() {
 		return waitingStates;
+	}
+
+	public List<MUIState> getPausedStates() {
+		return pausedStates;
 	}
 
 	public List<MUIState> getForkedStates() {
@@ -277,6 +286,38 @@ public class ManticoreRunner {
 
 	public boolean getIsRunning() {
 		return isRunning;
+	}
+
+	/**
+	 * Manually pause, resume, or kill a state in an active Manticore run.
+	 */
+	public void controlState(StateAction action, Integer stateId) {
+
+		StreamObserver<ControlStateResponse> controlStateObserver =
+			new StreamObserver<ControlStateResponse>() {
+
+				@Override
+				public void onCompleted() {
+				}
+
+				@Override
+				public void onError(Throwable arg0) {
+					logText.append(arg0.getMessage() + System.lineSeparator());
+				}
+
+				@Override
+				public void onNext(ControlStateResponse resp) {
+				}
+
+			};
+
+		ControlStateRequest request = ControlStateRequest.newBuilder()
+				.setManticoreInstance(manticoreInstance)
+				.setAction(action)
+				.setStateId(stateId)
+				.build();
+
+		MUIPlugin.asyncMUICoreStub.controlState(request, controlStateObserver);
 	}
 
 }
