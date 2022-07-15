@@ -1,4 +1,4 @@
-git+https://github.com/trailofbits/manticore.git@a16a01148bde965803cc3a2101bf4e03b0dfe340
+git+https://github.com/trailofbits/manticore.git@2918710d468c5c2225ac64c0b550a8c1c672b332
 pygments>=2.7.0,<2.9.0
 crytic-compile>=0.2.0
 capstone @ git+https://github.com/aquynh/capstone.git@1766485c0c32419e9a17d6ad31f9e218ef4f018f#subdirectory=bindings/python
