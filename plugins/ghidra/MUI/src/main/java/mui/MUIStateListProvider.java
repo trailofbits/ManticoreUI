@@ -1,12 +1,18 @@
 package mui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.util.HashSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -17,6 +23,7 @@ import docking.WindowPosition;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import muicore.MUICore.MUIState;
+import muicore.MUICore.ControlStateRequest.StateAction;
 
 /**
  * Provides the "MUI State List" component used to display the State List of the Manticore instance whose MUI Log tab is currently focused.
@@ -40,6 +47,8 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 	private static int maxStateId;
 	private static HashSet<Integer> numsSent;
+
+	private StateUserObject rightClickedState;
 
 	public MUIStateListProvider(PluginTool tool, String name) {
 		super(tool, name, name);
@@ -97,6 +106,65 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 			}
 
 		});
+
+		JMenuItem pauseOption = new JMenuItem(new AbstractAction("Pause State") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightClickedState != null) {
+					runnerDisplayed.controlState(StateAction.PAUSE, rightClickedState.stateId);
+				}
+			}
+
+		});
+
+		JMenuItem resumeOption = new JMenuItem(new AbstractAction("Resume State") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightClickedState != null) {
+					runnerDisplayed.controlState(StateAction.RESUME, rightClickedState.stateId);
+				}
+			}
+
+		});
+
+		JMenuItem killOption = new JMenuItem(new AbstractAction("Kill State") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rightClickedState != null) {
+					runnerDisplayed.controlState(StateAction.KILL, rightClickedState.stateId);
+				}
+			}
+
+		});
+
+		stateListTree.addMouseListener(new MouseInputAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+				if (SwingUtilities.isRightMouseButton(e)) {
+					TreePath path = stateListTree.getClosestPathForLocation(e.getX(), e.getY());
+					if (path != null) {
+						DefaultMutableTreeNode node =
+							(DefaultMutableTreeNode) path.getLastPathComponent();
+						if (node.getUserObject() instanceof StateUserObject) {
+							rightClickedState = (StateUserObject) node.getUserObject();
+							JPopupMenu stateListPopupMenu = new JPopupMenu();
+							if (rightClickedState.type != StateType.FORKED &&
+								rightClickedState.type != StateType.COMPLETE &&
+								rightClickedState.type != StateType.ERRORED) {
+								stateListPopupMenu.add(killOption);
+								stateListPopupMenu.add(
+									rightClickedState.type == StateType.PAUSED ? resumeOption
+											: pauseOption);
+							}
+							stateListPopupMenu.show(stateListTree, e.getX(), e.getY());
+						}
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -136,12 +204,18 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 		clearStateTree();
 
-		runner.getActiveStates().forEach((state) -> activeNode.add(stateToNode(state)));
-		runner.getWaitingStates().forEach((state) -> waitingNode.add(stateToNode(state)));
-		runner.getPausedStates().forEach((state) -> pausedNode.add(stateToNode(state)));
-		runner.getForkedStates().forEach((state) -> forkedNode.add(stateToNode(state)));
-		runner.getErroredStates().forEach((state) -> erroredNode.add(stateToNode(state)));
-		runner.getCompleteStates().forEach((state) -> completeNode.add(stateToNode(state)));
+		runner.getActiveStates()
+				.forEach((state) -> activeNode.add(stateToNode(state, StateType.ACTIVE)));
+		runner.getWaitingStates()
+				.forEach((state) -> waitingNode.add(stateToNode(state, StateType.WAITING)));
+		runner.getPausedStates()
+				.forEach((state) -> pausedNode.add(stateToNode(state, StateType.PAUSED)));
+		runner.getForkedStates()
+				.forEach((state) -> forkedNode.add(stateToNode(state, StateType.FORKED)));
+		runner.getErroredStates()
+				.forEach((state) -> erroredNode.add(stateToNode(state, StateType.ERRORED)));
+		runner.getCompleteStates()
+				.forEach((state) -> completeNode.add(stateToNode(state, StateType.COMPLETE)));
 
 		int activeCount = activeNode.getChildCount();
 		int waitingCount = waitingNode.getChildCount();
@@ -171,10 +245,10 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	 * @param st MUIState
 	 * @return Node that can be added to another parent node for the State List UI.
 	 */
-	private static DefaultMutableTreeNode stateToNode(MUIState st) {
+	private static DefaultMutableTreeNode stateToNode(MUIState st, StateType type) {
 		maxStateId = Math.max(maxStateId, st.getStateId());
 		numsSent.add(st.getStateId());
-		return new DefaultMutableTreeNode(new StateListNode(st.getStateId()));
+		return new DefaultMutableTreeNode(new StateUserObject(st.getStateId(), type));
 	}
 
 	@Override
@@ -184,11 +258,17 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 }
 
-class StateListNode {
-	public int stateId;
+enum StateType {
+	ACTIVE, WAITING, PAUSED, FORKED, ERRORED, COMPLETE
+}
 
-	public StateListNode(int stateId) {
+class StateUserObject {
+	public int stateId;
+	public StateType type;
+
+	public StateUserObject(int stateId, StateType type) {
 		this.stateId = stateId;
+		this.type = type;
 	}
 
 	@Override
