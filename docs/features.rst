@@ -13,7 +13,7 @@ Native Feature Table
 +-------------------------+---------------------------------+-------------------------------+
 | Feature                 | Binary Ninja                    | Ghidra                        |
 +=========================+=================================+===============================+
-| Find/Avoid              | `✔️ <Binja Find Avoid_>`_       | `✔️ <Ghidra Find Avoid_>`_    |
+| Solve                   | `✔️ <Binja EVM Solve_>`_        | `✔️ <Ghidra EVM Solve_>`_     |
 +-------------------------+---------------------------------+-------------------------------+
 | Custom Hooks            | `✔️ <Binja Custom Hooks_>`_     | `✔️ <Ghidra Custom Hooks_>`_  |
 +-------------------------+---------------------------------+-------------------------------+
@@ -27,10 +27,21 @@ Native Feature Table
 +-------------------------+---------------------------------+-------------------------------+
 | State Tracing           | `✔️ <Binja State Tracing_>`_    |                               |
 +-------------------------+---------------------------------+-------------------------------+
+| Multiple Instances      |                                 | `✔️ <Ghidra Multiple Inst_>`_ |
++-------------------------+---------------------------------+-------------------------------+
+
 
 
 EVM Feature Table
 -----------------
+
++----------+---------------------------+---------+
+| Feature  | Binary Ninja              | Ghidra  |
++==========+===========================+=========+
+| Solve    | `✔️ <Binja EVM Solve_>`_  |         |
++----------+---------------------------+---------+
+
+
 
 .. _Binja Find Avoid: binaryninja/hooks.rst#find-avoid
 .. _Ghidra Find Avoid: ghidra/hooks.rst#find-avoid
@@ -45,3 +56,9 @@ EVM Feature Table
 .. _Binja Shared Lib: binaryninja/shared_library.rst
 .. _Binja State Mgmt: binaryninja/state_management.rst
 .. _Binja State Tracing: binaryninja/state_management.rst#show-hide-trace
+
+.. _Ghidra Multiple Inst: #
+
+
+.. _Binja EVM Solve: binaryninja/evm.rst
+.. _Ghidra EVM Solve: ghidra/evm.rst
