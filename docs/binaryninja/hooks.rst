@@ -18,7 +18,7 @@ Use find hooks to indicate areas of code which you want to reach (e.g. a functio
 
     OR
 
-    Select instruction > Open command palette (Cntrl-Shift-P) > MUI - Find Path to This Instruction
+    Select instruction > Open command palette (Cntrl-P) > MUI - Find Path to This Instruction
 
 Avoid hooks are placed at a specific address of the binary.
 When Manticore executes the instruction at that address, it will abandon the state that executed the instruction and continue executing other active states.
@@ -30,7 +30,7 @@ Use avoid hooks to indicate areas of code which you do not want to reach (e.g. a
 
     OR
 
-    Select instruction > Open command palette (Cntrl-Shift-P) > MUI - Avoid This Instruction
+    Select instruction > Open command palette (Cntrl-P) > MUI - Avoid This Instruction
 
 
 
@@ -47,7 +47,7 @@ Use custom hooks to perform state manipulations, or to log any output necessary 
 
     OR
 
-    Select instruction > Open command palette (Cntrl-Shift-P) > MUI - Add Custom Hook
+    Select instruction > Open command palette (Cntrl-P) > MUI - Add Custom Hook
 
 
 
@@ -61,4 +61,4 @@ These can be useful for detecting certain state conditions and running correspon
 
 **Usage:** ::
 
-    Open command palette (Cntrl-Shift-P) > MUI - Add/Edit Global Hook
+    Open command palette (Cntrl-P) > MUI - Add/Edit Global Hook

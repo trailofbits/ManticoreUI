@@ -26,7 +26,7 @@ You can double click on the hex addresses listed, or navigate manually to the fu
 
     OR
 
-    Select instruction > Open command palette (Cntrl-Shift-P) > MUI - Add Function Model
+    Select instruction > Open command palette (Cntrl-P) > MUI - Add Function Model
 
 
 Doing the above will create a custom hook at the selected function to invoke the function model override.

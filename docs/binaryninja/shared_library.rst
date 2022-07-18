@@ -16,7 +16,7 @@ Now let's say you want to apply this hook to another binary that dynamically lin
 
 **Usage:** ::
 
-    Open command palette (Cntrl-Shift-P) > MUI - Manage Shared Library BNDBs
+    Open command palette (Cntrl-P) > MUI - Manage Shared Library BNDBs
 
     Click Add
 

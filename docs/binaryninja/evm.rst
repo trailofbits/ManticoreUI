@@ -11,7 +11,7 @@ This command allows you to load a solidity contract and compile it for use with 
 
 **Usage:** ::
 
-    Open command palette (Cntrl-Shift-P) > MUI - Load Ethereum Contract
+    Open command palette (Cntrl-P) > MUI - Load Ethereum Contract
 
 
 
@@ -23,7 +23,7 @@ The results will be shown at the end with a run report.
 
 **Usage:** ::
 
-    Open command palette (Cntrl-Shift-P) > MUI - Solve With Manticore
+    Open command palette (Cntrl-P) > MUI - Solve With Manticore
 
 
 
