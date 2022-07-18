@@ -13,7 +13,7 @@ Native Feature Table
 +-------------------------+---------------------------------+-------------------------------+
 | Feature                 | Binary Ninja                    | Ghidra                        |
 +=========================+=================================+===============================+
-| Solve                   | `✔️ <Binja EVM Solve_>`_        | `✔️ <Ghidra EVM Solve_>`_     |
+| Find/Avoid              | `✔️ <Binja Find Avoid_>`_       | `✔️ <Ghidra Find Avoid_>`_    |
 +-------------------------+---------------------------------+-------------------------------+
 | Custom Hooks            | `✔️ <Binja Custom Hooks_>`_     | `✔️ <Ghidra Custom Hooks_>`_  |
 +-------------------------+---------------------------------+-------------------------------+
@@ -59,6 +59,4 @@ EVM Feature Table
 
 .. _Ghidra Multiple Inst: #
 
-
 .. _Binja EVM Solve: binaryninja/evm.rst
-.. _Ghidra EVM Solve: ghidra/evm.rst
