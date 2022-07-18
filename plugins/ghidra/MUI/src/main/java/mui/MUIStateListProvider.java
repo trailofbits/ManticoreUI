@@ -31,6 +31,7 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	private static DefaultMutableTreeNode rootNode;
 	private static DefaultMutableTreeNode activeNode;
 	private static DefaultMutableTreeNode waitingNode;
+	private static DefaultMutableTreeNode pausedNode;
 	private static DefaultMutableTreeNode forkedNode;
 	private static DefaultMutableTreeNode completeNode;
 	private static DefaultMutableTreeNode erroredNode;
@@ -66,12 +67,14 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 		activeNode = new DefaultMutableTreeNode("Active");
 		waitingNode = new DefaultMutableTreeNode("Waiting");
+		pausedNode = new DefaultMutableTreeNode("Paused");
 		forkedNode = new DefaultMutableTreeNode("Forked");
 		completeNode = new DefaultMutableTreeNode("Complete");
 		erroredNode = new DefaultMutableTreeNode("Errored");
 
 		rootNode.add(activeNode);
 		rootNode.add(waitingNode);
+		rootNode.add(pausedNode);
 		rootNode.add(forkedNode);
 		rootNode.add(completeNode);
 		rootNode.add(erroredNode);
@@ -112,6 +115,7 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	private static void clearStateTree() {
 		activeNode.removeAllChildren();
 		waitingNode.removeAllChildren();
+		pausedNode.removeAllChildren();
 		forkedNode.removeAllChildren();
 		completeNode.removeAllChildren();
 		erroredNode.removeAllChildren();
@@ -134,24 +138,27 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 		runner.getActiveStates().forEach((state) -> activeNode.add(stateToNode(state)));
 		runner.getWaitingStates().forEach((state) -> waitingNode.add(stateToNode(state)));
+		runner.getPausedStates().forEach((state) -> pausedNode.add(stateToNode(state)));
 		runner.getForkedStates().forEach((state) -> forkedNode.add(stateToNode(state)));
 		runner.getErroredStates().forEach((state) -> erroredNode.add(stateToNode(state)));
 		runner.getCompleteStates().forEach((state) -> completeNode.add(stateToNode(state)));
 
 		int activeCount = activeNode.getChildCount();
 		int waitingCount = waitingNode.getChildCount();
+		int pausedCount = pausedNode.getChildCount();
 		int forkedCount = forkedNode.getChildCount();
 		int erroredCount = erroredNode.getChildCount();
 		int completeCount = completeNode.getChildCount();
 
 		activeNode.setUserObject(String.format("Active (%d)", activeCount));
 		waitingNode.setUserObject(String.format("Waiting (%d)", waitingCount));
+		pausedNode.setUserObject(String.format("Paused (%d)", pausedCount));
 		forkedNode.setUserObject(String.format("Forked (%d)", forkedCount));
 		erroredNode.setUserObject(String.format("Errored (%d)", erroredCount));
 		completeNode.setUserObject(String.format("Complete (%d)", completeCount));
 
 		rootNode.setUserObject(String.format("States (%d)",
-			activeCount + waitingCount + forkedCount + erroredCount + completeCount));
+			activeCount + waitingCount + pausedCount + forkedCount + erroredCount + completeCount));
 
 		treeModel.reload();
 
@@ -167,7 +174,7 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	private static DefaultMutableTreeNode stateToNode(MUIState st) {
 		maxStateId = Math.max(maxStateId, st.getStateId());
 		numsSent.add(st.getStateId());
-		return new DefaultMutableTreeNode(String.format("State %d", st.getStateId()));
+		return new DefaultMutableTreeNode(new StateListNode(st.getStateId()));
 	}
 
 	@Override
@@ -175,4 +182,17 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 		return mainPanel;
 	}
 
+}
+
+class StateListNode {
+	public int stateId;
+
+	public StateListNode(int stateId) {
+		this.stateId = stateId;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("State %d", stateId);
+	}
 }
