@@ -43,8 +43,8 @@ EVM Feature Table
 
 
 
-.. _Binja Find Avoid: binaryninja/hooks.rst#find-avoid
-.. _Ghidra Find Avoid: ghidra/hooks.rst#find-avoid
+.. _Binja Find Avoid: binaryninja/hooks.rst#findavoid
+.. _Ghidra Find Avoid: ghidra/hooks.rst#findavoid
 
 .. _Binja Custom Hooks: binaryninja/hooks.rst#custom-hooks
 .. _Ghidra Custom Hooks: ghidra/hooks.rst#custom-hooks
@@ -55,7 +55,7 @@ EVM Feature Table
 .. _Binja Function Models: binaryninja/function_models.rst
 .. _Binja Shared Lib: binaryninja/shared_library.rst
 .. _Binja State Mgmt: binaryninja/state_management.rst
-.. _Binja State Tracing: binaryninja/state_management.rst#show-hide-trace
+.. _Binja State Tracing: binaryninja/state_management.rst#showhide-trace
 
 .. _Ghidra Multiple Inst: #
 
