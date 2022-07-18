@@ -42,7 +42,7 @@ Save Trace
 ----------
 
 This option only works if the `Trace Instructions` option was enabled.
-Only Paused/Forked/Complete/Errored states have these options.
+Only Paused/Forked/Complete/Errored states have this option.
 
 Using Save Trace will prompt you to select a filename to save the trace.
 A DrCov_-compatible save data will be saved into that file.
