@@ -43,4 +43,4 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Lint
-        run: make -C plugins/binaryninja lint
+        run: just -d plugins/binaryninja -f plugins/binaryninja/justfile lint
