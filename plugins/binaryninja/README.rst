@@ -1,6 +1,6 @@
-===
+================================
 Manticore UI Binary Ninja Plugin
-===
+================================
 
 .. image:: https://raw.githubusercontent.com/trailofbits/manticore/master/docs/images/manticore.png
     :width: 200px
