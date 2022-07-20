@@ -1,6 +1,6 @@
 import os
 import unittest
-from mui.hook_manager import NativeHookManager
+from mui.hook_manager import NativeHookManager, CustomHookIdentity
 from binaryninja import open_view
 
 
@@ -13,7 +13,9 @@ class HookPersistenceTest(unittest.TestCase):
             mgr.load_existing_hooks()
             self.assertEqual(mgr.list_find_hooks(), set([0x401152]))
             self.assertEqual(mgr.list_avoid_hooks(), set([0x401153]))
-            self.assertEqual(mgr.list_custom_hooks(), {"0x40114D": "# custom hook code"})
+            self.assertEqual(
+                mgr.list_custom_hooks(), {CustomHookIdentity(0x40114D, 0): "# custom hook code"}
+            )
             self.assertEqual(mgr.list_global_hooks(), {"global_00": "# global hook code"})
 
 

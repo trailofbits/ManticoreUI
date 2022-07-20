@@ -121,7 +121,7 @@ class NativeHookManager:
             json.loads(settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}avoid", bv))
         )
         bv.session_data.mui_custom_hooks = {
-            key: item
+            CustomHookIdentity.from_name(key): item
             for key, item in json.loads(
                 settings.get_string(f"{BINJA_HOOK_SETTINGS_PREFIX}custom", bv)
             ).items()
@@ -168,9 +168,12 @@ class NativeHookManager:
             scope=SettingsScope.SettingsResourceScope,
         )
 
+        custom_hooks = {
+            key.to_name(): item for key, item in bv.session_data.mui_custom_hooks.items()
+        }
         settings.set_string(
             f"{BINJA_HOOK_SETTINGS_PREFIX}custom",
-            json.dumps(bv.session_data.mui_custom_hooks),
+            json.dumps(custom_hooks),
             view=bv,
             scope=SettingsScope.SettingsResourceScope,
         )
