@@ -37,9 +37,6 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 
 	public static ManticoreRunner runnerDisplayed;
 
-	private static int maxStateId;
-	private static HashSet<Integer> numsSent;
-
 	public MUIStateListProvider(PluginTool tool, String name) {
 		super(tool, name, name);
 		buildStateListView();
@@ -126,10 +123,6 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	 */
 	public static void updateShownStates(ManticoreRunner runner) {
 
-		maxStateId = 0;
-		numsSent = new HashSet<Integer>();
-		numsSent.clear();
-
 		clearStateTree();
 
 		runner.getActiveStates().forEach((state) -> activeNode.add(stateToNode(state)));
@@ -165,8 +158,6 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	 * @return Node that can be added to another parent node for the State List UI.
 	 */
 	private static DefaultMutableTreeNode stateToNode(MUIState st) {
-		maxStateId = Math.max(maxStateId, st.getStateId());
-		numsSent.add(st.getStateId());
 		return new DefaultMutableTreeNode(String.format("State %d", st.getStateId()));
 	}
 
