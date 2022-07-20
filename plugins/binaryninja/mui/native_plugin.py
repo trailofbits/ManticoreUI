@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Tuple
 from os.path import realpath
+from typing import Callable, Dict, List, Tuple
+
 from manticore.core.plugin import Plugin
 from manticore.native.memory import ProcSelfMapInfo
+
 from mui.hook_manager import NativeHookManager
 from mui.utils import MUIState
 

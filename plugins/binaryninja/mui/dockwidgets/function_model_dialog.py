@@ -1,18 +1,16 @@
+from binaryninjaui import UIContext
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import (
     QDialog,
-    QWidget,
-    QVBoxLayout,
+    QLabel,
     QListWidget,
     QListWidgetItem,
-    QLabel,
+    QVBoxLayout,
+    QWidget,
 )
-from binaryninja import (
-    BinaryView,
-)
-from binaryninjaui import UIContext
 
-from mui.utils import get_function_models, MUIFunctionModel
+from binaryninja import BinaryView
+from mui.utils import MUIFunctionModel, get_function_models
 
 
 class FunctionModelDialog(QDialog):

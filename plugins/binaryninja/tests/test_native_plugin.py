@@ -1,11 +1,12 @@
 import os
-from typing import Dict, Set, cast
 import unittest
+from typing import Dict, Set, cast
 from unittest.mock import MagicMock
 
 from manticore.native import Manticore
+
+from mui.hook_manager import CustomHookIdentity, NativeHookManager
 from mui.native_plugin import RebaseHooksPlugin
-from mui.hook_manager import NativeHookManager, CustomHookIdentity
 
 
 class FakeHookManager:

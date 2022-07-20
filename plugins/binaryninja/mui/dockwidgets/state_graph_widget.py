@@ -1,11 +1,19 @@
 import typing
-from PySide6.QtGui import QMouseEvent, QShortcut, QKeySequence, Qt
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QLabel, QWidget, QDockWidget
-from binaryninja import FlowGraph, FlowGraphNode, EdgePenStyle, ThemeColor, EdgeStyle, BranchType
-from binaryninja.binaryview import BinaryView
-from binaryninjaui import ViewFrame, DockContextHandler, FlowGraphWidget
-from manticore.core.plugin import StateDescriptor
 
+from binaryninjaui import DockContextHandler, FlowGraphWidget, ViewFrame
+from manticore.core.plugin import StateDescriptor
+from PySide6.QtGui import QKeySequence, QMouseEvent, QShortcut, Qt
+from PySide6.QtWidgets import QDockWidget, QLabel, QMainWindow, QVBoxLayout, QWidget
+
+from binaryninja import (
+    BranchType,
+    EdgePenStyle,
+    EdgeStyle,
+    FlowGraph,
+    FlowGraphNode,
+    ThemeColor,
+)
+from binaryninja.binaryview import BinaryView
 from mui.utils import MUIState
 
 

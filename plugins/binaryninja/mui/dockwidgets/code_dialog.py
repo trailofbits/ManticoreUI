@@ -1,11 +1,11 @@
 import typing
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QDialog, QVBoxLayout, QHBoxLayout, QPushButton
-from binaryninja import BinaryView
 from binaryninjaui import UIContext
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
-from mui.dockwidgets.QCodeEditor import QCodeEditor, Pylighter
+from binaryninja import BinaryView
+from mui.dockwidgets.QCodeEditor import Pylighter, QCodeEditor
 
 
 class CodeDialog(QDialog):
