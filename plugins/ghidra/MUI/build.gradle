@@ -53,6 +53,8 @@ else {
 }
 //----------------------END "DO NOT MODIFY" SECTION-------------------------------
 
+// For OS directory detection and naming
+apply from: new File(ghidraInstallDir).getCanonicalPath() + "/GPL/nativePlatforms.gradle"
 
 def ghidraDir = file(ghidraInstallDir + "/Ghidra").getCanonicalFile().getAbsolutePath()
 def ghidraProps = new Properties()
@@ -153,6 +155,44 @@ task copyMUICommonResources(type: Copy) {
 }
 
 buildExtension.dependsOn copyMUICommonResources
+
+def pyVer = { ->
+    def pyVerStdOut = new ByteArrayOutputStream()
+    exec {
+        commandLine 'python3', '-c', 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}", end = "")'
+        standardOutput = pyVerStdOut
+    }
+    return pyVerStdOut.toString()
+}
+println "Python version used for server: ${pyVer}"
+task checkPythonVersionedBinary(type : Exec) {
+    commandLine '/usr/bin/env', "python${pyVer}", '--version'
+
+    ignoreExitValue true
+
+    doLast {
+        if(execResult.exitValue == 0) {
+            println "Versioned 'python${pyVer}' found on PATH"
+        } else {
+            throw new GradleException("FATAL ERROR! The Python server requires having 'python${pyVer}' on PATH")
+        }
+    }
+
+    outputs.upToDateWhen { false } // ensures never cached, always runs if user enables
+}
+task buildShiv(type: Exec) {
+    doFirst {
+        mkdir "${projectDir}/os/${currentPlatformName}"
+    }
+
+    commandLine 'python3', '-m', 'shiv', '-c', 'muicore', '-o', "${projectDir}/os/${currentPlatformName}/muicore_server", '--reproducible', '--no-modify', '--python', "/usr/bin/env python${pyVer}", '--compressed', "$projectDir/../../../server"
+
+    outputs.upToDateWhen { false } // ensures never cached, always runs if user enables
+
+    dependsOn checkPythonVersionedBinary
+}
+
+buildExtension.dependsOn buildShiv
 
 task installZip(type: Exec) {
     dependsOn buildExtension
