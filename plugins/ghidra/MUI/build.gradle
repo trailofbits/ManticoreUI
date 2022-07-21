@@ -192,7 +192,9 @@ task buildShiv(type: Exec) {
     dependsOn checkPythonVersionedBinary
 }
 
-buildExtension.dependsOn buildShiv
+if (!project.hasProperty('MUI_SKIP_BUILD_SHIV')) {
+    buildExtension.dependsOn buildShiv
+}
 
 task installZip(type: Exec) {
     dependsOn buildExtension
