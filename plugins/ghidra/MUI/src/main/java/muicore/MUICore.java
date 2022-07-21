@@ -1392,7 +1392,12 @@ public final class MUICore {
     long getPc();
 
     /**
-     * <code>int32 parent_id = 28;</code>
+     * <code>optional int32 parent_id = 28;</code>
+     * @return Whether the parentId field is set.
+     */
+    boolean hasParentId();
+    /**
+     * <code>optional int32 parent_id = 28;</code>
      * @return The parentId.
      */
     int getParentId();
@@ -1472,14 +1477,14 @@ public final class MUICore {
               break;
             }
             case 224: {
-
+              bitField0_ |= 0x00000001;
               parentId_ = input.readInt32();
               break;
             }
             case 232: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
                 childrenIds_ = newIntList();
-                mutable_bitField0_ |= 0x00000001;
+                mutable_bitField0_ |= 0x00000002;
               }
               childrenIds_.addInt(input.readInt32());
               break;
@@ -1487,9 +1492,9 @@ public final class MUICore {
             case 234: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000002) != 0) && input.getBytesUntilLimit() > 0) {
                 childrenIds_ = newIntList();
-                mutable_bitField0_ |= 0x00000001;
+                mutable_bitField0_ |= 0x00000002;
               }
               while (input.getBytesUntilLimit() > 0) {
                 childrenIds_.addInt(input.readInt32());
@@ -1512,7 +1517,7 @@ public final class MUICore {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
           childrenIds_.makeImmutable(); // C
         }
         this.unknownFields = unknownFields.build();
@@ -1532,6 +1537,7 @@ public final class MUICore {
               muicore.MUICore.MUIState.class, muicore.MUICore.MUIState.Builder.class);
     }
 
+    private int bitField0_;
     public static final int STATE_ID_FIELD_NUMBER = 3;
     private int stateId_;
     /**
@@ -1557,7 +1563,15 @@ public final class MUICore {
     public static final int PARENT_ID_FIELD_NUMBER = 28;
     private int parentId_;
     /**
-     * <code>int32 parent_id = 28;</code>
+     * <code>optional int32 parent_id = 28;</code>
+     * @return Whether the parentId field is set.
+     */
+    @java.lang.Override
+    public boolean hasParentId() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional int32 parent_id = 28;</code>
      * @return The parentId.
      */
     @java.lang.Override
@@ -1614,7 +1628,7 @@ public final class MUICore {
       if (pc_ != 0L) {
         output.writeUInt64(10, pc_);
       }
-      if (parentId_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt32(28, parentId_);
       }
       if (getChildrenIdsList().size() > 0) {
@@ -1641,7 +1655,7 @@ public final class MUICore {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(10, pc_);
       }
-      if (parentId_ != 0) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(28, parentId_);
       }
@@ -1678,8 +1692,11 @@ public final class MUICore {
           != other.getStateId()) return false;
       if (getPc()
           != other.getPc()) return false;
-      if (getParentId()
-          != other.getParentId()) return false;
+      if (hasParentId() != other.hasParentId()) return false;
+      if (hasParentId()) {
+        if (getParentId()
+            != other.getParentId()) return false;
+      }
       if (!getChildrenIdsList()
           .equals(other.getChildrenIdsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
@@ -1698,8 +1715,10 @@ public final class MUICore {
       hash = (37 * hash) + PC_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getPc());
-      hash = (37 * hash) + PARENT_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getParentId();
+      if (hasParentId()) {
+        hash = (37 * hash) + PARENT_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getParentId();
+      }
       if (getChildrenIdsCount() > 0) {
         hash = (37 * hash) + CHILDREN_IDS_FIELD_NUMBER;
         hash = (53 * hash) + getChildrenIdsList().hashCode();
@@ -1842,9 +1861,9 @@ public final class MUICore {
         pc_ = 0L;
 
         parentId_ = 0;
-
-        childrenIds_ = emptyIntList();
         bitField0_ = (bitField0_ & ~0x00000001);
+        childrenIds_ = emptyIntList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -1872,14 +1891,19 @@ public final class MUICore {
       public muicore.MUICore.MUIState buildPartial() {
         muicore.MUICore.MUIState result = new muicore.MUICore.MUIState(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.stateId_ = stateId_;
         result.pc_ = pc_;
-        result.parentId_ = parentId_;
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.parentId_ = parentId_;
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((bitField0_ & 0x00000002) != 0)) {
           childrenIds_.makeImmutable();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.childrenIds_ = childrenIds_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -1934,13 +1958,13 @@ public final class MUICore {
         if (other.getPc() != 0L) {
           setPc(other.getPc());
         }
-        if (other.getParentId() != 0) {
+        if (other.hasParentId()) {
           setParentId(other.getParentId());
         }
         if (!other.childrenIds_.isEmpty()) {
           if (childrenIds_.isEmpty()) {
             childrenIds_ = other.childrenIds_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000002);
           } else {
             ensureChildrenIdsIsMutable();
             childrenIds_.addAll(other.childrenIds_);
@@ -2041,7 +2065,15 @@ public final class MUICore {
 
       private int parentId_ ;
       /**
-       * <code>int32 parent_id = 28;</code>
+       * <code>optional int32 parent_id = 28;</code>
+       * @return Whether the parentId field is set.
+       */
+      @java.lang.Override
+      public boolean hasParentId() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional int32 parent_id = 28;</code>
        * @return The parentId.
        */
       @java.lang.Override
@@ -2049,22 +2081,22 @@ public final class MUICore {
         return parentId_;
       }
       /**
-       * <code>int32 parent_id = 28;</code>
+       * <code>optional int32 parent_id = 28;</code>
        * @param value The parentId to set.
        * @return This builder for chaining.
        */
       public Builder setParentId(int value) {
-        
+        bitField0_ |= 0x00000001;
         parentId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 parent_id = 28;</code>
+       * <code>optional int32 parent_id = 28;</code>
        * @return This builder for chaining.
        */
       public Builder clearParentId() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         parentId_ = 0;
         onChanged();
         return this;
@@ -2072,9 +2104,9 @@ public final class MUICore {
 
       private com.google.protobuf.Internal.IntList childrenIds_ = emptyIntList();
       private void ensureChildrenIdsIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
+        if (!((bitField0_ & 0x00000002) != 0)) {
           childrenIds_ = mutableCopy(childrenIds_);
-          bitField0_ |= 0x00000001;
+          bitField0_ |= 0x00000002;
          }
       }
       /**
@@ -2083,7 +2115,7 @@ public final class MUICore {
        */
       public java.util.List<java.lang.Integer>
           getChildrenIdsList() {
-        return ((bitField0_ & 0x00000001) != 0) ?
+        return ((bitField0_ & 0x00000002) != 0) ?
                  java.util.Collections.unmodifiableList(childrenIds_) : childrenIds_;
       }
       /**
@@ -2144,7 +2176,7 @@ public final class MUICore {
        */
       public Builder clearChildrenIds() {
         childrenIds_ = emptyIntList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -2344,6 +2376,30 @@ public final class MUICore {
      */
     muicore.MUICore.MUIStateOrBuilder getCompleteStatesOrBuilder(
         int index);
+
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    java.util.List<muicore.MUICore.MUIState> 
+        getPausedStatesList();
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    muicore.MUICore.MUIState getPausedStates(int index);
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    int getPausedStatesCount();
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    java.util.List<? extends muicore.MUICore.MUIStateOrBuilder> 
+        getPausedStatesOrBuilderList();
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    muicore.MUICore.MUIStateOrBuilder getPausedStatesOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code muicore.MUIStateList}
@@ -2363,6 +2419,7 @@ public final class MUICore {
       forkedStates_ = java.util.Collections.emptyList();
       erroredStates_ = java.util.Collections.emptyList();
       completeStates_ = java.util.Collections.emptyList();
+      pausedStates_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -2441,6 +2498,15 @@ public final class MUICore {
                   input.readMessage(muicore.MUICore.MUIState.parser(), extensionRegistry));
               break;
             }
+            case 266: {
+              if (!((mutable_bitField0_ & 0x00000020) != 0)) {
+                pausedStates_ = new java.util.ArrayList<muicore.MUICore.MUIState>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              pausedStates_.add(
+                  input.readMessage(muicore.MUICore.MUIState.parser(), extensionRegistry));
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -2470,6 +2536,9 @@ public final class MUICore {
         }
         if (((mutable_bitField0_ & 0x00000010) != 0)) {
           completeStates_ = java.util.Collections.unmodifiableList(completeStates_);
+        }
+        if (((mutable_bitField0_ & 0x00000020) != 0)) {
+          pausedStates_ = java.util.Collections.unmodifiableList(pausedStates_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -2708,6 +2777,46 @@ public final class MUICore {
       return completeStates_.get(index);
     }
 
+    public static final int PAUSED_STATES_FIELD_NUMBER = 33;
+    private java.util.List<muicore.MUICore.MUIState> pausedStates_;
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    @java.lang.Override
+    public java.util.List<muicore.MUICore.MUIState> getPausedStatesList() {
+      return pausedStates_;
+    }
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends muicore.MUICore.MUIStateOrBuilder> 
+        getPausedStatesOrBuilderList() {
+      return pausedStates_;
+    }
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    @java.lang.Override
+    public int getPausedStatesCount() {
+      return pausedStates_.size();
+    }
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    @java.lang.Override
+    public muicore.MUICore.MUIState getPausedStates(int index) {
+      return pausedStates_.get(index);
+    }
+    /**
+     * <code>repeated .muicore.MUIState paused_states = 33;</code>
+     */
+    @java.lang.Override
+    public muicore.MUICore.MUIStateOrBuilder getPausedStatesOrBuilder(
+        int index) {
+      return pausedStates_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2736,6 +2845,9 @@ public final class MUICore {
       }
       for (int i = 0; i < completeStates_.size(); i++) {
         output.writeMessage(8, completeStates_.get(i));
+      }
+      for (int i = 0; i < pausedStates_.size(); i++) {
+        output.writeMessage(33, pausedStates_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -2766,6 +2878,10 @@ public final class MUICore {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, completeStates_.get(i));
       }
+      for (int i = 0; i < pausedStates_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(33, pausedStates_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2791,6 +2907,8 @@ public final class MUICore {
           .equals(other.getErroredStatesList())) return false;
       if (!getCompleteStatesList()
           .equals(other.getCompleteStatesList())) return false;
+      if (!getPausedStatesList()
+          .equals(other.getPausedStatesList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2821,6 +2939,10 @@ public final class MUICore {
       if (getCompleteStatesCount() > 0) {
         hash = (37 * hash) + COMPLETE_STATES_FIELD_NUMBER;
         hash = (53 * hash) + getCompleteStatesList().hashCode();
+      }
+      if (getPausedStatesCount() > 0) {
+        hash = (37 * hash) + PAUSED_STATES_FIELD_NUMBER;
+        hash = (53 * hash) + getPausedStatesList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2955,6 +3077,7 @@ public final class MUICore {
           getForkedStatesFieldBuilder();
           getErroredStatesFieldBuilder();
           getCompleteStatesFieldBuilder();
+          getPausedStatesFieldBuilder();
         }
       }
       @java.lang.Override
@@ -2989,6 +3112,12 @@ public final class MUICore {
           bitField0_ = (bitField0_ & ~0x00000010);
         } else {
           completeStatesBuilder_.clear();
+        }
+        if (pausedStatesBuilder_ == null) {
+          pausedStates_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+        } else {
+          pausedStatesBuilder_.clear();
         }
         return this;
       }
@@ -3061,6 +3190,15 @@ public final class MUICore {
           result.completeStates_ = completeStates_;
         } else {
           result.completeStates_ = completeStatesBuilder_.build();
+        }
+        if (pausedStatesBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0)) {
+            pausedStates_ = java.util.Collections.unmodifiableList(pausedStates_);
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.pausedStates_ = pausedStates_;
+        } else {
+          result.pausedStates_ = pausedStatesBuilder_.build();
         }
         onBuilt();
         return result;
@@ -3237,6 +3375,32 @@ public final class MUICore {
                    getCompleteStatesFieldBuilder() : null;
             } else {
               completeStatesBuilder_.addAllMessages(other.completeStates_);
+            }
+          }
+        }
+        if (pausedStatesBuilder_ == null) {
+          if (!other.pausedStates_.isEmpty()) {
+            if (pausedStates_.isEmpty()) {
+              pausedStates_ = other.pausedStates_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensurePausedStatesIsMutable();
+              pausedStates_.addAll(other.pausedStates_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.pausedStates_.isEmpty()) {
+            if (pausedStatesBuilder_.isEmpty()) {
+              pausedStatesBuilder_.dispose();
+              pausedStatesBuilder_ = null;
+              pausedStates_ = other.pausedStates_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+              pausedStatesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getPausedStatesFieldBuilder() : null;
+            } else {
+              pausedStatesBuilder_.addAllMessages(other.pausedStates_);
             }
           }
         }
@@ -4541,6 +4705,246 @@ public final class MUICore {
         }
         return completeStatesBuilder_;
       }
+
+      private java.util.List<muicore.MUICore.MUIState> pausedStates_ =
+        java.util.Collections.emptyList();
+      private void ensurePausedStatesIsMutable() {
+        if (!((bitField0_ & 0x00000020) != 0)) {
+          pausedStates_ = new java.util.ArrayList<muicore.MUICore.MUIState>(pausedStates_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          muicore.MUICore.MUIState, muicore.MUICore.MUIState.Builder, muicore.MUICore.MUIStateOrBuilder> pausedStatesBuilder_;
+
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public java.util.List<muicore.MUICore.MUIState> getPausedStatesList() {
+        if (pausedStatesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(pausedStates_);
+        } else {
+          return pausedStatesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public int getPausedStatesCount() {
+        if (pausedStatesBuilder_ == null) {
+          return pausedStates_.size();
+        } else {
+          return pausedStatesBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public muicore.MUICore.MUIState getPausedStates(int index) {
+        if (pausedStatesBuilder_ == null) {
+          return pausedStates_.get(index);
+        } else {
+          return pausedStatesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder setPausedStates(
+          int index, muicore.MUICore.MUIState value) {
+        if (pausedStatesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePausedStatesIsMutable();
+          pausedStates_.set(index, value);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder setPausedStates(
+          int index, muicore.MUICore.MUIState.Builder builderForValue) {
+        if (pausedStatesBuilder_ == null) {
+          ensurePausedStatesIsMutable();
+          pausedStates_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          pausedStatesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder addPausedStates(muicore.MUICore.MUIState value) {
+        if (pausedStatesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePausedStatesIsMutable();
+          pausedStates_.add(value);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder addPausedStates(
+          int index, muicore.MUICore.MUIState value) {
+        if (pausedStatesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePausedStatesIsMutable();
+          pausedStates_.add(index, value);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder addPausedStates(
+          muicore.MUICore.MUIState.Builder builderForValue) {
+        if (pausedStatesBuilder_ == null) {
+          ensurePausedStatesIsMutable();
+          pausedStates_.add(builderForValue.build());
+          onChanged();
+        } else {
+          pausedStatesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder addPausedStates(
+          int index, muicore.MUICore.MUIState.Builder builderForValue) {
+        if (pausedStatesBuilder_ == null) {
+          ensurePausedStatesIsMutable();
+          pausedStates_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          pausedStatesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder addAllPausedStates(
+          java.lang.Iterable<? extends muicore.MUICore.MUIState> values) {
+        if (pausedStatesBuilder_ == null) {
+          ensurePausedStatesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, pausedStates_);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder clearPausedStates() {
+        if (pausedStatesBuilder_ == null) {
+          pausedStates_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public Builder removePausedStates(int index) {
+        if (pausedStatesBuilder_ == null) {
+          ensurePausedStatesIsMutable();
+          pausedStates_.remove(index);
+          onChanged();
+        } else {
+          pausedStatesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public muicore.MUICore.MUIState.Builder getPausedStatesBuilder(
+          int index) {
+        return getPausedStatesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public muicore.MUICore.MUIStateOrBuilder getPausedStatesOrBuilder(
+          int index) {
+        if (pausedStatesBuilder_ == null) {
+          return pausedStates_.get(index);  } else {
+          return pausedStatesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public java.util.List<? extends muicore.MUICore.MUIStateOrBuilder> 
+           getPausedStatesOrBuilderList() {
+        if (pausedStatesBuilder_ != null) {
+          return pausedStatesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(pausedStates_);
+        }
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public muicore.MUICore.MUIState.Builder addPausedStatesBuilder() {
+        return getPausedStatesFieldBuilder().addBuilder(
+            muicore.MUICore.MUIState.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public muicore.MUICore.MUIState.Builder addPausedStatesBuilder(
+          int index) {
+        return getPausedStatesFieldBuilder().addBuilder(
+            index, muicore.MUICore.MUIState.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .muicore.MUIState paused_states = 33;</code>
+       */
+      public java.util.List<muicore.MUICore.MUIState.Builder> 
+           getPausedStatesBuilderList() {
+        return getPausedStatesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          muicore.MUICore.MUIState, muicore.MUICore.MUIState.Builder, muicore.MUICore.MUIStateOrBuilder> 
+          getPausedStatesFieldBuilder() {
+        if (pausedStatesBuilder_ == null) {
+          pausedStatesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              muicore.MUICore.MUIState, muicore.MUICore.MUIState.Builder, muicore.MUICore.MUIStateOrBuilder>(
+                  pausedStates_,
+                  ((bitField0_ & 0x00000020) != 0),
+                  getParentForChildren(),
+                  isClean());
+          pausedStates_ = null;
+        }
+        return pausedStatesBuilder_;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5585,7 +5989,12 @@ public final class MUICore {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint64 address = 26;</code>
+     * <code>optional uint64 address = 26;</code>
+     * @return Whether the address field is set.
+     */
+    boolean hasAddress();
+    /**
+     * <code>optional uint64 address = 26;</code>
      * @return The address.
      */
     long getAddress();
@@ -5602,12 +6011,17 @@ public final class MUICore {
     muicore.MUICore.Hook.HookType getType();
 
     /**
-     * <code>string func_text = 31;</code>
+     * <code>optional string func_text = 31;</code>
+     * @return Whether the funcText field is set.
+     */
+    boolean hasFuncText();
+    /**
+     * <code>optional string func_text = 31;</code>
      * @return The funcText.
      */
     java.lang.String getFuncText();
     /**
-     * <code>string func_text = 31;</code>
+     * <code>optional string func_text = 31;</code>
      * @return The bytes for funcText.
      */
     com.google.protobuf.ByteString
@@ -5650,6 +6064,7 @@ public final class MUICore {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -5661,7 +6076,7 @@ public final class MUICore {
               done = true;
               break;
             case 208: {
-
+              bitField0_ |= 0x00000001;
               address_ = input.readUInt64();
               break;
             }
@@ -5673,7 +6088,7 @@ public final class MUICore {
             }
             case 250: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000002;
               funcText_ = s;
               break;
             }
@@ -5835,10 +6250,19 @@ public final class MUICore {
       // @@protoc_insertion_point(enum_scope:muicore.Hook.HookType)
     }
 
+    private int bitField0_;
     public static final int ADDRESS_FIELD_NUMBER = 26;
     private long address_;
     /**
-     * <code>uint64 address = 26;</code>
+     * <code>optional uint64 address = 26;</code>
+     * @return Whether the address field is set.
+     */
+    @java.lang.Override
+    public boolean hasAddress() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional uint64 address = 26;</code>
      * @return The address.
      */
     @java.lang.Override
@@ -5868,7 +6292,15 @@ public final class MUICore {
     public static final int FUNC_TEXT_FIELD_NUMBER = 31;
     private volatile java.lang.Object funcText_;
     /**
-     * <code>string func_text = 31;</code>
+     * <code>optional string func_text = 31;</code>
+     * @return Whether the funcText field is set.
+     */
+    @java.lang.Override
+    public boolean hasFuncText() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>optional string func_text = 31;</code>
      * @return The funcText.
      */
     @java.lang.Override
@@ -5885,7 +6317,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string func_text = 31;</code>
+     * <code>optional string func_text = 31;</code>
      * @return The bytes for funcText.
      */
     @java.lang.Override
@@ -5917,13 +6349,13 @@ public final class MUICore {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (address_ != 0L) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeUInt64(26, address_);
       }
       if (type_ != muicore.MUICore.Hook.HookType.FIND.getNumber()) {
         output.writeEnum(27, type_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(funcText_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 31, funcText_);
       }
       unknownFields.writeTo(output);
@@ -5935,7 +6367,7 @@ public final class MUICore {
       if (size != -1) return size;
 
       size = 0;
-      if (address_ != 0L) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(26, address_);
       }
@@ -5943,7 +6375,7 @@ public final class MUICore {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(27, type_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(funcText_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(31, funcText_);
       }
       size += unknownFields.getSerializedSize();
@@ -5961,11 +6393,17 @@ public final class MUICore {
       }
       muicore.MUICore.Hook other = (muicore.MUICore.Hook) obj;
 
-      if (getAddress()
-          != other.getAddress()) return false;
+      if (hasAddress() != other.hasAddress()) return false;
+      if (hasAddress()) {
+        if (getAddress()
+            != other.getAddress()) return false;
+      }
       if (type_ != other.type_) return false;
-      if (!getFuncText()
-          .equals(other.getFuncText())) return false;
+      if (hasFuncText() != other.hasFuncText()) return false;
+      if (hasFuncText()) {
+        if (!getFuncText()
+            .equals(other.getFuncText())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5977,13 +6415,17 @@ public final class MUICore {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getAddress());
+      if (hasAddress()) {
+        hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            getAddress());
+      }
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + type_;
-      hash = (37 * hash) + FUNC_TEXT_FIELD_NUMBER;
-      hash = (53 * hash) + getFuncText().hashCode();
+      if (hasFuncText()) {
+        hash = (37 * hash) + FUNC_TEXT_FIELD_NUMBER;
+        hash = (53 * hash) + getFuncText().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -6118,11 +6560,11 @@ public final class MUICore {
       public Builder clear() {
         super.clear();
         address_ = 0L;
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         type_ = 0;
 
         funcText_ = "";
-
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -6149,9 +6591,18 @@ public final class MUICore {
       @java.lang.Override
       public muicore.MUICore.Hook buildPartial() {
         muicore.MUICore.Hook result = new muicore.MUICore.Hook(this);
-        result.address_ = address_;
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.address_ = address_;
+          to_bitField0_ |= 0x00000001;
+        }
         result.type_ = type_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          to_bitField0_ |= 0x00000002;
+        }
         result.funcText_ = funcText_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -6200,13 +6651,14 @@ public final class MUICore {
 
       public Builder mergeFrom(muicore.MUICore.Hook other) {
         if (other == muicore.MUICore.Hook.getDefaultInstance()) return this;
-        if (other.getAddress() != 0L) {
+        if (other.hasAddress()) {
           setAddress(other.getAddress());
         }
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
-        if (!other.getFuncText().isEmpty()) {
+        if (other.hasFuncText()) {
+          bitField0_ |= 0x00000002;
           funcText_ = other.funcText_;
           onChanged();
         }
@@ -6238,10 +6690,19 @@ public final class MUICore {
         }
         return this;
       }
+      private int bitField0_;
 
       private long address_ ;
       /**
-       * <code>uint64 address = 26;</code>
+       * <code>optional uint64 address = 26;</code>
+       * @return Whether the address field is set.
+       */
+      @java.lang.Override
+      public boolean hasAddress() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional uint64 address = 26;</code>
        * @return The address.
        */
       @java.lang.Override
@@ -6249,22 +6710,22 @@ public final class MUICore {
         return address_;
       }
       /**
-       * <code>uint64 address = 26;</code>
+       * <code>optional uint64 address = 26;</code>
        * @param value The address to set.
        * @return This builder for chaining.
        */
       public Builder setAddress(long value) {
-        
+        bitField0_ |= 0x00000001;
         address_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>uint64 address = 26;</code>
+       * <code>optional uint64 address = 26;</code>
        * @return This builder for chaining.
        */
       public Builder clearAddress() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         address_ = 0L;
         onChanged();
         return this;
@@ -6326,7 +6787,14 @@ public final class MUICore {
 
       private java.lang.Object funcText_ = "";
       /**
-       * <code>string func_text = 31;</code>
+       * <code>optional string func_text = 31;</code>
+       * @return Whether the funcText field is set.
+       */
+      public boolean hasFuncText() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>optional string func_text = 31;</code>
        * @return The funcText.
        */
       public java.lang.String getFuncText() {
@@ -6342,7 +6810,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string func_text = 31;</code>
+       * <code>optional string func_text = 31;</code>
        * @return The bytes for funcText.
        */
       public com.google.protobuf.ByteString
@@ -6359,7 +6827,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string func_text = 31;</code>
+       * <code>optional string func_text = 31;</code>
        * @param value The funcText to set.
        * @return This builder for chaining.
        */
@@ -6368,23 +6836,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000002;
         funcText_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string func_text = 31;</code>
+       * <code>optional string func_text = 31;</code>
        * @return This builder for chaining.
        */
       public Builder clearFuncText() {
-        
+        bitField0_ = (bitField0_ & ~0x00000002);
         funcText_ = getDefaultInstance().getFuncText();
         onChanged();
         return this;
       }
       /**
-       * <code>string func_text = 31;</code>
+       * <code>optional string func_text = 31;</code>
        * @param value The bytes for funcText to set.
        * @return This builder for chaining.
        */
@@ -6394,7 +6862,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000002;
         funcText_ = value;
         onChanged();
         return this;
@@ -6544,36 +7012,51 @@ public final class MUICore {
         getSymbolicFilesBytes(int index);
 
     /**
-     * <code>string concrete_start = 19;</code>
+     * <code>optional string concrete_start = 19;</code>
+     * @return Whether the concreteStart field is set.
+     */
+    boolean hasConcreteStart();
+    /**
+     * <code>optional string concrete_start = 19;</code>
      * @return The concreteStart.
      */
     java.lang.String getConcreteStart();
     /**
-     * <code>string concrete_start = 19;</code>
+     * <code>optional string concrete_start = 19;</code>
      * @return The bytes for concreteStart.
      */
     com.google.protobuf.ByteString
         getConcreteStartBytes();
 
     /**
-     * <code>string stdin_size = 20;</code>
+     * <code>optional string stdin_size = 20;</code>
+     * @return Whether the stdinSize field is set.
+     */
+    boolean hasStdinSize();
+    /**
+     * <code>optional string stdin_size = 20;</code>
      * @return The stdinSize.
      */
     java.lang.String getStdinSize();
     /**
-     * <code>string stdin_size = 20;</code>
+     * <code>optional string stdin_size = 20;</code>
      * @return The bytes for stdinSize.
      */
     com.google.protobuf.ByteString
         getStdinSizeBytes();
 
     /**
-     * <code>string additional_mcore_args = 21;</code>
+     * <code>optional string additional_mcore_args = 21;</code>
+     * @return Whether the additionalMcoreArgs field is set.
+     */
+    boolean hasAdditionalMcoreArgs();
+    /**
+     * <code>optional string additional_mcore_args = 21;</code>
      * @return The additionalMcoreArgs.
      */
     java.lang.String getAdditionalMcoreArgs();
     /**
-     * <code>string additional_mcore_args = 21;</code>
+     * <code>optional string additional_mcore_args = 21;</code>
      * @return The bytes for additionalMcoreArgs.
      */
     com.google.protobuf.ByteString
@@ -6602,6 +7085,17 @@ public final class MUICore {
      */
     muicore.MUICore.HookOrBuilder getHooksOrBuilder(
         int index);
+
+    /**
+     * <code>optional uint64 emulate_until = 32;</code>
+     * @return Whether the emulateUntil field is set.
+     */
+    boolean hasEmulateUntil();
+    /**
+     * <code>optional uint64 emulate_until = 32;</code>
+     * @return The emulateUntil.
+     */
+    long getEmulateUntil();
   }
   /**
    * Protobuf type {@code muicore.NativeArguments}
@@ -6692,29 +7186,34 @@ public final class MUICore {
             }
             case 154: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000001;
               concreteStart_ = s;
               break;
             }
             case 162: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000002;
               stdinSize_ = s;
               break;
             }
             case 170: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000004;
               additionalMcoreArgs_ = s;
               break;
             }
             case 242: {
-              if (!((mutable_bitField0_ & 0x00000008) != 0)) {
+              if (!((mutable_bitField0_ & 0x00000040) != 0)) {
                 hooks_ = new java.util.ArrayList<muicore.MUICore.Hook>();
-                mutable_bitField0_ |= 0x00000008;
+                mutable_bitField0_ |= 0x00000040;
               }
               hooks_.add(
                   input.readMessage(muicore.MUICore.Hook.parser(), extensionRegistry));
+              break;
+            }
+            case 256: {
+              bitField0_ |= 0x00000008;
+              emulateUntil_ = input.readUInt64();
               break;
             }
             default: {
@@ -6741,7 +7240,7 @@ public final class MUICore {
         if (((mutable_bitField0_ & 0x00000004) != 0)) {
           symbolicFiles_ = symbolicFiles_.getUnmodifiableView();
         }
-        if (((mutable_bitField0_ & 0x00000008) != 0)) {
+        if (((mutable_bitField0_ & 0x00000040) != 0)) {
           hooks_ = java.util.Collections.unmodifiableList(hooks_);
         }
         this.unknownFields = unknownFields.build();
@@ -6761,6 +7260,7 @@ public final class MUICore {
               muicore.MUICore.NativeArguments.class, muicore.MUICore.NativeArguments.Builder.class);
     }
 
+    private int bitField0_;
     public static final int PROGRAM_PATH_FIELD_NUMBER = 11;
     private volatile java.lang.Object programPath_;
     /**
@@ -6907,7 +7407,15 @@ public final class MUICore {
     public static final int CONCRETE_START_FIELD_NUMBER = 19;
     private volatile java.lang.Object concreteStart_;
     /**
-     * <code>string concrete_start = 19;</code>
+     * <code>optional string concrete_start = 19;</code>
+     * @return Whether the concreteStart field is set.
+     */
+    @java.lang.Override
+    public boolean hasConcreteStart() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional string concrete_start = 19;</code>
      * @return The concreteStart.
      */
     @java.lang.Override
@@ -6924,7 +7432,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string concrete_start = 19;</code>
+     * <code>optional string concrete_start = 19;</code>
      * @return The bytes for concreteStart.
      */
     @java.lang.Override
@@ -6945,7 +7453,15 @@ public final class MUICore {
     public static final int STDIN_SIZE_FIELD_NUMBER = 20;
     private volatile java.lang.Object stdinSize_;
     /**
-     * <code>string stdin_size = 20;</code>
+     * <code>optional string stdin_size = 20;</code>
+     * @return Whether the stdinSize field is set.
+     */
+    @java.lang.Override
+    public boolean hasStdinSize() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>optional string stdin_size = 20;</code>
      * @return The stdinSize.
      */
     @java.lang.Override
@@ -6962,7 +7478,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string stdin_size = 20;</code>
+     * <code>optional string stdin_size = 20;</code>
      * @return The bytes for stdinSize.
      */
     @java.lang.Override
@@ -6983,7 +7499,15 @@ public final class MUICore {
     public static final int ADDITIONAL_MCORE_ARGS_FIELD_NUMBER = 21;
     private volatile java.lang.Object additionalMcoreArgs_;
     /**
-     * <code>string additional_mcore_args = 21;</code>
+     * <code>optional string additional_mcore_args = 21;</code>
+     * @return Whether the additionalMcoreArgs field is set.
+     */
+    @java.lang.Override
+    public boolean hasAdditionalMcoreArgs() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>optional string additional_mcore_args = 21;</code>
      * @return The additionalMcoreArgs.
      */
     @java.lang.Override
@@ -7000,7 +7524,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string additional_mcore_args = 21;</code>
+     * <code>optional string additional_mcore_args = 21;</code>
      * @return The bytes for additionalMcoreArgs.
      */
     @java.lang.Override
@@ -7058,6 +7582,25 @@ public final class MUICore {
       return hooks_.get(index);
     }
 
+    public static final int EMULATE_UNTIL_FIELD_NUMBER = 32;
+    private long emulateUntil_;
+    /**
+     * <code>optional uint64 emulate_until = 32;</code>
+     * @return Whether the emulateUntil field is set.
+     */
+    @java.lang.Override
+    public boolean hasEmulateUntil() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <code>optional uint64 emulate_until = 32;</code>
+     * @return The emulateUntil.
+     */
+    @java.lang.Override
+    public long getEmulateUntil() {
+      return emulateUntil_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -7084,17 +7627,20 @@ public final class MUICore {
       for (int i = 0; i < symbolicFiles_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 18, symbolicFiles_.getRaw(i));
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(concreteStart_)) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 19, concreteStart_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(stdinSize_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 20, stdinSize_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalMcoreArgs_)) {
+      if (((bitField0_ & 0x00000004) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 21, additionalMcoreArgs_);
       }
       for (int i = 0; i < hooks_.size(); i++) {
         output.writeMessage(30, hooks_.get(i));
+      }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        output.writeUInt64(32, emulateUntil_);
       }
       unknownFields.writeTo(output);
     }
@@ -7132,18 +7678,22 @@ public final class MUICore {
         size += dataSize;
         size += 2 * getSymbolicFilesList().size();
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(concreteStart_)) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, concreteStart_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(stdinSize_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(20, stdinSize_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalMcoreArgs_)) {
+      if (((bitField0_ & 0x00000004) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, additionalMcoreArgs_);
       }
       for (int i = 0; i < hooks_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(30, hooks_.get(i));
+      }
+      if (((bitField0_ & 0x00000008) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(32, emulateUntil_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7168,14 +7718,28 @@ public final class MUICore {
           .equals(other.getEnvpList())) return false;
       if (!getSymbolicFilesList()
           .equals(other.getSymbolicFilesList())) return false;
-      if (!getConcreteStart()
-          .equals(other.getConcreteStart())) return false;
-      if (!getStdinSize()
-          .equals(other.getStdinSize())) return false;
-      if (!getAdditionalMcoreArgs()
-          .equals(other.getAdditionalMcoreArgs())) return false;
+      if (hasConcreteStart() != other.hasConcreteStart()) return false;
+      if (hasConcreteStart()) {
+        if (!getConcreteStart()
+            .equals(other.getConcreteStart())) return false;
+      }
+      if (hasStdinSize() != other.hasStdinSize()) return false;
+      if (hasStdinSize()) {
+        if (!getStdinSize()
+            .equals(other.getStdinSize())) return false;
+      }
+      if (hasAdditionalMcoreArgs() != other.hasAdditionalMcoreArgs()) return false;
+      if (hasAdditionalMcoreArgs()) {
+        if (!getAdditionalMcoreArgs()
+            .equals(other.getAdditionalMcoreArgs())) return false;
+      }
       if (!getHooksList()
           .equals(other.getHooksList())) return false;
+      if (hasEmulateUntil() != other.hasEmulateUntil()) return false;
+      if (hasEmulateUntil()) {
+        if (getEmulateUntil()
+            != other.getEmulateUntil()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -7201,15 +7765,26 @@ public final class MUICore {
         hash = (37 * hash) + SYMBOLIC_FILES_FIELD_NUMBER;
         hash = (53 * hash) + getSymbolicFilesList().hashCode();
       }
-      hash = (37 * hash) + CONCRETE_START_FIELD_NUMBER;
-      hash = (53 * hash) + getConcreteStart().hashCode();
-      hash = (37 * hash) + STDIN_SIZE_FIELD_NUMBER;
-      hash = (53 * hash) + getStdinSize().hashCode();
-      hash = (37 * hash) + ADDITIONAL_MCORE_ARGS_FIELD_NUMBER;
-      hash = (53 * hash) + getAdditionalMcoreArgs().hashCode();
+      if (hasConcreteStart()) {
+        hash = (37 * hash) + CONCRETE_START_FIELD_NUMBER;
+        hash = (53 * hash) + getConcreteStart().hashCode();
+      }
+      if (hasStdinSize()) {
+        hash = (37 * hash) + STDIN_SIZE_FIELD_NUMBER;
+        hash = (53 * hash) + getStdinSize().hashCode();
+      }
+      if (hasAdditionalMcoreArgs()) {
+        hash = (37 * hash) + ADDITIONAL_MCORE_ARGS_FIELD_NUMBER;
+        hash = (53 * hash) + getAdditionalMcoreArgs().hashCode();
+      }
       if (getHooksCount() > 0) {
         hash = (37 * hash) + HOOKS_FIELD_NUMBER;
         hash = (53 * hash) + getHooksList().hashCode();
+      }
+      if (hasEmulateUntil()) {
+        hash = (37 * hash) + EMULATE_UNTIL_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            getEmulateUntil());
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -7354,17 +7929,19 @@ public final class MUICore {
         symbolicFiles_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
         concreteStart_ = "";
-
+        bitField0_ = (bitField0_ & ~0x00000008);
         stdinSize_ = "";
-
+        bitField0_ = (bitField0_ & ~0x00000010);
         additionalMcoreArgs_ = "";
-
+        bitField0_ = (bitField0_ & ~0x00000020);
         if (hooksBuilder_ == null) {
           hooks_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000040);
         } else {
           hooksBuilder_.clear();
         }
+        emulateUntil_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -7392,6 +7969,7 @@ public final class MUICore {
       public muicore.MUICore.NativeArguments buildPartial() {
         muicore.MUICore.NativeArguments result = new muicore.MUICore.NativeArguments(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.programPath_ = programPath_;
         if (((bitField0_ & 0x00000001) != 0)) {
           binaryArgs_ = binaryArgs_.getUnmodifiableView();
@@ -7408,18 +7986,32 @@ public final class MUICore {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.symbolicFiles_ = symbolicFiles_;
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          to_bitField0_ |= 0x00000001;
+        }
         result.concreteStart_ = concreteStart_;
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          to_bitField0_ |= 0x00000002;
+        }
         result.stdinSize_ = stdinSize_;
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          to_bitField0_ |= 0x00000004;
+        }
         result.additionalMcoreArgs_ = additionalMcoreArgs_;
         if (hooksBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) != 0)) {
+          if (((bitField0_ & 0x00000040) != 0)) {
             hooks_ = java.util.Collections.unmodifiableList(hooks_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000040);
           }
           result.hooks_ = hooks_;
         } else {
           result.hooks_ = hooksBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.emulateUntil_ = emulateUntil_;
+          to_bitField0_ |= 0x00000008;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -7502,15 +8094,18 @@ public final class MUICore {
           }
           onChanged();
         }
-        if (!other.getConcreteStart().isEmpty()) {
+        if (other.hasConcreteStart()) {
+          bitField0_ |= 0x00000008;
           concreteStart_ = other.concreteStart_;
           onChanged();
         }
-        if (!other.getStdinSize().isEmpty()) {
+        if (other.hasStdinSize()) {
+          bitField0_ |= 0x00000010;
           stdinSize_ = other.stdinSize_;
           onChanged();
         }
-        if (!other.getAdditionalMcoreArgs().isEmpty()) {
+        if (other.hasAdditionalMcoreArgs()) {
+          bitField0_ |= 0x00000020;
           additionalMcoreArgs_ = other.additionalMcoreArgs_;
           onChanged();
         }
@@ -7518,7 +8113,7 @@ public final class MUICore {
           if (!other.hooks_.isEmpty()) {
             if (hooks_.isEmpty()) {
               hooks_ = other.hooks_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000040);
             } else {
               ensureHooksIsMutable();
               hooks_.addAll(other.hooks_);
@@ -7531,7 +8126,7 @@ public final class MUICore {
               hooksBuilder_.dispose();
               hooksBuilder_ = null;
               hooks_ = other.hooks_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000040);
               hooksBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getHooksFieldBuilder() : null;
@@ -7539,6 +8134,9 @@ public final class MUICore {
               hooksBuilder_.addAllMessages(other.hooks_);
             }
           }
+        }
+        if (other.hasEmulateUntil()) {
+          setEmulateUntil(other.getEmulateUntil());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7978,7 +8576,14 @@ public final class MUICore {
 
       private java.lang.Object concreteStart_ = "";
       /**
-       * <code>string concrete_start = 19;</code>
+       * <code>optional string concrete_start = 19;</code>
+       * @return Whether the concreteStart field is set.
+       */
+      public boolean hasConcreteStart() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <code>optional string concrete_start = 19;</code>
        * @return The concreteStart.
        */
       public java.lang.String getConcreteStart() {
@@ -7994,7 +8599,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string concrete_start = 19;</code>
+       * <code>optional string concrete_start = 19;</code>
        * @return The bytes for concreteStart.
        */
       public com.google.protobuf.ByteString
@@ -8011,7 +8616,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string concrete_start = 19;</code>
+       * <code>optional string concrete_start = 19;</code>
        * @param value The concreteStart to set.
        * @return This builder for chaining.
        */
@@ -8020,23 +8625,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000008;
         concreteStart_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string concrete_start = 19;</code>
+       * <code>optional string concrete_start = 19;</code>
        * @return This builder for chaining.
        */
       public Builder clearConcreteStart() {
-        
+        bitField0_ = (bitField0_ & ~0x00000008);
         concreteStart_ = getDefaultInstance().getConcreteStart();
         onChanged();
         return this;
       }
       /**
-       * <code>string concrete_start = 19;</code>
+       * <code>optional string concrete_start = 19;</code>
        * @param value The bytes for concreteStart to set.
        * @return This builder for chaining.
        */
@@ -8046,7 +8651,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000008;
         concreteStart_ = value;
         onChanged();
         return this;
@@ -8054,7 +8659,14 @@ public final class MUICore {
 
       private java.lang.Object stdinSize_ = "";
       /**
-       * <code>string stdin_size = 20;</code>
+       * <code>optional string stdin_size = 20;</code>
+       * @return Whether the stdinSize field is set.
+       */
+      public boolean hasStdinSize() {
+        return ((bitField0_ & 0x00000010) != 0);
+      }
+      /**
+       * <code>optional string stdin_size = 20;</code>
        * @return The stdinSize.
        */
       public java.lang.String getStdinSize() {
@@ -8070,7 +8682,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string stdin_size = 20;</code>
+       * <code>optional string stdin_size = 20;</code>
        * @return The bytes for stdinSize.
        */
       public com.google.protobuf.ByteString
@@ -8087,7 +8699,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string stdin_size = 20;</code>
+       * <code>optional string stdin_size = 20;</code>
        * @param value The stdinSize to set.
        * @return This builder for chaining.
        */
@@ -8096,23 +8708,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000010;
         stdinSize_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string stdin_size = 20;</code>
+       * <code>optional string stdin_size = 20;</code>
        * @return This builder for chaining.
        */
       public Builder clearStdinSize() {
-        
+        bitField0_ = (bitField0_ & ~0x00000010);
         stdinSize_ = getDefaultInstance().getStdinSize();
         onChanged();
         return this;
       }
       /**
-       * <code>string stdin_size = 20;</code>
+       * <code>optional string stdin_size = 20;</code>
        * @param value The bytes for stdinSize to set.
        * @return This builder for chaining.
        */
@@ -8122,7 +8734,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000010;
         stdinSize_ = value;
         onChanged();
         return this;
@@ -8130,7 +8742,14 @@ public final class MUICore {
 
       private java.lang.Object additionalMcoreArgs_ = "";
       /**
-       * <code>string additional_mcore_args = 21;</code>
+       * <code>optional string additional_mcore_args = 21;</code>
+       * @return Whether the additionalMcoreArgs field is set.
+       */
+      public boolean hasAdditionalMcoreArgs() {
+        return ((bitField0_ & 0x00000020) != 0);
+      }
+      /**
+       * <code>optional string additional_mcore_args = 21;</code>
        * @return The additionalMcoreArgs.
        */
       public java.lang.String getAdditionalMcoreArgs() {
@@ -8146,7 +8765,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string additional_mcore_args = 21;</code>
+       * <code>optional string additional_mcore_args = 21;</code>
        * @return The bytes for additionalMcoreArgs.
        */
       public com.google.protobuf.ByteString
@@ -8163,7 +8782,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string additional_mcore_args = 21;</code>
+       * <code>optional string additional_mcore_args = 21;</code>
        * @param value The additionalMcoreArgs to set.
        * @return This builder for chaining.
        */
@@ -8172,23 +8791,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000020;
         additionalMcoreArgs_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string additional_mcore_args = 21;</code>
+       * <code>optional string additional_mcore_args = 21;</code>
        * @return This builder for chaining.
        */
       public Builder clearAdditionalMcoreArgs() {
-        
+        bitField0_ = (bitField0_ & ~0x00000020);
         additionalMcoreArgs_ = getDefaultInstance().getAdditionalMcoreArgs();
         onChanged();
         return this;
       }
       /**
-       * <code>string additional_mcore_args = 21;</code>
+       * <code>optional string additional_mcore_args = 21;</code>
        * @param value The bytes for additionalMcoreArgs to set.
        * @return This builder for chaining.
        */
@@ -8198,7 +8817,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000020;
         additionalMcoreArgs_ = value;
         onChanged();
         return this;
@@ -8207,9 +8826,9 @@ public final class MUICore {
       private java.util.List<muicore.MUICore.Hook> hooks_ =
         java.util.Collections.emptyList();
       private void ensureHooksIsMutable() {
-        if (!((bitField0_ & 0x00000008) != 0)) {
+        if (!((bitField0_ & 0x00000040) != 0)) {
           hooks_ = new java.util.ArrayList<muicore.MUICore.Hook>(hooks_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000040;
          }
       }
 
@@ -8359,7 +8978,7 @@ public final class MUICore {
       public Builder clearHooks() {
         if (hooksBuilder_ == null) {
           hooks_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000040);
           onChanged();
         } else {
           hooksBuilder_.clear();
@@ -8436,12 +9055,51 @@ public final class MUICore {
           hooksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               muicore.MUICore.Hook, muicore.MUICore.Hook.Builder, muicore.MUICore.HookOrBuilder>(
                   hooks_,
-                  ((bitField0_ & 0x00000008) != 0),
+                  ((bitField0_ & 0x00000040) != 0),
                   getParentForChildren(),
                   isClean());
           hooks_ = null;
         }
         return hooksBuilder_;
+      }
+
+      private long emulateUntil_ ;
+      /**
+       * <code>optional uint64 emulate_until = 32;</code>
+       * @return Whether the emulateUntil field is set.
+       */
+      @java.lang.Override
+      public boolean hasEmulateUntil() {
+        return ((bitField0_ & 0x00000080) != 0);
+      }
+      /**
+       * <code>optional uint64 emulate_until = 32;</code>
+       * @return The emulateUntil.
+       */
+      @java.lang.Override
+      public long getEmulateUntil() {
+        return emulateUntil_;
+      }
+      /**
+       * <code>optional uint64 emulate_until = 32;</code>
+       * @param value The emulateUntil to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEmulateUntil(long value) {
+        bitField0_ |= 0x00000080;
+        emulateUntil_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional uint64 emulate_until = 32;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearEmulateUntil() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        emulateUntil_ = 0L;
+        onChanged();
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -8537,24 +9195,34 @@ public final class MUICore {
         getSolcBinBytes();
 
     /**
-     * <code>string tx_limit = 22;</code>
+     * <code>optional string tx_limit = 22;</code>
+     * @return Whether the txLimit field is set.
+     */
+    boolean hasTxLimit();
+    /**
+     * <code>optional string tx_limit = 22;</code>
      * @return The txLimit.
      */
     java.lang.String getTxLimit();
     /**
-     * <code>string tx_limit = 22;</code>
+     * <code>optional string tx_limit = 22;</code>
      * @return The bytes for txLimit.
      */
     com.google.protobuf.ByteString
         getTxLimitBytes();
 
     /**
-     * <code>string tx_account = 23;</code>
+     * <code>optional string tx_account = 23;</code>
+     * @return Whether the txAccount field is set.
+     */
+    boolean hasTxAccount();
+    /**
+     * <code>optional string tx_account = 23;</code>
      * @return The txAccount.
      */
     java.lang.String getTxAccount();
     /**
-     * <code>string tx_account = 23;</code>
+     * <code>optional string tx_account = 23;</code>
      * @return The bytes for txAccount.
      */
     com.google.protobuf.ByteString
@@ -8586,12 +9254,17 @@ public final class MUICore {
         getDetectorsToExcludeBytes(int index);
 
     /**
-     * <code>string additional_flags = 25;</code>
+     * <code>optional string additional_flags = 25;</code>
+     * @return Whether the additionalFlags field is set.
+     */
+    boolean hasAdditionalFlags();
+    /**
+     * <code>optional string additional_flags = 25;</code>
      * @return The additionalFlags.
      */
     java.lang.String getAdditionalFlags();
     /**
-     * <code>string additional_flags = 25;</code>
+     * <code>optional string additional_flags = 25;</code>
      * @return The bytes for additionalFlags.
      */
     com.google.protobuf.ByteString
@@ -8670,28 +9343,28 @@ public final class MUICore {
             }
             case 178: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000001;
               txLimit_ = s;
               break;
             }
             case 186: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000002;
               txAccount_ = s;
               break;
             }
             case 194: {
               java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+              if (!((mutable_bitField0_ & 0x00000004) != 0)) {
                 detectorsToExclude_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000001;
+                mutable_bitField0_ |= 0x00000004;
               }
               detectorsToExclude_.add(s);
               break;
             }
             case 202: {
               java.lang.String s = input.readStringRequireUtf8();
-
+              bitField0_ |= 0x00000004;
               additionalFlags_ = s;
               break;
             }
@@ -8710,7 +9383,7 @@ public final class MUICore {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+        if (((mutable_bitField0_ & 0x00000004) != 0)) {
           detectorsToExclude_ = detectorsToExclude_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
@@ -8730,6 +9403,7 @@ public final class MUICore {
               muicore.MUICore.EVMArguments.class, muicore.MUICore.EVMArguments.Builder.class);
     }
 
+    private int bitField0_;
     public static final int CONTRACT_PATH_FIELD_NUMBER = 12;
     private volatile java.lang.Object contractPath_;
     /**
@@ -8847,7 +9521,15 @@ public final class MUICore {
     public static final int TX_LIMIT_FIELD_NUMBER = 22;
     private volatile java.lang.Object txLimit_;
     /**
-     * <code>string tx_limit = 22;</code>
+     * <code>optional string tx_limit = 22;</code>
+     * @return Whether the txLimit field is set.
+     */
+    @java.lang.Override
+    public boolean hasTxLimit() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional string tx_limit = 22;</code>
      * @return The txLimit.
      */
     @java.lang.Override
@@ -8864,7 +9546,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string tx_limit = 22;</code>
+     * <code>optional string tx_limit = 22;</code>
      * @return The bytes for txLimit.
      */
     @java.lang.Override
@@ -8885,7 +9567,15 @@ public final class MUICore {
     public static final int TX_ACCOUNT_FIELD_NUMBER = 23;
     private volatile java.lang.Object txAccount_;
     /**
-     * <code>string tx_account = 23;</code>
+     * <code>optional string tx_account = 23;</code>
+     * @return Whether the txAccount field is set.
+     */
+    @java.lang.Override
+    public boolean hasTxAccount() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>optional string tx_account = 23;</code>
      * @return The txAccount.
      */
     @java.lang.Override
@@ -8902,7 +9592,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string tx_account = 23;</code>
+     * <code>optional string tx_account = 23;</code>
      * @return The bytes for txAccount.
      */
     @java.lang.Override
@@ -8958,7 +9648,15 @@ public final class MUICore {
     public static final int ADDITIONAL_FLAGS_FIELD_NUMBER = 25;
     private volatile java.lang.Object additionalFlags_;
     /**
-     * <code>string additional_flags = 25;</code>
+     * <code>optional string additional_flags = 25;</code>
+     * @return Whether the additionalFlags field is set.
+     */
+    @java.lang.Override
+    public boolean hasAdditionalFlags() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>optional string additional_flags = 25;</code>
      * @return The additionalFlags.
      */
     @java.lang.Override
@@ -8975,7 +9673,7 @@ public final class MUICore {
       }
     }
     /**
-     * <code>string additional_flags = 25;</code>
+     * <code>optional string additional_flags = 25;</code>
      * @return The bytes for additionalFlags.
      */
     @java.lang.Override
@@ -9016,16 +9714,16 @@ public final class MUICore {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(solcBin_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 14, solcBin_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txLimit_)) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 22, txLimit_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txAccount_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 23, txAccount_);
       }
       for (int i = 0; i < detectorsToExclude_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 24, detectorsToExclude_.getRaw(i));
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalFlags_)) {
+      if (((bitField0_ & 0x00000004) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 25, additionalFlags_);
       }
       unknownFields.writeTo(output);
@@ -9046,10 +9744,10 @@ public final class MUICore {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(solcBin_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, solcBin_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txLimit_)) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(22, txLimit_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(txAccount_)) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, txAccount_);
       }
       {
@@ -9060,7 +9758,7 @@ public final class MUICore {
         size += dataSize;
         size += 2 * getDetectorsToExcludeList().size();
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(additionalFlags_)) {
+      if (((bitField0_ & 0x00000004) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, additionalFlags_);
       }
       size += unknownFields.getSerializedSize();
@@ -9084,14 +9782,23 @@ public final class MUICore {
           .equals(other.getContractName())) return false;
       if (!getSolcBin()
           .equals(other.getSolcBin())) return false;
-      if (!getTxLimit()
-          .equals(other.getTxLimit())) return false;
-      if (!getTxAccount()
-          .equals(other.getTxAccount())) return false;
+      if (hasTxLimit() != other.hasTxLimit()) return false;
+      if (hasTxLimit()) {
+        if (!getTxLimit()
+            .equals(other.getTxLimit())) return false;
+      }
+      if (hasTxAccount() != other.hasTxAccount()) return false;
+      if (hasTxAccount()) {
+        if (!getTxAccount()
+            .equals(other.getTxAccount())) return false;
+      }
       if (!getDetectorsToExcludeList()
           .equals(other.getDetectorsToExcludeList())) return false;
-      if (!getAdditionalFlags()
-          .equals(other.getAdditionalFlags())) return false;
+      if (hasAdditionalFlags() != other.hasAdditionalFlags()) return false;
+      if (hasAdditionalFlags()) {
+        if (!getAdditionalFlags()
+            .equals(other.getAdditionalFlags())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -9109,16 +9816,22 @@ public final class MUICore {
       hash = (53 * hash) + getContractName().hashCode();
       hash = (37 * hash) + SOLC_BIN_FIELD_NUMBER;
       hash = (53 * hash) + getSolcBin().hashCode();
-      hash = (37 * hash) + TX_LIMIT_FIELD_NUMBER;
-      hash = (53 * hash) + getTxLimit().hashCode();
-      hash = (37 * hash) + TX_ACCOUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getTxAccount().hashCode();
+      if (hasTxLimit()) {
+        hash = (37 * hash) + TX_LIMIT_FIELD_NUMBER;
+        hash = (53 * hash) + getTxLimit().hashCode();
+      }
+      if (hasTxAccount()) {
+        hash = (37 * hash) + TX_ACCOUNT_FIELD_NUMBER;
+        hash = (53 * hash) + getTxAccount().hashCode();
+      }
       if (getDetectorsToExcludeCount() > 0) {
         hash = (37 * hash) + DETECTORS_TO_EXCLUDE_FIELD_NUMBER;
         hash = (53 * hash) + getDetectorsToExcludeList().hashCode();
       }
-      hash = (37 * hash) + ADDITIONAL_FLAGS_FIELD_NUMBER;
-      hash = (53 * hash) + getAdditionalFlags().hashCode();
+      if (hasAdditionalFlags()) {
+        hash = (37 * hash) + ADDITIONAL_FLAGS_FIELD_NUMBER;
+        hash = (53 * hash) + getAdditionalFlags().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9259,13 +9972,13 @@ public final class MUICore {
         solcBin_ = "";
 
         txLimit_ = "";
-
-        txAccount_ = "";
-
-        detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
+        txAccount_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         additionalFlags_ = "";
-
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -9293,17 +10006,28 @@ public final class MUICore {
       public muicore.MUICore.EVMArguments buildPartial() {
         muicore.MUICore.EVMArguments result = new muicore.MUICore.EVMArguments(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.contractPath_ = contractPath_;
         result.contractName_ = contractName_;
         result.solcBin_ = solcBin_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          to_bitField0_ |= 0x00000001;
+        }
         result.txLimit_ = txLimit_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          to_bitField0_ |= 0x00000002;
+        }
         result.txAccount_ = txAccount_;
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((bitField0_ & 0x00000004) != 0)) {
           detectorsToExclude_ = detectorsToExclude_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.detectorsToExclude_ = detectorsToExclude_;
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          to_bitField0_ |= 0x00000004;
+        }
         result.additionalFlags_ = additionalFlags_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -9364,25 +10088,28 @@ public final class MUICore {
           solcBin_ = other.solcBin_;
           onChanged();
         }
-        if (!other.getTxLimit().isEmpty()) {
+        if (other.hasTxLimit()) {
+          bitField0_ |= 0x00000001;
           txLimit_ = other.txLimit_;
           onChanged();
         }
-        if (!other.getTxAccount().isEmpty()) {
+        if (other.hasTxAccount()) {
+          bitField0_ |= 0x00000002;
           txAccount_ = other.txAccount_;
           onChanged();
         }
         if (!other.detectorsToExclude_.isEmpty()) {
           if (detectorsToExclude_.isEmpty()) {
             detectorsToExclude_ = other.detectorsToExclude_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000004);
           } else {
             ensureDetectorsToExcludeIsMutable();
             detectorsToExclude_.addAll(other.detectorsToExclude_);
           }
           onChanged();
         }
-        if (!other.getAdditionalFlags().isEmpty()) {
+        if (other.hasAdditionalFlags()) {
+          bitField0_ |= 0x00000008;
           additionalFlags_ = other.additionalFlags_;
           onChanged();
         }
@@ -9646,7 +10373,14 @@ public final class MUICore {
 
       private java.lang.Object txLimit_ = "";
       /**
-       * <code>string tx_limit = 22;</code>
+       * <code>optional string tx_limit = 22;</code>
+       * @return Whether the txLimit field is set.
+       */
+      public boolean hasTxLimit() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional string tx_limit = 22;</code>
        * @return The txLimit.
        */
       public java.lang.String getTxLimit() {
@@ -9662,7 +10396,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string tx_limit = 22;</code>
+       * <code>optional string tx_limit = 22;</code>
        * @return The bytes for txLimit.
        */
       public com.google.protobuf.ByteString
@@ -9679,7 +10413,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string tx_limit = 22;</code>
+       * <code>optional string tx_limit = 22;</code>
        * @param value The txLimit to set.
        * @return This builder for chaining.
        */
@@ -9688,23 +10422,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000001;
         txLimit_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string tx_limit = 22;</code>
+       * <code>optional string tx_limit = 22;</code>
        * @return This builder for chaining.
        */
       public Builder clearTxLimit() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         txLimit_ = getDefaultInstance().getTxLimit();
         onChanged();
         return this;
       }
       /**
-       * <code>string tx_limit = 22;</code>
+       * <code>optional string tx_limit = 22;</code>
        * @param value The bytes for txLimit to set.
        * @return This builder for chaining.
        */
@@ -9714,7 +10448,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000001;
         txLimit_ = value;
         onChanged();
         return this;
@@ -9722,7 +10456,14 @@ public final class MUICore {
 
       private java.lang.Object txAccount_ = "";
       /**
-       * <code>string tx_account = 23;</code>
+       * <code>optional string tx_account = 23;</code>
+       * @return Whether the txAccount field is set.
+       */
+      public boolean hasTxAccount() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>optional string tx_account = 23;</code>
        * @return The txAccount.
        */
       public java.lang.String getTxAccount() {
@@ -9738,7 +10479,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string tx_account = 23;</code>
+       * <code>optional string tx_account = 23;</code>
        * @return The bytes for txAccount.
        */
       public com.google.protobuf.ByteString
@@ -9755,7 +10496,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string tx_account = 23;</code>
+       * <code>optional string tx_account = 23;</code>
        * @param value The txAccount to set.
        * @return This builder for chaining.
        */
@@ -9764,23 +10505,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000002;
         txAccount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string tx_account = 23;</code>
+       * <code>optional string tx_account = 23;</code>
        * @return This builder for chaining.
        */
       public Builder clearTxAccount() {
-        
+        bitField0_ = (bitField0_ & ~0x00000002);
         txAccount_ = getDefaultInstance().getTxAccount();
         onChanged();
         return this;
       }
       /**
-       * <code>string tx_account = 23;</code>
+       * <code>optional string tx_account = 23;</code>
        * @param value The bytes for txAccount to set.
        * @return This builder for chaining.
        */
@@ -9790,7 +10531,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000002;
         txAccount_ = value;
         onChanged();
         return this;
@@ -9798,9 +10539,9 @@ public final class MUICore {
 
       private com.google.protobuf.LazyStringList detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureDetectorsToExcludeIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
+        if (!((bitField0_ & 0x00000004) != 0)) {
           detectorsToExclude_ = new com.google.protobuf.LazyStringArrayList(detectorsToExclude_);
-          bitField0_ |= 0x00000001;
+          bitField0_ |= 0x00000004;
          }
       }
       /**
@@ -9885,7 +10626,7 @@ public final class MUICore {
        */
       public Builder clearDetectorsToExclude() {
         detectorsToExclude_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -9908,7 +10649,14 @@ public final class MUICore {
 
       private java.lang.Object additionalFlags_ = "";
       /**
-       * <code>string additional_flags = 25;</code>
+       * <code>optional string additional_flags = 25;</code>
+       * @return Whether the additionalFlags field is set.
+       */
+      public boolean hasAdditionalFlags() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <code>optional string additional_flags = 25;</code>
        * @return The additionalFlags.
        */
       public java.lang.String getAdditionalFlags() {
@@ -9924,7 +10672,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string additional_flags = 25;</code>
+       * <code>optional string additional_flags = 25;</code>
        * @return The bytes for additionalFlags.
        */
       public com.google.protobuf.ByteString
@@ -9941,7 +10689,7 @@ public final class MUICore {
         }
       }
       /**
-       * <code>string additional_flags = 25;</code>
+       * <code>optional string additional_flags = 25;</code>
        * @param value The additionalFlags to set.
        * @return This builder for chaining.
        */
@@ -9950,23 +10698,23 @@ public final class MUICore {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000008;
         additionalFlags_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string additional_flags = 25;</code>
+       * <code>optional string additional_flags = 25;</code>
        * @return This builder for chaining.
        */
       public Builder clearAdditionalFlags() {
-        
+        bitField0_ = (bitField0_ & ~0x00000008);
         additionalFlags_ = getDefaultInstance().getAdditionalFlags();
         onChanged();
         return this;
       }
       /**
-       * <code>string additional_flags = 25;</code>
+       * <code>optional string additional_flags = 25;</code>
        * @param value The bytes for additionalFlags to set.
        * @return This builder for chaining.
        */
@@ -9976,7 +10724,7 @@ public final class MUICore {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+        bitField0_ |= 0x00000008;
         additionalFlags_ = value;
         onChanged();
         return this;
@@ -11359,6 +12107,1339 @@ public final class MUICore {
 
   }
 
+  public interface ControlStateRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:muicore.ControlStateRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int32 state_id = 34;</code>
+     * @return The stateId.
+     */
+    int getStateId();
+
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     * @return Whether the manticoreInstance field is set.
+     */
+    boolean hasManticoreInstance();
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     * @return The manticoreInstance.
+     */
+    muicore.MUICore.ManticoreInstance getManticoreInstance();
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     */
+    muicore.MUICore.ManticoreInstanceOrBuilder getManticoreInstanceOrBuilder();
+
+    /**
+     * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+     * @return The enum numeric value on the wire for action.
+     */
+    int getActionValue();
+    /**
+     * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+     * @return The action.
+     */
+    muicore.MUICore.ControlStateRequest.StateAction getAction();
+  }
+  /**
+   * Protobuf type {@code muicore.ControlStateRequest}
+   */
+  public static final class ControlStateRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:muicore.ControlStateRequest)
+      ControlStateRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ControlStateRequest.newBuilder() to construct.
+    private ControlStateRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ControlStateRequest() {
+      action_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ControlStateRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ControlStateRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 272: {
+
+              stateId_ = input.readInt32();
+              break;
+            }
+            case 282: {
+              muicore.MUICore.ManticoreInstance.Builder subBuilder = null;
+              if (manticoreInstance_ != null) {
+                subBuilder = manticoreInstance_.toBuilder();
+              }
+              manticoreInstance_ = input.readMessage(muicore.MUICore.ManticoreInstance.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(manticoreInstance_);
+                manticoreInstance_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 288: {
+              int rawValue = input.readEnum();
+
+              action_ = rawValue;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return muicore.MUICore.internal_static_muicore_ControlStateRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return muicore.MUICore.internal_static_muicore_ControlStateRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              muicore.MUICore.ControlStateRequest.class, muicore.MUICore.ControlStateRequest.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code muicore.ControlStateRequest.StateAction}
+     */
+    public enum StateAction
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>RESUME = 0;</code>
+       */
+      RESUME(0),
+      /**
+       * <code>PAUSE = 1;</code>
+       */
+      PAUSE(1),
+      /**
+       * <code>KILL = 2;</code>
+       */
+      KILL(2),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       * <code>RESUME = 0;</code>
+       */
+      public static final int RESUME_VALUE = 0;
+      /**
+       * <code>PAUSE = 1;</code>
+       */
+      public static final int PAUSE_VALUE = 1;
+      /**
+       * <code>KILL = 2;</code>
+       */
+      public static final int KILL_VALUE = 2;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static StateAction valueOf(int value) {
+        return forNumber(value);
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       */
+      public static StateAction forNumber(int value) {
+        switch (value) {
+          case 0: return RESUME;
+          case 1: return PAUSE;
+          case 2: return KILL;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<StateAction>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          StateAction> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<StateAction>() {
+              public StateAction findValueByNumber(int number) {
+                return StateAction.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalStateException(
+              "Can't get the descriptor of an unrecognized enum value.");
+        }
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return muicore.MUICore.ControlStateRequest.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final StateAction[] VALUES = values();
+
+      public static StateAction valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private StateAction(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:muicore.ControlStateRequest.StateAction)
+    }
+
+    public static final int STATE_ID_FIELD_NUMBER = 34;
+    private int stateId_;
+    /**
+     * <code>int32 state_id = 34;</code>
+     * @return The stateId.
+     */
+    @java.lang.Override
+    public int getStateId() {
+      return stateId_;
+    }
+
+    public static final int MANTICORE_INSTANCE_FIELD_NUMBER = 35;
+    private muicore.MUICore.ManticoreInstance manticoreInstance_;
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     * @return Whether the manticoreInstance field is set.
+     */
+    @java.lang.Override
+    public boolean hasManticoreInstance() {
+      return manticoreInstance_ != null;
+    }
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     * @return The manticoreInstance.
+     */
+    @java.lang.Override
+    public muicore.MUICore.ManticoreInstance getManticoreInstance() {
+      return manticoreInstance_ == null ? muicore.MUICore.ManticoreInstance.getDefaultInstance() : manticoreInstance_;
+    }
+    /**
+     * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+     */
+    @java.lang.Override
+    public muicore.MUICore.ManticoreInstanceOrBuilder getManticoreInstanceOrBuilder() {
+      return getManticoreInstance();
+    }
+
+    public static final int ACTION_FIELD_NUMBER = 36;
+    private int action_;
+    /**
+     * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+     * @return The enum numeric value on the wire for action.
+     */
+    @java.lang.Override public int getActionValue() {
+      return action_;
+    }
+    /**
+     * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+     * @return The action.
+     */
+    @java.lang.Override public muicore.MUICore.ControlStateRequest.StateAction getAction() {
+      @SuppressWarnings("deprecation")
+      muicore.MUICore.ControlStateRequest.StateAction result = muicore.MUICore.ControlStateRequest.StateAction.valueOf(action_);
+      return result == null ? muicore.MUICore.ControlStateRequest.StateAction.UNRECOGNIZED : result;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (stateId_ != 0) {
+        output.writeInt32(34, stateId_);
+      }
+      if (manticoreInstance_ != null) {
+        output.writeMessage(35, getManticoreInstance());
+      }
+      if (action_ != muicore.MUICore.ControlStateRequest.StateAction.RESUME.getNumber()) {
+        output.writeEnum(36, action_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (stateId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(34, stateId_);
+      }
+      if (manticoreInstance_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(35, getManticoreInstance());
+      }
+      if (action_ != muicore.MUICore.ControlStateRequest.StateAction.RESUME.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(36, action_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof muicore.MUICore.ControlStateRequest)) {
+        return super.equals(obj);
+      }
+      muicore.MUICore.ControlStateRequest other = (muicore.MUICore.ControlStateRequest) obj;
+
+      if (getStateId()
+          != other.getStateId()) return false;
+      if (hasManticoreInstance() != other.hasManticoreInstance()) return false;
+      if (hasManticoreInstance()) {
+        if (!getManticoreInstance()
+            .equals(other.getManticoreInstance())) return false;
+      }
+      if (action_ != other.action_) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + STATE_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getStateId();
+      if (hasManticoreInstance()) {
+        hash = (37 * hash) + MANTICORE_INSTANCE_FIELD_NUMBER;
+        hash = (53 * hash) + getManticoreInstance().hashCode();
+      }
+      hash = (37 * hash) + ACTION_FIELD_NUMBER;
+      hash = (53 * hash) + action_;
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(muicore.MUICore.ControlStateRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code muicore.ControlStateRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:muicore.ControlStateRequest)
+        muicore.MUICore.ControlStateRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return muicore.MUICore.internal_static_muicore_ControlStateRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return muicore.MUICore.internal_static_muicore_ControlStateRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                muicore.MUICore.ControlStateRequest.class, muicore.MUICore.ControlStateRequest.Builder.class);
+      }
+
+      // Construct using muicore.MUICore.ControlStateRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        stateId_ = 0;
+
+        if (manticoreInstanceBuilder_ == null) {
+          manticoreInstance_ = null;
+        } else {
+          manticoreInstance_ = null;
+          manticoreInstanceBuilder_ = null;
+        }
+        action_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return muicore.MUICore.internal_static_muicore_ControlStateRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateRequest getDefaultInstanceForType() {
+        return muicore.MUICore.ControlStateRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateRequest build() {
+        muicore.MUICore.ControlStateRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateRequest buildPartial() {
+        muicore.MUICore.ControlStateRequest result = new muicore.MUICore.ControlStateRequest(this);
+        result.stateId_ = stateId_;
+        if (manticoreInstanceBuilder_ == null) {
+          result.manticoreInstance_ = manticoreInstance_;
+        } else {
+          result.manticoreInstance_ = manticoreInstanceBuilder_.build();
+        }
+        result.action_ = action_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof muicore.MUICore.ControlStateRequest) {
+          return mergeFrom((muicore.MUICore.ControlStateRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(muicore.MUICore.ControlStateRequest other) {
+        if (other == muicore.MUICore.ControlStateRequest.getDefaultInstance()) return this;
+        if (other.getStateId() != 0) {
+          setStateId(other.getStateId());
+        }
+        if (other.hasManticoreInstance()) {
+          mergeManticoreInstance(other.getManticoreInstance());
+        }
+        if (other.action_ != 0) {
+          setActionValue(other.getActionValue());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        muicore.MUICore.ControlStateRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (muicore.MUICore.ControlStateRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int stateId_ ;
+      /**
+       * <code>int32 state_id = 34;</code>
+       * @return The stateId.
+       */
+      @java.lang.Override
+      public int getStateId() {
+        return stateId_;
+      }
+      /**
+       * <code>int32 state_id = 34;</code>
+       * @param value The stateId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStateId(int value) {
+        
+        stateId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 state_id = 34;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStateId() {
+        
+        stateId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private muicore.MUICore.ManticoreInstance manticoreInstance_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          muicore.MUICore.ManticoreInstance, muicore.MUICore.ManticoreInstance.Builder, muicore.MUICore.ManticoreInstanceOrBuilder> manticoreInstanceBuilder_;
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       * @return Whether the manticoreInstance field is set.
+       */
+      public boolean hasManticoreInstance() {
+        return manticoreInstanceBuilder_ != null || manticoreInstance_ != null;
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       * @return The manticoreInstance.
+       */
+      public muicore.MUICore.ManticoreInstance getManticoreInstance() {
+        if (manticoreInstanceBuilder_ == null) {
+          return manticoreInstance_ == null ? muicore.MUICore.ManticoreInstance.getDefaultInstance() : manticoreInstance_;
+        } else {
+          return manticoreInstanceBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public Builder setManticoreInstance(muicore.MUICore.ManticoreInstance value) {
+        if (manticoreInstanceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          manticoreInstance_ = value;
+          onChanged();
+        } else {
+          manticoreInstanceBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public Builder setManticoreInstance(
+          muicore.MUICore.ManticoreInstance.Builder builderForValue) {
+        if (manticoreInstanceBuilder_ == null) {
+          manticoreInstance_ = builderForValue.build();
+          onChanged();
+        } else {
+          manticoreInstanceBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public Builder mergeManticoreInstance(muicore.MUICore.ManticoreInstance value) {
+        if (manticoreInstanceBuilder_ == null) {
+          if (manticoreInstance_ != null) {
+            manticoreInstance_ =
+              muicore.MUICore.ManticoreInstance.newBuilder(manticoreInstance_).mergeFrom(value).buildPartial();
+          } else {
+            manticoreInstance_ = value;
+          }
+          onChanged();
+        } else {
+          manticoreInstanceBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public Builder clearManticoreInstance() {
+        if (manticoreInstanceBuilder_ == null) {
+          manticoreInstance_ = null;
+          onChanged();
+        } else {
+          manticoreInstance_ = null;
+          manticoreInstanceBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public muicore.MUICore.ManticoreInstance.Builder getManticoreInstanceBuilder() {
+        
+        onChanged();
+        return getManticoreInstanceFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      public muicore.MUICore.ManticoreInstanceOrBuilder getManticoreInstanceOrBuilder() {
+        if (manticoreInstanceBuilder_ != null) {
+          return manticoreInstanceBuilder_.getMessageOrBuilder();
+        } else {
+          return manticoreInstance_ == null ?
+              muicore.MUICore.ManticoreInstance.getDefaultInstance() : manticoreInstance_;
+        }
+      }
+      /**
+       * <code>.muicore.ManticoreInstance manticore_instance = 35;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          muicore.MUICore.ManticoreInstance, muicore.MUICore.ManticoreInstance.Builder, muicore.MUICore.ManticoreInstanceOrBuilder> 
+          getManticoreInstanceFieldBuilder() {
+        if (manticoreInstanceBuilder_ == null) {
+          manticoreInstanceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              muicore.MUICore.ManticoreInstance, muicore.MUICore.ManticoreInstance.Builder, muicore.MUICore.ManticoreInstanceOrBuilder>(
+                  getManticoreInstance(),
+                  getParentForChildren(),
+                  isClean());
+          manticoreInstance_ = null;
+        }
+        return manticoreInstanceBuilder_;
+      }
+
+      private int action_ = 0;
+      /**
+       * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+       * @return The enum numeric value on the wire for action.
+       */
+      @java.lang.Override public int getActionValue() {
+        return action_;
+      }
+      /**
+       * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+       * @param value The enum numeric value on the wire for action to set.
+       * @return This builder for chaining.
+       */
+      public Builder setActionValue(int value) {
+        
+        action_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+       * @return The action.
+       */
+      @java.lang.Override
+      public muicore.MUICore.ControlStateRequest.StateAction getAction() {
+        @SuppressWarnings("deprecation")
+        muicore.MUICore.ControlStateRequest.StateAction result = muicore.MUICore.ControlStateRequest.StateAction.valueOf(action_);
+        return result == null ? muicore.MUICore.ControlStateRequest.StateAction.UNRECOGNIZED : result;
+      }
+      /**
+       * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+       * @param value The action to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAction(muicore.MUICore.ControlStateRequest.StateAction value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        action_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>.muicore.ControlStateRequest.StateAction action = 36;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAction() {
+        
+        action_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:muicore.ControlStateRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:muicore.ControlStateRequest)
+    private static final muicore.MUICore.ControlStateRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new muicore.MUICore.ControlStateRequest();
+    }
+
+    public static muicore.MUICore.ControlStateRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ControlStateRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ControlStateRequest>() {
+      @java.lang.Override
+      public ControlStateRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ControlStateRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ControlStateRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ControlStateRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public muicore.MUICore.ControlStateRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ControlStateResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:muicore.ControlStateResponse)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code muicore.ControlStateResponse}
+   */
+  public static final class ControlStateResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:muicore.ControlStateResponse)
+      ControlStateResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ControlStateResponse.newBuilder() to construct.
+    private ControlStateResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ControlStateResponse() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ControlStateResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ControlStateResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return muicore.MUICore.internal_static_muicore_ControlStateResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return muicore.MUICore.internal_static_muicore_ControlStateResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              muicore.MUICore.ControlStateResponse.class, muicore.MUICore.ControlStateResponse.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof muicore.MUICore.ControlStateResponse)) {
+        return super.equals(obj);
+      }
+      muicore.MUICore.ControlStateResponse other = (muicore.MUICore.ControlStateResponse) obj;
+
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static muicore.MUICore.ControlStateResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(muicore.MUICore.ControlStateResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code muicore.ControlStateResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:muicore.ControlStateResponse)
+        muicore.MUICore.ControlStateResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return muicore.MUICore.internal_static_muicore_ControlStateResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return muicore.MUICore.internal_static_muicore_ControlStateResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                muicore.MUICore.ControlStateResponse.class, muicore.MUICore.ControlStateResponse.Builder.class);
+      }
+
+      // Construct using muicore.MUICore.ControlStateResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return muicore.MUICore.internal_static_muicore_ControlStateResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateResponse getDefaultInstanceForType() {
+        return muicore.MUICore.ControlStateResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateResponse build() {
+        muicore.MUICore.ControlStateResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public muicore.MUICore.ControlStateResponse buildPartial() {
+        muicore.MUICore.ControlStateResponse result = new muicore.MUICore.ControlStateResponse(this);
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof muicore.MUICore.ControlStateResponse) {
+          return mergeFrom((muicore.MUICore.ControlStateResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(muicore.MUICore.ControlStateResponse other) {
+        if (other == muicore.MUICore.ControlStateResponse.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        muicore.MUICore.ControlStateResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (muicore.MUICore.ControlStateResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:muicore.ControlStateResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:muicore.ControlStateResponse)
+    private static final muicore.MUICore.ControlStateResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new muicore.MUICore.ControlStateResponse();
+    }
+
+    public static muicore.MUICore.ControlStateResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ControlStateResponse>
+        PARSER = new com.google.protobuf.AbstractParser<ControlStateResponse>() {
+      @java.lang.Override
+      public ControlStateResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ControlStateResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ControlStateResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ControlStateResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public muicore.MUICore.ControlStateResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_muicore_MUILogMessage_descriptor;
   private static final 
@@ -11419,6 +13500,16 @@ public final class MUICore {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_muicore_StopServerResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_muicore_ControlStateRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_muicore_ControlStateRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_muicore_ControlStateResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_muicore_ControlStateResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -11430,45 +13521,60 @@ public final class MUICore {
     java.lang.String[] descriptorData = {
       "\n\rMUICore.proto\022\007muicore\" \n\rMUILogMessag" +
       "e\022\017\n\007content\030\001 \001(\t\":\n\016MUIMessageList\022(\n\010" +
-      "messages\030\002 \003(\0132\026.muicore.MUILogMessage\"Q" +
+      "messages\030\002 \003(\0132\026.muicore.MUILogMessage\"d" +
       "\n\010MUIState\022\020\n\010state_id\030\003 \001(\005\022\n\n\002pc\030\n \001(\004" +
-      "\022\021\n\tparent_id\030\034 \001(\005\022\024\n\014children_ids\030\035 \003(" +
-      "\005\"\344\001\n\014MUIStateList\022(\n\ractive_states\030\004 \003(" +
-      "\0132\021.muicore.MUIState\022)\n\016waiting_states\030\005" +
-      " \003(\0132\021.muicore.MUIState\022(\n\rforked_states" +
-      "\030\006 \003(\0132\021.muicore.MUIState\022)\n\016errored_sta" +
-      "tes\030\007 \003(\0132\021.muicore.MUIState\022*\n\017complete" +
-      "_states\030\010 \003(\0132\021.muicore.MUIState\"!\n\021Mant" +
-      "icoreInstance\022\014\n\004uuid\030\t \001(\t\"\023\n\021Terminate" +
-      "Response\"\211\001\n\004Hook\022\017\n\007address\030\032 \001(\004\022$\n\004ty" +
-      "pe\030\033 \001(\0162\026.muicore.Hook.HookType\022\021\n\tfunc" +
-      "_text\030\037 \001(\t\"7\n\010HookType\022\010\n\004FIND\020\000\022\t\n\005AVO" +
-      "ID\020\001\022\n\n\006CUSTOM\020\002\022\n\n\006GLOBAL\020\003\"\313\001\n\017NativeA" +
-      "rguments\022\024\n\014program_path\030\013 \001(\t\022\023\n\013binary" +
-      "_args\030\020 \003(\t\022\014\n\004envp\030\021 \003(\t\022\026\n\016symbolic_fi" +
-      "les\030\022 \003(\t\022\026\n\016concrete_start\030\023 \001(\t\022\022\n\nstd" +
-      "in_size\030\024 \001(\t\022\035\n\025additional_mcore_args\030\025" +
-      " \001(\t\022\034\n\005hooks\030\036 \003(\0132\r.muicore.Hook\"\254\001\n\014E" +
-      "VMArguments\022\025\n\rcontract_path\030\014 \001(\t\022\025\n\rco" +
-      "ntract_name\030\r \001(\t\022\020\n\010solc_bin\030\016 \001(\t\022\020\n\010t" +
-      "x_limit\030\026 \001(\t\022\022\n\ntx_account\030\027 \001(\t\022\034\n\024det" +
-      "ectors_to_exclude\030\030 \003(\t\022\030\n\020additional_fl" +
-      "ags\030\031 \001(\t\",\n\026ManticoreRunningStatus\022\022\n\ni" +
-      "s_running\030\017 \001(\010\"\023\n\021StopServerRequest\"\024\n\022" +
-      "StopServerResponse2\213\004\n\013ManticoreUI\022E\n\013St" +
-      "artNative\022\030.muicore.NativeArguments\032\032.mu" +
-      "icore.ManticoreInstance\"\000\022?\n\010StartEVM\022\025." +
-      "muicore.EVMArguments\032\032.muicore.Manticore" +
-      "Instance\"\000\022E\n\tTerminate\022\032.muicore.Mantic" +
-      "oreInstance\032\032.muicore.TerminateResponse\"" +
-      "\000\022C\n\014GetStateList\022\032.muicore.ManticoreIns" +
-      "tance\032\025.muicore.MUIStateList\"\000\022G\n\016GetMes" +
-      "sageList\022\032.muicore.ManticoreInstance\032\027.m" +
-      "uicore.MUIMessageList\"\000\022V\n\025CheckManticor" +
-      "eRunning\022\032.muicore.ManticoreInstance\032\037.m" +
-      "uicore.ManticoreRunningStatus\"\000\022G\n\nStopS" +
-      "erver\022\032.muicore.StopServerRequest\032\033.muic" +
-      "ore.StopServerResponse\"\000b\006proto3"
+      "\022\026\n\tparent_id\030\034 \001(\005H\000\210\001\001\022\024\n\014children_ids" +
+      "\030\035 \003(\005B\014\n\n_parent_id\"\216\002\n\014MUIStateList\022(\n" +
+      "\ractive_states\030\004 \003(\0132\021.muicore.MUIState\022" +
+      ")\n\016waiting_states\030\005 \003(\0132\021.muicore.MUISta" +
+      "te\022(\n\rforked_states\030\006 \003(\0132\021.muicore.MUIS" +
+      "tate\022)\n\016errored_states\030\007 \003(\0132\021.muicore.M" +
+      "UIState\022*\n\017complete_states\030\010 \003(\0132\021.muico" +
+      "re.MUIState\022(\n\rpaused_states\030! \003(\0132\021.mui" +
+      "core.MUIState\"!\n\021ManticoreInstance\022\014\n\004uu" +
+      "id\030\t \001(\t\"\023\n\021TerminateResponse\"\255\001\n\004Hook\022\024" +
+      "\n\007address\030\032 \001(\004H\000\210\001\001\022$\n\004type\030\033 \001(\0162\026.mui" +
+      "core.Hook.HookType\022\026\n\tfunc_text\030\037 \001(\tH\001\210" +
+      "\001\001\"7\n\010HookType\022\010\n\004FIND\020\000\022\t\n\005AVOID\020\001\022\n\n\006C" +
+      "USTOM\020\002\022\n\n\006GLOBAL\020\003B\n\n\010_addressB\014\n\n_func" +
+      "_text\"\304\002\n\017NativeArguments\022\024\n\014program_pat" +
+      "h\030\013 \001(\t\022\023\n\013binary_args\030\020 \003(\t\022\014\n\004envp\030\021 \003" +
+      "(\t\022\026\n\016symbolic_files\030\022 \003(\t\022\033\n\016concrete_s" +
+      "tart\030\023 \001(\tH\000\210\001\001\022\027\n\nstdin_size\030\024 \001(\tH\001\210\001\001" +
+      "\022\"\n\025additional_mcore_args\030\025 \001(\tH\002\210\001\001\022\034\n\005" +
+      "hooks\030\036 \003(\0132\r.muicore.Hook\022\032\n\remulate_un" +
+      "til\030  \001(\004H\003\210\001\001B\021\n\017_concrete_startB\r\n\013_st" +
+      "din_sizeB\030\n\026_additional_mcore_argsB\020\n\016_e" +
+      "mulate_until\"\354\001\n\014EVMArguments\022\025\n\rcontrac" +
+      "t_path\030\014 \001(\t\022\025\n\rcontract_name\030\r \001(\t\022\020\n\010s" +
+      "olc_bin\030\016 \001(\t\022\025\n\010tx_limit\030\026 \001(\tH\000\210\001\001\022\027\n\n" +
+      "tx_account\030\027 \001(\tH\001\210\001\001\022\034\n\024detectors_to_ex" +
+      "clude\030\030 \003(\t\022\035\n\020additional_flags\030\031 \001(\tH\002\210" +
+      "\001\001B\013\n\t_tx_limitB\r\n\013_tx_accountB\023\n\021_addit" +
+      "ional_flags\",\n\026ManticoreRunningStatus\022\022\n" +
+      "\nis_running\030\017 \001(\010\"\023\n\021StopServerRequest\"\024" +
+      "\n\022StopServerResponse\"\311\001\n\023ControlStateReq" +
+      "uest\022\020\n\010state_id\030\" \001(\005\0226\n\022manticore_inst" +
+      "ance\030# \001(\0132\032.muicore.ManticoreInstance\0228" +
+      "\n\006action\030$ \001(\0162(.muicore.ControlStateReq" +
+      "uest.StateAction\".\n\013StateAction\022\n\n\006RESUM" +
+      "E\020\000\022\t\n\005PAUSE\020\001\022\010\n\004KILL\020\002\"\026\n\024ControlState" +
+      "Response2\332\004\n\013ManticoreUI\022E\n\013StartNative\022" +
+      "\030.muicore.NativeArguments\032\032.muicore.Mant" +
+      "icoreInstance\"\000\022?\n\010StartEVM\022\025.muicore.EV" +
+      "MArguments\032\032.muicore.ManticoreInstance\"\000" +
+      "\022E\n\tTerminate\022\032.muicore.ManticoreInstanc" +
+      "e\032\032.muicore.TerminateResponse\"\000\022C\n\014GetSt" +
+      "ateList\022\032.muicore.ManticoreInstance\032\025.mu" +
+      "icore.MUIStateList\"\000\022G\n\016GetMessageList\022\032" +
+      ".muicore.ManticoreInstance\032\027.muicore.MUI" +
+      "MessageList\"\000\022V\n\025CheckManticoreRunning\022\032" +
+      ".muicore.ManticoreInstance\032\037.muicore.Man" +
+      "ticoreRunningStatus\"\000\022G\n\nStopServer\022\032.mu" +
+      "icore.StopServerRequest\032\033.muicore.StopSe" +
+      "rverResponse\"\000\022M\n\014ControlState\022\034.muicore" +
+      ".ControlStateRequest\032\035.muicore.ControlSt" +
+      "ateResponse\"\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -11491,13 +13597,13 @@ public final class MUICore {
     internal_static_muicore_MUIState_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_MUIState_descriptor,
-        new java.lang.String[] { "StateId", "Pc", "ParentId", "ChildrenIds", });
+        new java.lang.String[] { "StateId", "Pc", "ParentId", "ChildrenIds", "ParentId", });
     internal_static_muicore_MUIStateList_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_muicore_MUIStateList_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_MUIStateList_descriptor,
-        new java.lang.String[] { "ActiveStates", "WaitingStates", "ForkedStates", "ErroredStates", "CompleteStates", });
+        new java.lang.String[] { "ActiveStates", "WaitingStates", "ForkedStates", "ErroredStates", "CompleteStates", "PausedStates", });
     internal_static_muicore_ManticoreInstance_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_muicore_ManticoreInstance_fieldAccessorTable = new
@@ -11515,19 +13621,19 @@ public final class MUICore {
     internal_static_muicore_Hook_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_Hook_descriptor,
-        new java.lang.String[] { "Address", "Type", "FuncText", });
+        new java.lang.String[] { "Address", "Type", "FuncText", "Address", "FuncText", });
     internal_static_muicore_NativeArguments_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_muicore_NativeArguments_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_NativeArguments_descriptor,
-        new java.lang.String[] { "ProgramPath", "BinaryArgs", "Envp", "SymbolicFiles", "ConcreteStart", "StdinSize", "AdditionalMcoreArgs", "Hooks", });
+        new java.lang.String[] { "ProgramPath", "BinaryArgs", "Envp", "SymbolicFiles", "ConcreteStart", "StdinSize", "AdditionalMcoreArgs", "Hooks", "EmulateUntil", "ConcreteStart", "StdinSize", "AdditionalMcoreArgs", "EmulateUntil", });
     internal_static_muicore_EVMArguments_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_muicore_EVMArguments_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_EVMArguments_descriptor,
-        new java.lang.String[] { "ContractPath", "ContractName", "SolcBin", "TxLimit", "TxAccount", "DetectorsToExclude", "AdditionalFlags", });
+        new java.lang.String[] { "ContractPath", "ContractName", "SolcBin", "TxLimit", "TxAccount", "DetectorsToExclude", "AdditionalFlags", "TxLimit", "TxAccount", "AdditionalFlags", });
     internal_static_muicore_ManticoreRunningStatus_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_muicore_ManticoreRunningStatus_fieldAccessorTable = new
@@ -11545,6 +13651,18 @@ public final class MUICore {
     internal_static_muicore_StopServerResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_muicore_StopServerResponse_descriptor,
+        new java.lang.String[] { });
+    internal_static_muicore_ControlStateRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_muicore_ControlStateRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_muicore_ControlStateRequest_descriptor,
+        new java.lang.String[] { "StateId", "ManticoreInstance", "Action", });
+    internal_static_muicore_ControlStateResponse_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_muicore_ControlStateResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_muicore_ControlStateResponse_descriptor,
         new java.lang.String[] { });
   }
 
