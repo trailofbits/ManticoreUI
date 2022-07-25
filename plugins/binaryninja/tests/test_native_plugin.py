@@ -153,7 +153,7 @@ class FakeMUIState:
 
 class TraceBlockTest(unittest.TestCase):
     BIN_PATH = os.path.join(os.path.dirname(__file__), "binaries", "hello_world")
-    # Generated with DynamoRIO: `env -i drrun -t drcov -dump_text -- hello_world`
+    # Generated with DynamoRIO: `env -i drrun -t drcov -dump_text -- hello_world > /dev/null`
     TRACE = {
         4198400,
         4198416,
@@ -254,6 +254,7 @@ class TraceBlockTest(unittest.TestCase):
         4201241,
         4201255,
         4201271,
+        4201280,
         4201312,
         4201339,
         4201424,
@@ -321,8 +322,6 @@ class TraceBlockTest(unittest.TestCase):
     # Init libc seems to behave differently between manticore and native, ignore blocks from it
     INIT_LIBC = 0x401180
     INIT_LIBC_END = 0x401398
-    # IOCTL for fd={0,1,2} on manticore currently doesn't work
-    IOCTL_SKIP = 0x401B40
 
     def test_trace_block(self) -> None:
         mui_state = cast(MUIState, FakeMUIState())
@@ -331,8 +330,6 @@ class TraceBlockTest(unittest.TestCase):
         m.run()
 
         trace = mui_state.state_trace[0]
-        if self.IOCTL_SKIP in trace:
-            trace.remove(self.IOCTL_SKIP)
 
         diff = trace.difference(self.TRACE)
         diff = set(filter(lambda x: not self.INIT_LIBC <= x < self.INIT_LIBC_END, diff))
