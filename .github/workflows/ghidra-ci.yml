@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'plugins/ghidra/**'
+      - '.github/workflows/ghidra-ci.yml'
     branches:
       - '*'
   push:
     paths:
       - 'plugins/ghidra/**'
+      - '.github/workflows/ghidra-ci.yml'
     branches:
       - '*'
 

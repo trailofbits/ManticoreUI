@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'server/**'
+      - '.github/workflows/server-ci.yml'
     branches:
       - '*'
   push:
     paths:
       - 'server/**'
+      - '.github/workflows/server-ci.yml'
     branches:
       - '*'
 

@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'plugins/binaryninja/**'
+      - '.github/workflows/binaryninja-ci.yml'
     branches-ignore:
       - 'binja-migration/master'
   push:
     paths:
       - 'plugins/binaryninja/**'
+      - '.github/workflows/binaryninja-ci.yml'
     branches-ignore:
       - 'binja-migration/master'
 
