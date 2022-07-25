@@ -232,6 +232,37 @@ public final class ManticoreUIGrpc {
     return getStopServerMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<muicore.MUICore.ControlStateRequest,
+      muicore.MUICore.ControlStateResponse> getControlStateMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ControlState",
+      requestType = muicore.MUICore.ControlStateRequest.class,
+      responseType = muicore.MUICore.ControlStateResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<muicore.MUICore.ControlStateRequest,
+      muicore.MUICore.ControlStateResponse> getControlStateMethod() {
+    io.grpc.MethodDescriptor<muicore.MUICore.ControlStateRequest, muicore.MUICore.ControlStateResponse> getControlStateMethod;
+    if ((getControlStateMethod = ManticoreUIGrpc.getControlStateMethod) == null) {
+      synchronized (ManticoreUIGrpc.class) {
+        if ((getControlStateMethod = ManticoreUIGrpc.getControlStateMethod) == null) {
+          ManticoreUIGrpc.getControlStateMethod = getControlStateMethod =
+              io.grpc.MethodDescriptor.<muicore.MUICore.ControlStateRequest, muicore.MUICore.ControlStateResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ControlState"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.ControlStateRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  muicore.MUICore.ControlStateResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new ManticoreUIMethodDescriptorSupplier("ControlState"))
+              .build();
+        }
+      }
+    }
+    return getControlStateMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -329,6 +360,13 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStopServerMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void controlState(muicore.MUICore.ControlStateRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ControlStateResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getControlStateMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -380,6 +418,13 @@ public final class ManticoreUIGrpc {
                 muicore.MUICore.StopServerRequest,
                 muicore.MUICore.StopServerResponse>(
                   this, METHODID_STOP_SERVER)))
+          .addMethod(
+            getControlStateMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                muicore.MUICore.ControlStateRequest,
+                muicore.MUICore.ControlStateResponse>(
+                  this, METHODID_CONTROL_STATE)))
           .build();
     }
   }
@@ -453,6 +498,14 @@ public final class ManticoreUIGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getStopServerMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void controlState(muicore.MUICore.ControlStateRequest request,
+        io.grpc.stub.StreamObserver<muicore.MUICore.ControlStateResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getControlStateMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -516,6 +569,13 @@ public final class ManticoreUIGrpc {
     public muicore.MUICore.StopServerResponse stopServer(muicore.MUICore.StopServerRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getStopServerMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public muicore.MUICore.ControlStateResponse controlState(muicore.MUICore.ControlStateRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getControlStateMethod(), getCallOptions(), request);
     }
   }
 
@@ -588,6 +648,14 @@ public final class ManticoreUIGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getStopServerMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<muicore.MUICore.ControlStateResponse> controlState(
+        muicore.MUICore.ControlStateRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getControlStateMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_START_NATIVE = 0;
@@ -597,6 +665,7 @@ public final class ManticoreUIGrpc {
   private static final int METHODID_GET_MESSAGE_LIST = 4;
   private static final int METHODID_CHECK_MANTICORE_RUNNING = 5;
   private static final int METHODID_STOP_SERVER = 6;
+  private static final int METHODID_CONTROL_STATE = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -642,6 +711,10 @@ public final class ManticoreUIGrpc {
         case METHODID_STOP_SERVER:
           serviceImpl.stopServer((muicore.MUICore.StopServerRequest) request,
               (io.grpc.stub.StreamObserver<muicore.MUICore.StopServerResponse>) responseObserver);
+          break;
+        case METHODID_CONTROL_STATE:
+          serviceImpl.controlState((muicore.MUICore.ControlStateRequest) request,
+              (io.grpc.stub.StreamObserver<muicore.MUICore.ControlStateResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -711,6 +784,7 @@ public final class ManticoreUIGrpc {
               .addMethod(getGetMessageListMethod())
               .addMethod(getCheckManticoreRunningMethod())
               .addMethod(getStopServerMethod())
+              .addMethod(getControlStateMethod())
               .build();
         }
       }
