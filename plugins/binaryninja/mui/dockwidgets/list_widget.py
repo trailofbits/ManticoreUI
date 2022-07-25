@@ -1,7 +1,14 @@
 from typing import Callable, List, Optional
 
 from PySide6.QtCore import QObject
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit, QComboBox
+from PySide6.QtWidgets import (
+    QComboBox,
+    QHBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class ListWidget(QWidget):

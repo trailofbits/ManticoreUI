@@ -2,39 +2,39 @@ import random
 import string
 from pathlib import Path
 
-from binaryninja import (
-    BackgroundTaskThread,
-    BinaryView,
-    Settings,
-    ReportCollection,
-    PlainTextReport,
-    show_report_collection,
-)
 from manticore import ManticoreEVM
 from manticore.core.plugin import Profiler
 from manticore.ethereum import (
-    DetectInvalid,
-    DetectIntegerOverflow,
-    DetectUninitializedStorage,
-    DetectUninitializedMemory,
-    DetectReentrancySimple,
-    DetectReentrancyAdvanced,
-    DetectUnusedRetVal,
-    DetectSuicidal,
     DetectDelegatecall,
-    DetectExternalCallAndLeak,
     DetectEnvInstruction,
+    DetectExternalCallAndLeak,
+    DetectIntegerOverflow,
+    DetectInvalid,
     DetectManipulableBalance,
+    DetectReentrancyAdvanced,
+    DetectReentrancySimple,
+    DetectSuicidal,
+    DetectUninitializedMemory,
+    DetectUninitializedStorage,
+    DetectUnusedRetVal,
 )
 from manticore.ethereum.plugins import (
-    LoopDepthLimiter,
-    VerboseTrace,
-    KeepOnlyIfStorageChanges,
-    SkipRevertBasicBlocks,
     FilterFunctions,
+    KeepOnlyIfStorageChanges,
+    LoopDepthLimiter,
+    SkipRevertBasicBlocks,
+    VerboseTrace,
 )
 from manticore.utils import config
 
+from binaryninja import (
+    BackgroundTaskThread,
+    BinaryView,
+    PlainTextReport,
+    ReportCollection,
+    Settings,
+    show_report_collection,
+)
 from mui.constants import BINJA_EVM_RUN_SETTINGS_PREFIX
 
 

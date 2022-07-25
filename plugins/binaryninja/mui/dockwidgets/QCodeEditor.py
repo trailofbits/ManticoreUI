@@ -12,23 +12,23 @@ https://github.com/luchko/QCodeEditor
 import typing
 
 import binaryninjaui
-from binaryninja import log_warn, bncompleter
-from PySide6.QtCore import Qt, QRect, QRegularExpression
-from PySide6.QtWidgets import QWidget, QTextEdit, QPlainTextEdit
-from PySide6.QtGui import (
-    QPainter,
-    QFont,
-    QSyntaxHighlighter,
-    QTextFormat,
-    QTextCharFormat,
-    QColor,
-    QTextCursor,
-)
-
-from binaryninjaui import getMonospaceFont, getThemeColor, ThemeColor
+from binaryninjaui import ThemeColor, getMonospaceFont, getThemeColor
 from pygments import highlight, token
-from pygments.lexers import get_lexer_by_name
 from pygments.formatter import Formatter
+from pygments.lexers import get_lexer_by_name
+from PySide6.QtCore import QRect, QRegularExpression, Qt
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QPainter,
+    QSyntaxHighlighter,
+    QTextCharFormat,
+    QTextCursor,
+    QTextFormat,
+)
+from PySide6.QtWidgets import QPlainTextEdit, QTextEdit, QWidget
+
+from binaryninja import bncompleter, log_warn
 
 
 def bnformat(color, style=""):

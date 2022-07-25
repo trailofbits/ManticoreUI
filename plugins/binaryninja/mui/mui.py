@@ -4,37 +4,37 @@ import string
 import tempfile
 from pathlib import Path
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog
-from binaryninja import (
-    PluginCommand,
-    BinaryView,
-    show_message_box,
-    MessageBoxButtonSet,
-    MessageBoxIcon,
-    Settings,
-    get_open_filename_input,
-    Architecture,
-    SettingsScope,
-    BinaryViewType,
-    core_ui_enabled,
-)
 from binaryninjaui import DockHandler, UIContext
 from crytic_compile import CryticCompile
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog
 
+from binaryninja import (
+    Architecture,
+    BinaryView,
+    BinaryViewType,
+    MessageBoxButtonSet,
+    MessageBoxIcon,
+    PluginCommand,
+    Settings,
+    SettingsScope,
+    core_ui_enabled,
+    get_open_filename_input,
+    show_message_box,
+)
 from mui.constants import (
     BINJA_EVM_RUN_SETTINGS_PREFIX,
     BINJA_NATIVE_RUN_SETTINGS_PREFIX,
 )
 from mui.dockwidgets import widget
 from mui.dockwidgets.code_dialog import CodeDialog
-from mui.dockwidgets.library_dialog import LibraryDialog
-from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.function_model_dialog import FunctionModelDialog
 from mui.dockwidgets.global_hook_dialog import GlobalHookDialog
+from mui.dockwidgets.hook_list_widget import HookListWidget
+from mui.dockwidgets.library_dialog import LibraryDialog
+from mui.dockwidgets.run_dialog import RunDialog
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
-from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.hook_manager import CustomHookIdentity, NativeHookManager
 from mui.manticore_evm_runner import ManticoreEVMRunner
 from mui.manticore_native_runner import ManticoreNativeRunner

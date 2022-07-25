@@ -1,6 +1,7 @@
 import os
-import z3
 from pathlib import Path
+
+import z3
 
 # Hack to include z3 path for virtualenv installs
 bin_path = Path(z3.__file__).parent.parent / "bin"

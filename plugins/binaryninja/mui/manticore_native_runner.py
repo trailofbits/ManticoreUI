@@ -2,33 +2,33 @@ import tempfile
 from time import sleep
 from typing import Callable, Optional
 
+from manticore.core.state import StateBase, TerminateState
+from manticore.native import Manticore
+from manticore.utils.helpers import PickleSerializer
+
 from binaryninja import (
-    BackgroundTaskThread,
-    Settings,
-    BinaryView,
-    TypedDataAccessor,
-    Endianness,
     Architecture,
+    BackgroundTaskThread,
+    BinaryView,
+    Endianness,
+    Settings,
+    TypedDataAccessor,
     open_view,
 )
-from manticore.core.state import StateBase, TerminateState
-from manticore.utils.helpers import PickleSerializer
-from manticore.native import Manticore
-
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.dockwidgets.state_list_widget import StateListWidget
 from mui.hook_manager import NativeHookManager
 from mui.introspect_plugin import MUIIntrospectionPlugin
-from mui.report import NativeResultReport
-from mui.utils import MUIState, print_timestamp
 from mui.native_plugin import (
     ModuleMappingPlugin,
     RebaseHooksPlugin,
     TraceBlockPlugin,
     UnicornEmulatePlugin,
 )
+from mui.report import NativeResultReport
+from mui.utils import MUIState, print_timestamp
 
 
 class ManticoreNativeRunner(BackgroundTaskThread):

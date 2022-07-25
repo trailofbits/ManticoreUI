@@ -1,7 +1,8 @@
 import os
 import unittest
-from mui.hook_manager import NativeHookManager, CustomHookIdentity
+
 from binaryninja import open_view
+from mui.hook_manager import CustomHookIdentity, NativeHookManager
 
 
 class HookPersistenceTest(unittest.TestCase):

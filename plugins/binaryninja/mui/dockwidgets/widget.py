@@ -5,10 +5,11 @@ import traceback
 from enum import Enum
 from typing import List, Union
 
-from PySide6.QtCore import Qt, QObject
+from binaryninjaui import DockContextHandler, DockHandler, ViewFrame
+from PySide6.QtCore import QObject, Qt
 from PySide6.QtWidgets import QWidget
+
 from binaryninja import BinaryView
-from binaryninjaui import DockHandler, DockContextHandler, ViewFrame
 
 mui_dockwidgets: List[QWidget] = []
 

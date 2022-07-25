@@ -1,13 +1,20 @@
 from typing import Dict, Final, Optional
 
-from PySide6 import QtCore
-from PySide6.QtCore import Slot, Qt, QEvent
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu, QFileDialog
-from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, ViewFrame
 from manticore.core.plugin import StateDescriptor
-from manticore.utils.enums import StateStatus, StateLists
+from manticore.utils.enums import StateLists, StateStatus
+from PySide6 import QtCore
+from PySide6.QtCore import QEvent, Qt, Slot
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QMenu,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
+from binaryninja import BinaryView
 from mui.dockwidgets import widget
 from mui.dockwidgets.state_graph_widget import StateGraphWidget
 from mui.utils import MUIState

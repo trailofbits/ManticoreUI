@@ -1,24 +1,25 @@
-from ctypes import Structure, c_uint16, c_uint32
-import os
-import typing
-from pathlib import Path
-from datetime import datetime
-from inspect import getmembers, isfunction
-from dataclasses import dataclass
 import importlib.resources
 import json
+import os
+import typing
+from ctypes import Structure, c_uint16, c_uint32
+from dataclasses import dataclass
+from datetime import datetime
+from inspect import getmembers, isfunction
+from pathlib import Path
+
+from manticore.core.plugin import StateDescriptor
+from manticore.core.state import StateBase, TerminateState
+from manticore.native import Manticore, models
 
 from binaryninja import (
     BinaryView,
-    show_message_box,
+    HighlightColor,
+    HighlightStandardColor,
     MessageBoxButtonSet,
     MessageBoxIcon,
-    HighlightStandardColor,
-    HighlightColor,
+    show_message_box,
 )
-from manticore.core.plugin import StateDescriptor
-from manticore.core.state import StateBase, TerminateState
-from manticore.native import models, Manticore
 
 
 class MUIState:

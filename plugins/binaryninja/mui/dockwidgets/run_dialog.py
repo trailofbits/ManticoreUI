@@ -1,28 +1,23 @@
 from typing import Dict
 
+from binaryninjaui import UIContext
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QDialog,
-    QWidget,
-    QVBoxLayout,
-    QLabel,
-    QHBoxLayout,
-    QPushButton,
-    QLineEdit,
-    QFormLayout,
-    QFileDialog,
-    QScrollArea,
     QCheckBox,
     QComboBox,
+    QDialog,
+    QFileDialog,
+    QFormLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
-from binaryninja import (
-    BinaryView,
-    show_message_box,
-    Settings,
-    SettingsScope,
-)
-from binaryninjaui import UIContext
 
+from binaryninja import BinaryView, Settings, SettingsScope, show_message_box
 from mui.dockwidgets.list_widget import ListWidget
 from mui.settings import MUISettings
 

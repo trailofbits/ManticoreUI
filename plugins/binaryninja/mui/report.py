@@ -2,18 +2,19 @@ from html import escape
 from pathlib import Path
 from typing import Any, Dict, Set
 
+from manticore.core.smtlib.expression import Expression
+from manticore.core.state import StateBase
+from manticore.native import Manticore
+from manticore.utils.helpers import PickleSerializer
+
 from binaryninja import (
-    Settings,
     BinaryView,
     HTMLReport,
     PlainTextReport,
     ReportCollection,
+    Settings,
     show_report_collection,
 )
-from manticore.core.state import StateBase
-from manticore.native import Manticore
-from manticore.utils.helpers import PickleSerializer
-from manticore.core.smtlib.expression import Expression
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 from mui.settings import MUISettings
 

@@ -1,14 +1,11 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import json
 from collections import defaultdict
-from typing import Set, Dict, Optional
-from binaryninja import (
-    Settings,
-    SettingsScope,
-    BinaryView,
-    HighlightStandardColor,
-)
+from dataclasses import dataclass
+from typing import Dict, Optional, Set
+
+from binaryninja import BinaryView, HighlightStandardColor, Settings, SettingsScope
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX
 from mui.dockwidgets.hook_list_widget import HookListWidget, HookType
 from mui.utils import clear_highlight, highlight_instr
