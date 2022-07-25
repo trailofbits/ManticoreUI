@@ -13,12 +13,7 @@ on:
 
 jobs:
   ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        python: [3.8]
-        os: ubuntu-20.04
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,7 +22,7 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python }}
+          python-version: 3.8
 
       - name: 'Install tools'
         run: |
