@@ -1,11 +1,11 @@
 name: binaryninja-ci
 on:
-  push:
+  pull_request:
     paths:
       - 'plugins/binaryninja/**'
     branches-ignore:
       - 'binja-migration/master'
-  pull_request:
+  push:
     paths:
       - 'plugins/binaryninja/**'
     branches-ignore:
@@ -16,9 +16,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true
-          fetch-depth: 1
 
       - uses: actions/setup-python@v2
         with:
