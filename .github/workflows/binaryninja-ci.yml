@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         python: [3.8]
-        os: [ubuntu-20.04, macos-10.15]
+        os: ubuntu-20.04
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -28,6 +28,11 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
+
+      - name: 'Install tools'
+        run: |
+          # just command runner https://github.com/casey/just#pre-built-binaries
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "${HOME}/.local/bin"
 
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
@@ -43,4 +48,4 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Lint
-        run: make -C plugins/binaryninja lint
+        run: just -d plugins/binaryninja -f plugins/binaryninja/justfile lint

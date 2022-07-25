@@ -134,6 +134,8 @@ class TraceBlockPlugin(Plugin):
         "LJMP",
         "LOOP",
         "LOOPNZ",
+        "SYSCALL",
+        "INT",
     }
 
     def will_run_callback(self, ready_states):
