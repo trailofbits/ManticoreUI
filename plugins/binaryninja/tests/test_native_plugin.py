@@ -331,7 +331,7 @@ class TraceBlockTest(unittest.TestCase):
 
         trace = mui_state.state_trace[0]
 
-        diff = trace.difference(self.TRACE)
+        diff = trace.symmetric_difference(self.TRACE)
         diff = set(filter(lambda x: not self.INIT_LIBC <= x < self.INIT_LIBC_END, diff))
         self.assertFalse(diff)
 
