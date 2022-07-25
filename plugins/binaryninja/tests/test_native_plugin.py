@@ -154,6 +154,7 @@ class FakeMUIState:
 class TraceBlockTest(unittest.TestCase):
     BIN_PATH = os.path.join(os.path.dirname(__file__), "binaries", "hello_world")
     # Generated with DynamoRIO: `env -i drrun -t drcov -dump_text -- hello_world > /dev/null`
+    # Manticore stdout does not have a tty, piping to /dev/null mimics this
     TRACE = {
         4198400,
         4198416,
@@ -319,7 +320,8 @@ class TraceBlockTest(unittest.TestCase):
         4202912,
         4203138,
     }
-    # Init libc seems to behave differently between manticore and native, ignore blocks from it
+    # __init_libc behaves differently between manticore and native
+    # likely due to different environment variables, ignore blocks from it
     INIT_LIBC = 0x401180
     INIT_LIBC_END = 0x401398
 
