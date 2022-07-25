@@ -4,8 +4,9 @@ from typing import Dict, Set, cast
 from unittest.mock import MagicMock
 
 from manticore.native import Manticore
+
+from mui.hook_manager import CustomHookIdentity, NativeHookManager
 from mui.native_plugin import RebaseHooksPlugin, TraceBlockPlugin
-from mui.hook_manager import NativeHookManager, CustomHookIdentity
 from mui.utils import MUIState
 
 
