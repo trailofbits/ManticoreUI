@@ -42,9 +42,7 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 	/**
 	 * Builds and makes changes to UI elements when a user attempts to run a new instance of Manticore, and calls the function that actually creates the new Manticore process.
-	 * @param programPath Path of the binary being analyzed.
-	 * @param formOptions Map storing pre-selected key Manticore options.
-	 * @param moreArgs Additional Manticore arguments set by the user.
+	 * @param manticoreRunner The newly-created ManticoreRunner instance for which the log tab should display logs for.
 	 */
 	public void addLogTab(ManticoreRunner manticoreRunner) {
 
@@ -65,6 +63,10 @@ public class MUILogProvider extends ComponentProviderAdapter {
 
 	}
 
+	/**
+	 * Begins the process of fetching logs _ states every 1 second for the specified ManticoreRunner.
+	 * @param manticoreRunner The newly-created ManticoreRunner instance whose logs and states should begin to be fetched.
+	 */
 	private void fetchLogs(ManticoreRunner manticoreRunner) {
 
 		SwingWorker sw = new SwingWorker() {
