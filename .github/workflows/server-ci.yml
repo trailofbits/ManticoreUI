@@ -3,16 +3,18 @@ on:
   pull_request:
     paths:
       - 'server/**'
+      - '.github/workflows/server-ci.yml'
     branches:
       - '*'
   push:
     paths:
       - 'server/**'
+      - '.github/workflows/server-ci.yml'
     branches:
       - '*'
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
