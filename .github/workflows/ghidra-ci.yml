@@ -41,7 +41,9 @@ jobs:
         run: just --justfile plugins/ghidra/justfile lint
 
       - name: 'Build MUI'
-        run: just --justfile plugins/ghidra/justfile build
+        run: |
+          python3 -m pip install -r server/requirements-dev.txt
+          just --justfile plugins/ghidra/justfile build
 
       - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
