@@ -1,22 +1,20 @@
 import json
+
+from binaryninjaui import UIContext
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
-    QWidget,
-    QVBoxLayout,
+    QFileDialog,
     QHBoxLayout,
-    QPushButton,
+    QLabel,
     QListWidget,
     QListWidgetItem,
-    QFileDialog,
-    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
-from binaryninja import (
-    BinaryView,
-    Settings,
-    SettingsScope,
-)
-from binaryninjaui import UIContext
+
+from binaryninja import BinaryView, Settings, SettingsScope
 from mui.constants import BINJA_NATIVE_RUN_SETTINGS_PREFIX
 
 

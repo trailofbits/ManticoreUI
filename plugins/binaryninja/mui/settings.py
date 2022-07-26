@@ -1,12 +1,11 @@
 import json
-from typing import Final, Dict, Any, List, Tuple
+from typing import Any, Dict, Final, List, Tuple
 
 from binaryninja import Settings
-
 from mui.constants import (
-    BINJA_NATIVE_RUN_SETTINGS_PREFIX,
-    BINJA_HOOK_SETTINGS_PREFIX,
     BINJA_EVM_RUN_SETTINGS_PREFIX,
+    BINJA_HOOK_SETTINGS_PREFIX,
+    BINJA_NATIVE_RUN_SETTINGS_PREFIX,
     BINJA_SETTINGS_GROUP,
 )
 from mui.utils import evm_populate_default_solc_path, read_from_common

@@ -1,16 +1,16 @@
 from enum import Enum
-from typing import Dict, Final, Tuple, Optional
+from typing import Dict, Final, Optional, Tuple
 
-from PySide6.QtCore import Qt, Slot, QEvent
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeWidgetItem, QTreeWidget, QMenu
-from PySide6.QtGui import QAction
-from binaryninja import BinaryView
 from binaryninjaui import DockContextHandler, DockHandler, ViewFrame
+from PySide6.QtCore import QEvent, Qt, Slot
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMenu, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget
 
-from mui.utils import clear_highlight
 import mui.dockwidgets.global_hook_dialog
-import mui.mui
 import mui.hook_manager
+import mui.mui
+from binaryninja import BinaryView
+from mui.utils import clear_highlight
 
 
 class HookType(Enum):

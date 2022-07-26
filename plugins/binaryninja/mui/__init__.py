@@ -3,6 +3,7 @@ __version__ = "0.1.0"
 import os
 import sys
 from pathlib import Path
+
 from binaryninja import Settings
 
 # Egg-link files created by Pip are currently not honored by Binary Ninja

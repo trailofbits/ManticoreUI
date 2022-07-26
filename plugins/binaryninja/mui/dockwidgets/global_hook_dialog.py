@@ -1,18 +1,16 @@
+from binaryninjaui import DockHandler, UIContext
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import (
     QDialog,
-    QWidget,
-    QVBoxLayout,
     QHBoxLayout,
-    QPushButton,
     QListWidget,
     QListWidgetItem,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
-from binaryninja import (
-    BinaryView,
-)
-from binaryninjaui import UIContext, DockHandler
 
+from binaryninja import BinaryView
 from mui.dockwidgets.code_dialog import CodeDialog
 from mui.hook_manager import NativeHookManager
 
