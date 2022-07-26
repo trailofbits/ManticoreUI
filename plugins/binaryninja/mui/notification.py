@@ -1,13 +1,19 @@
 import json
 
-from binaryninja import BinaryView, FileMetadata, Settings, HighlightStandardColor, SettingsScope
-from binaryninjaui import UIContextNotification, UIContext, FileContext, ViewFrame
+from binaryninjaui import FileContext, UIContext, UIContextNotification, ViewFrame
 
+from binaryninja import (
+    BinaryView,
+    FileMetadata,
+    HighlightStandardColor,
+    Settings,
+    SettingsScope,
+)
 from mui.constants import BINJA_HOOK_SETTINGS_PREFIX, BINJA_NATIVE_RUN_SETTINGS_PREFIX
+from mui.dockwidgets import widget
+from mui.dockwidgets.hook_list_widget import HookListWidget
 from mui.hook_manager import NativeHookManager
 from mui.utils import highlight_instr
-from mui.dockwidgets.hook_list_widget import HookListWidget
-from mui.dockwidgets import widget
 
 
 class UINotification(UIContextNotification):

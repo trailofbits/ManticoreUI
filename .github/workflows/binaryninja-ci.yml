@@ -1,33 +1,27 @@
 name: binaryninja-ci
 on:
-  push:
-    paths:
-      - 'plugins/binaryninja/**'
-    branches-ignore:
-      - 'binja-migration/master'
   pull_request:
     paths:
       - 'plugins/binaryninja/**'
+      - '.github/workflows/binaryninja-ci.yml'
+    branches-ignore:
+      - 'binja-migration/master'
+  push:
+    paths:
+      - 'plugins/binaryninja/**'
+      - '.github/workflows/binaryninja-ci.yml'
     branches-ignore:
       - 'binja-migration/master'
 
 jobs:
   ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        python: [3.8]
-        os: ubuntu-20.04
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true
-          fetch-depth: 1
 
       - uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python }}
+          python-version: 3.8
 
       - name: 'Install tools'
         run: |
