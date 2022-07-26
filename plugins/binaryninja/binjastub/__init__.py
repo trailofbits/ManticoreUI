@@ -1,8 +1,9 @@
 import os
-import z3
 import sys
-from pathlib import Path
 from distutils.dir_util import copy_tree
+from pathlib import Path
+
+import z3
 
 DIR = os.path.dirname(__file__)
 
