@@ -67,7 +67,7 @@ public class ManticoreRunner {
 
 	/**
 	 * Starts Manticore with given arguments.
-	 * @param nativeArgs MUICore.NativeArguments object
+	 * @param nativeArgs NativeArguments object which is populated and built in the Setup Component provider.
 	 */
 	public void startManticore(NativeArguments nativeArgs) {
 
@@ -151,9 +151,7 @@ public class ManticoreRunner {
 	}
 
 	/**
-	 * Fetches Message Logs.
-	 * TODO: Message logs displayed should be updated to mimic MUI-Binja.
-	 * TODO: Message logs gRPC service should be re-written to be client-side streaming, not unary
+	 * Fetches unfetched Message Logs and displays them in the associated log component.
 	 */
 	public void fetchMessageLogs() {
 
@@ -198,8 +196,7 @@ public class ManticoreRunner {
 	}
 
 	/**
-	 * Fetches State List.
-	 * TODO: State List gRPC service should be re-written to be client-side streaming, not unary
+	 * Fetches State List and updates State List component if is this Manticore instance is selected.
 	 */
 	public void fetchStateList() {
 
@@ -259,7 +256,7 @@ public class ManticoreRunner {
 	}
 
 	/**
-	 * Fetches current status of Manticore execution.
+	 * Fetches current running status of Manticore execution.
 	 */
 	public void fetchIsRunning() {
 
@@ -290,6 +287,8 @@ public class ManticoreRunner {
 
 	/**
 	 * Manually pause, resume, or kill a state in an active Manticore run.
+	 * @param action StateAction enum indicating whether to PAUSE, RESUME, or KILL a state
+	 * @param stateId Numeric ID of the state to perform the action on
 	 */
 	public void controlState(StateAction action, Integer stateId) {
 
