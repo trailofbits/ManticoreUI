@@ -9,12 +9,18 @@ import muicore.MUICore.Hook;
 import muicore.MUICore.Hook.HookType;
 import muicore.MUICore.Hook.Builder;
 
+/** 
+ * User Object class used to store and conveniently display Hook information in the Hook List component 
+ */
 public class MUIHookUserObject {
 	public HookType type;
 	public String name;
 	public Address address;
 	public String func_text;
 
+	/**
+	 * Constructor for Find, Avoid, and Custom hooks
+	 */
 	public MUIHookUserObject(HookType type, Address address, String func_text) {
 		this.type = type;
 		this.name = address.toString();
@@ -22,6 +28,9 @@ public class MUIHookUserObject {
 		this.func_text = func_text;
 	}
 
+	/**
+	 * Constructor for Global hooks which aren't tied to an address
+	 */
 	public MUIHookUserObject(HookType type, String func_text) {
 		this.type = type;
 		this.name = "Global " + ZonedDateTime.now(ZoneId.systemDefault())
@@ -29,6 +38,9 @@ public class MUIHookUserObject {
 		this.func_text = func_text;
 	}
 
+	/**
+	 * Builds the Hook object used in RPC calls.
+	 */
 	public Hook toMUIHook() {
 		Builder b = Hook.newBuilder().setType(type);
 		switch (type) {

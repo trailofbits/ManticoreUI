@@ -168,8 +168,6 @@ public class MUIHookListComponent extends JPanel {
 
 		hookLocations.put(hook.name.toString() + hook.type.name(), node);
 
-		// TODO: Show hook counts?
-
 		treeModel.reload();
 		expandTree();
 
@@ -189,12 +187,10 @@ public class MUIHookListComponent extends JPanel {
 	}
 
 	public void clearHooks() {
-
 		findNode.removeAllChildren();
 		avoidNode.removeAllChildren();
 
 		treeModel.reload();
-
 	}
 
 	public ArrayList<Hook> getAllMUIHooks() {

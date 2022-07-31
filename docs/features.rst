@@ -23,7 +23,7 @@ Native Feature Table
 +-------------------------+---------------------------------+-------------------------------+
 | Shared Library Support  | `✔️ <Binja Shared Lib_>`_       |                               |
 +-------------------------+---------------------------------+-------------------------------+
-| Live State Management   | `✔️ <Binja State Mgmt_>`_       |                               |
+| Live State Management   | `✔️ <Binja State Mgmt_>`_       |  `✔️ <Ghidra State Mgmt_>`_    |
 +-------------------------+---------------------------------+-------------------------------+
 | State Tracing           | `✔️ <Binja State Tracing_>`_    |                               |
 +-------------------------+---------------------------------+-------------------------------+
@@ -52,11 +52,13 @@ EVM Feature Table
 .. _Binja Global Hooks: binaryninja/hooks.rst#global-hooks
 .. _Ghidra Global Hooks: ghidra/hooks.rst#global-hooks
 
+.. _Binja State Mgmt: binaryninja/state_management.rst
+.. _Ghidra State Mgmt: ghidra/state_management.rst
+
 .. _Binja Function Models: binaryninja/function_models.rst
 .. _Binja Shared Lib: binaryninja/shared_library.rst
-.. _Binja State Mgmt: binaryninja/state_management.rst
 .. _Binja State Tracing: binaryninja/state_management.rst#showhide-trace
 
-.. _Ghidra Multiple Inst: #
+.. _Ghidra Multiple Inst: ghidra/multiple_instances.rst
 
 .. _Binja EVM Solve: binaryninja/evm.rst

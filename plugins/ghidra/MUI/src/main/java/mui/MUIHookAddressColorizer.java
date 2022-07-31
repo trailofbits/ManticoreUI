@@ -15,7 +15,7 @@ public class MUIHookAddressColorizer {
 	/**
 	 * Sets color in the Listing component for the specified address.
 	 * @param address The address to set color of in the Disassembly Listing.
-	 * @param hookType The HookType of the hook at the address being colorized. 
+	 * @param hookType The HookType of the hook at the address being colorized, which determines the highlight color. 
 	 */
 	public static void setColor(Address address, HookType hookType) {
 		ColorizingService service = MUIPlugin.pluginTool.getService(ColorizingService.class);

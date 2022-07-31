@@ -1,6 +1,6 @@
-================================
-Manticore UI Binary Ninja Plugin
-================================
+==========================
+Manticore UI Ghidra Plugin
+==========================
 
 .. image:: https://raw.githubusercontent.com/trailofbits/manticore/master/docs/images/manticore.png
     :width: 200px
@@ -27,14 +27,15 @@ Manticore only operates on native binaries within a Linux environment. The Ghidr
 2. Run Ghidra and select the extension in `File -> Install Extensions`
 3. Restart Ghidra 
 
+The Ghidra plugin interacts with Manticore via the MUI Server, which is bundled with releases of the plugin.
 
 At its present form, MUI-Ghidra manifests as three Ghidra components named `MUI Setup` (used to specify args and run Manticore), `MUI Log`, and `MUI State List` (which together display Manticore output). 
 
 1. To run Manticore on the current binary, open the `MUI Setup` component via `MUI -> Run Manticore` in the menu.
-2. Fill in Manticore and program arguments in the `MUI Setup` component, and click the `Run` Button. Notably, users can specify:
-- the Manticore binary used (by default, a bundled binary which requires `python3.9` on PATH is used)
-- the port used by Manticore's state server (by default, an open port starting from `3215` will be allocated).
-3. View log message output and a list of states and their statuses via the `MUI Log`/`MUI State List` components which will be visible on `Run`. Alternatively, you can open the components manually via `MUI -> Show Log / Show State List` in the menu. 
+2. Fill in Manticore and program arguments in the `MUI Setup` component
+3. Add desired Find, Avoid, Custom, or Global Hooks.
+4. Click the `Run` Button.
+5. View log message output and a list of states and their statuses via the `MUI Log`/`MUI State List` components which will be visible on `Run`. Alternatively, you can open the components manually via `MUI -> Show Log / Show State List` in the menu. 
 
 Usage (Native)
 --------------
@@ -68,7 +69,7 @@ State List
 - The State List displays the states and their statuses of the Manticore instance whose log tab is currently being viewed
 - Switching log tabs will cause the State List to show the state list of the newly-focused Manticore instance
 - You may click on the State statuses to expand a list of States with that status alongside their respective IDs 
-- At present, possible State statuses include `ACTIVE`, `WAITING`, `FORKED`, `COMPLETE`, and `ERRORED`
+- At present, possible State statuses include `ACTIVE`, `WAITING`, `PAUSED`, `FORKED`, `COMPLETE`, and `ERRORED`
 
 .. image:: https://user-images.githubusercontent.com/29654756/151377036-34cf5aa0-2fdf-43ca-a825-0f4fdec16545.png
     :align: center
@@ -93,9 +94,7 @@ Building
 
 Build the plugin with Gradle. Built plugin will be a `zip` file in `dist` directory.
     
-    ``cd MUI/``
-
-    ``GHIDRA_INSTALL_DIR=<path_to_ghidra_directory> gradle buildExtension``
+    ``GHIDRA_INSTALL_DIR=<path_to_ghidra_directory> just build``
 
 Development
 -----------
@@ -105,4 +104,6 @@ Development
 3. Import the project via `File -> Import -> General -> Projects from Folder or Archive`
 4. Link your installation of Ghidra via `GhidraDev -> Link Ghidra`. The necessary `.project` and `.pydevproject` files will be generated for Eclipse.
 5. Format your code with the included `MUI/GhidraEclipseFormatter.xml` (taken from upstream Ghidra) by running `just format` with the tool `just <https://github.com/casey/just>`_.
-6. When you first build the plugin, a gradle will download the `muicore_server` binary used to wrap Manticore UI functionality and the protobuf compiler binary will generate the `ManticoreUIGrpc.java` and `MUICore.java` files to serialize messages for communication with the server.
+6. Copy the desired version of the `muicore_server` binary to the `os/linux/x86_64` directory of the plugin.
+7. When you first build the plugin, a gradle method will copy any common plugin resources to the `data` directory and the protobuf compiler binary will generate the `ManticoreUIGrpc.java` and `MUICore.java` files to serialize messages for communication with the server.
+8. Quick plugin installation is enabled by the `just install` command.
