@@ -10,7 +10,7 @@ format:
 
 lint:
 	black --check .
-	isort --check .
+	isort --check-only .
 	mypy
 
 test:
