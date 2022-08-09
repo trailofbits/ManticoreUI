@@ -2,7 +2,7 @@ init:
 	mkdir -p {{justfile_directory()}}/mui/common_resources
 	cp {{justfile_directory()}}/../common/* {{justfile_directory()}}/mui/common_resources/
 	test -d venv || python3 -m venv venv
-	. venv/bin/activate; pip install -r requirements-dev.txt -r binjastub/requirements.txt
+	. venv/bin/activate; python3 -m pip install -r requirements-dev.txt -r binjastub/requirements.txt
 
 format:
 	black .
@@ -10,7 +10,7 @@ format:
 
 lint:
 	black --check .
-	isort --check .
+	isort --check-only .
 	mypy
 
 test:

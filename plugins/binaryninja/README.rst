@@ -17,6 +17,7 @@ Requirements
 Aside from the Python requirements, we require the following:
 
 * Binary Ninja (latest version) with GUI
+* `just <https://github.com/casey/just>`_
 
 Installation
 ------------
@@ -25,7 +26,7 @@ MUI requires a copy of Binary Ninja with a GUI. We are currently developing agai
 
 Manticore only operates on native binaries within a Linux environment. EVM support has only been tested on Mac and Linux, and it requires the installation of `ethersplay <https://github.com/crytic/ethersplay>`_.
 
-Python dependencies are currently managed using ``binjastub/requirements.txt`` and ``requirements-dev.txt``. You can run ``make init`` to set up a development environment.
+Python dependencies are currently managed using ``binjastub/requirements.txt`` and ``requirements-dev.txt``. You can run ``just init`` to set up a development environment.
 
 #. Make the project available to Binary Ninja by creating a symbolic link to the plugins directory. From within the root of this repo, run the following::
 
@@ -48,7 +49,7 @@ Development
 
 Installing currently listed dependencies::
 
-    $ make init
+    $ just init
 
     # Linux generic:
     $ export "PYTHONPATH=${BN_INSTALL_DIR}/python:${BN_INSTALL_DIR}/python3"
@@ -59,18 +60,18 @@ Installing currently listed dependencies::
     # For Mac
     $ export "PYTHONPATH=/Applications/Binary Ninja.app/Contents/Resources/python:/Applications/Binary Ninja.app/Contents/Resources/python3"
 
-Activating the python virtual environment (do this before running other make commands)::
+Activating the python virtual environment (do this before running other just commands)::
 
     $ . venv/bin/activate
 
 Code style and linting can be followed by running the following::
 
-    $ make format
-    $ make lint
+    $ just format
+    $ just lint
 
 Tests for code without Binary Ninja interaction can be run if you have a headless version of binary ninja available, otherwise only non-Binary Ninja tests will be run::
 
-    $ make test
+    $ just test
 
 Adding a new dependency can be done by editing ``binjastub/requirements.txt`` or ``requirements-dev.txt`` and then running the following in the virtual environment::
 
