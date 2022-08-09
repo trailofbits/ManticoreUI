@@ -17,6 +17,7 @@ Requirements
 Aside from the Python requirements, we require the following:
 
 * Binary Ninja (latest version) with GUI
+* `just <https://github.com/casey/just>`_
 
 Installation
 ------------
