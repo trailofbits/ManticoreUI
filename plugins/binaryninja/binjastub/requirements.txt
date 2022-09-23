@@ -1,3 +1,3 @@
-# Latest commit on Manticore `master` branch as of July 28, 2022
-manticore[native] @ git+https://github.com/trailofbits/manticore.git@04cc68dbf164af976df23e3a435207aa8fcb246d
+# This should match the server's Manticore submodule
+manticore[native] @ git+https://github.com/trailofbits/manticore.git@f54bbedbe3a30449fd54bca6da5169d67c20df82
 pygments>=2.7.0,<2.9.0

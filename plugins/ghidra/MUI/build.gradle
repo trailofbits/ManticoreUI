@@ -88,6 +88,7 @@ def protocVersion = protobufVersion
 
 
 dependencies {
+    protobuf files('../../../server/manticore/server/manticore_server/')
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "org.apache.tomcat:annotations-api:6.0.53"
@@ -185,7 +186,7 @@ task buildShiv(type: Exec) {
         mkdir "${projectDir}/os/${currentPlatformName}"
     }
 
-    commandLine 'python3', '-m', 'shiv', '-c', 'muicore', '-o', "${projectDir}/os/${currentPlatformName}/muicore_server", '--reproducible', '--no-modify', '--python', "/usr/bin/env python${pyVer}", '--compressed', "$projectDir/../../../server"
+    commandLine "python${pyVer}", '-m', 'shiv', '-c', 'manticore_server', '-o', "${projectDir}/os/${currentPlatformName}/muicore_server", '--reproducible', '--no-modify', '--python', "/usr/bin/env python${pyVer}", '--compressed', "$projectDir/../../../server/manticore/server"
 
     outputs.upToDateWhen { false } // ensures never cached, always runs if user enables
 
@@ -232,7 +233,7 @@ spotless {
     }
     java {
         target 'src/*/java/mui/**/*.java', 'ghidra_scripts/*.java'
-        targetExclude('src/main/java/muicore/**/*.java')
+        targetExclude('src/main/java/manticore_server/**/*.java')
         targetExclude('src/main/grpc/**/*.java')
         // The Ghidra formatting file was taken from Ghidra 10.1.1 located in
         // eclipse/GhidraEclipseFormatter.xml Ghidra repo

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import ghidra.app.plugin.core.colorizer.ColorizingService;
 import ghidra.program.model.address.Address;
-import muicore.MUICore.Hook.HookType;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
 
 public class MUIHookAddressColorizer {
 

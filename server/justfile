@@ -1,30 +1,25 @@
 init:
   test -d venv || python3 -m venv venv
-  . venv/bin/activate; pip install -r requirements-dev.txt
+  . venv/bin/activate; pip install -U pip setuptools wheel; pip install -e ./manticore/server[dev]
 
 format:
-  black .
-  isort .
+  just --justfile ./manticore/server/justfile -d ./manticore/server format
 
 lint:
-  black --check .
-  isort --check .
-  mypy
+  just --justfile ./manticore/server/justfile -d ./manticore/server lint
 
 generate:
-  python3 setup.py generate
+  cd ./manticore/server; python3 setup.py generate
 
 build: generate
   #!/usr/bin/env bash
   set -euo
   mkdir -p dist
   py_ver=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-  python3 -m shiv -c muicore -o dist/muicore_server --reproducible --no-modify --python "/usr/bin/env python${py_ver}" --compressed .
-  wget https://github.com/ethereum/solc-bin/raw/gh-pages/linux-amd64/solc-linux-amd64-v0.8.9%2Bcommit.e5eed63a -O dist/solc
-  chmod 775 dist/solc
+  python3 -m shiv -c manticore_server -o dist/muicore_server --reproducible --no-modify --python "/usr/bin/env python${py_ver}" --compressed ./manticore/server
 
 install: build
   cp dist/* ../plugins/ghidra/MUI/os/linux_x86_64/
 
 test:
-  python3 -m unittest tests/test_*.py
+  just --justfile ./manticore/server/justfile -d ./manticore/server test

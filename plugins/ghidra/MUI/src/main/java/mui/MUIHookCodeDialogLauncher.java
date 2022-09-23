@@ -5,7 +5,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import ghidra.program.model.address.Address;
-import muicore.MUICore.Hook.HookType;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
 
 public class MUIHookCodeDialogLauncher {
 

@@ -33,11 +33,11 @@ import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import muicore.ManticoreUIGrpc;
-import muicore.ManticoreUIGrpc.ManticoreUIBlockingStub;
-import muicore.ManticoreUIGrpc.ManticoreUIStub;
-import muicore.MUICore.StopServerRequest;
-import muicore.MUICore.Hook.HookType;
+import manticore_server.ManticoreServerGrpc;
+import manticore_server.ManticoreServerGrpc.ManticoreServerBlockingStub;
+import manticore_server.ManticoreServerGrpc.ManticoreServerStub;
+import manticore_server.ManticoreServerOuterClass.StopServerRequest;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
 
 // @formatter:off
 @PluginInfo(
@@ -56,8 +56,8 @@ public class MUIPlugin extends ProgramPlugin {
 	public static MUIStateListProvider stateList;
 
 	private String MUICoreServerPath;
-	public static ManticoreUIBlockingStub blockingMUICoreStub;
-	public static ManticoreUIStub asyncMUICoreStub;
+	public static ManticoreServerBlockingStub blockingMUICoreStub;
+	public static ManticoreServerStub asyncMUICoreStub;
 
 	private DockingAction showSetup;
 	private DockingAction showLog;
@@ -178,8 +178,8 @@ public class MUIPlugin extends ProgramPlugin {
 	public void initMUICoreStubs() {
 		ManagedChannel channel =
 			ManagedChannelBuilder.forTarget("localhost:50010").usePlaintext().build();
-		blockingMUICoreStub = ManticoreUIGrpc.newBlockingStub(channel);
-		asyncMUICoreStub = ManticoreUIGrpc.newStub(channel);
+		blockingMUICoreStub = ManticoreServerGrpc.newBlockingStub(channel);
+		asyncMUICoreStub = ManticoreServerGrpc.newStub(channel);
 	}
 
 	@Override

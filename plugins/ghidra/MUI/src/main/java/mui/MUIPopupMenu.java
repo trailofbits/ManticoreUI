@@ -13,7 +13,7 @@ import ghidra.app.context.ListingContextAction;
 import ghidra.app.plugin.core.colorizer.ColorizingService;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import muicore.MUICore.Hook.HookType;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
 import ghidra.program.model.address.Address;
 
 /**

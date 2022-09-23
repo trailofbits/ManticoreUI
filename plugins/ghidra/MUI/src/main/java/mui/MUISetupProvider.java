@@ -4,7 +4,7 @@ import docking.*;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.listing.Program;
-import muicore.MUICore.NativeArguments;
+import manticore_server.ManticoreServerOuterClass.NativeArguments;
 
 import java.awt.*;
 import java.awt.event.*;

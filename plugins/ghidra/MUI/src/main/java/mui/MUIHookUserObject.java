@@ -5,9 +5,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import ghidra.program.model.address.Address;
-import muicore.MUICore.Hook;
-import muicore.MUICore.Hook.HookType;
-import muicore.MUICore.Hook.Builder;
+import manticore_server.ManticoreServerOuterClass.Hook;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
+import manticore_server.ManticoreServerOuterClass.Hook.Builder;
 
 /** 
  * User Object class used to store and conveniently display Hook information in the Hook List component 
