@@ -1,3 +1,8 @@
+init-python:
+  test -d venv || python3 -m venv venv
+  . venv/bin/activate; pip install -U pip setuptools wheel shiv
+  # Run `source venv/bin/activate` in your shell after this step
+
 format:
   gradle -p MUI spotlessApply
 

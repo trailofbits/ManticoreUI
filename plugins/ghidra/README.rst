@@ -21,7 +21,7 @@ We require:
 
   * Must also have Python ``shiv`` `tool <https://github.com/linkedin/shiv>`_ accessible by same versioned Python executable, i.e. ``python3.7 -m shiv --version``)
 
-  * It is easiest to use and activate a `Python virtual environment <https://docs.python.org/3/library/venv.html>`_
+  * It is easiest to use and activate a `Python virtual environment <https://docs.python.org/3/library/venv.html>`_ (check out the ``init-python`` target in the `justfile <justfile>`_ for commands needed to set up a virtual environment).
 * Java JDK 11+
 * `Gradle <https://gradle.org/install/>`_
 * ``just`` `command runner <https://github.com/casey/just>`_
@@ -29,7 +29,7 @@ We require:
 Building
 --------
 
-The plugin is built with Gradle. The built plugin will be a ``zip`` file in the ``MUI/dist`` directory::
+The plugin is built with Gradle. Be sure you have the Python requirements installed. The built plugin will be a ``zip`` file in the ``MUI/dist`` directory::
 
     $ export GHIDRA_INSTALL_DIR=<path_to_ghidra_directory>
     $ just build

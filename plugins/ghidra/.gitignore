@@ -1,6 +1,7 @@
 MUI/bin/
 MUI/build/
 MUI/lib/*
+/venv
 **/.classpath
 **/.settings
 **/.gradle/
