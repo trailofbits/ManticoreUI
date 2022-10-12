@@ -9,17 +9,13 @@ lint:
   just --justfile ./manticore/server/justfile -d ./manticore/server lint
 
 generate:
-  cd ./manticore/server; python3 setup.py generate
+  just --justfile ./manticore/server/justfile -d ./manticore/server generate
 
-build: generate
-  #!/usr/bin/env bash
-  set -euo
-  mkdir -p dist
-  py_ver=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-  python3 -m shiv -c manticore_server -o dist/muicore_server --reproducible --no-modify --python "/usr/bin/env python${py_ver}" --compressed ./manticore/server
+build:
+  just --justfile ./manticore/server/justfile -d ./manticore/server build
 
 install: build
-  cp dist/* ../plugins/ghidra/MUI/os/linux_x86_64/
+  cp ./manticore/server/dist/* ../plugins/ghidra/MUI/os/linux_x86_64/
 
 test:
   just --justfile ./manticore/server/justfile -d ./manticore/server test

@@ -186,7 +186,8 @@ task buildShiv(type: Exec) {
         mkdir "${projectDir}/os/${currentPlatformName}"
     }
 
-    commandLine "python${pyVer}", '-m', 'shiv', '-c', 'manticore_server', '-o', "${projectDir}/os/${currentPlatformName}/muicore_server", '--reproducible', '--no-modify', '--python', "/usr/bin/env python${pyVer}", '--compressed', "$projectDir/../../../server/manticore/server"
+    // Check the server's `justfile` file to stay in sync with how this should be generated
+    commandLine "python${pyVer}", '-m', 'shiv', '-c', 'manticore_server', '-o', "${projectDir}/os/${currentPlatformName}/manticore_server", '--reproducible', '--no-modify', '--python', "/usr/bin/env python${pyVer}", '--compressed', "$projectDir/../../../server/manticore/server"
 
     outputs.upToDateWhen { false } // ensures never cached, always runs if user enables
 

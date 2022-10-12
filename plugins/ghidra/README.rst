@@ -30,7 +30,7 @@ Building
 --------
 
 The plugin is built with Gradle. The built plugin will be a ``zip`` file in the ``MUI/dist`` directory::
-    
+
     $ export GHIDRA_INSTALL_DIR=<path_to_ghidra_directory>
     $ just build
 
@@ -117,6 +117,6 @@ Development
 3. Import the project via ``File -> Import -> General -> Projects from Folder or Archive``
 4. Link your installation of Ghidra via ``GhidraDev -> Link Ghidra``. The necessary ``.project`` and ``.pydevproject`` files will be generated for Eclipse.
 5. Format your code with the included ``MUI/GhidraEclipseFormatter.xml`` (taken from upstream Ghidra) by running ``just format`` with the tool `just <https://github.com/casey/just>`_.
-6. Copy the desired version of the ``muicore_server`` binary to the ``os/linux/x86_64`` directory of the plugin.
+6. Copy the desired version of the ``manticore_server`` binary to the ``os/linux/x86_64`` directory of the plugin.
 7. When you first build the plugin, a gradle method will copy any common plugin resources to the ``data`` directory and the protobuf compiler binary will generate the ``ManticoreServerGrpc.java`` and ``ManticoreServerOuterClass.java`` files to serialize messages for communication with the server.
 8. Quick plugin installation is enabled by the ``just install`` command.

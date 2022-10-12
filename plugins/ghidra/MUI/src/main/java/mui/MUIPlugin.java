@@ -132,9 +132,9 @@ public class MUIPlugin extends ProgramPlugin {
 	}
 
 	/**
-	 * Starts the MUICore server using the muicore_server binary included in the extension.
-	 * 
-	 * Should eventually be optimized such that it's created only when needed, and automatically  
+	 * Starts the MUICore server using the manticore_server binary included in the extension.
+	 *
+	 * Should eventually be optimized such that it's created only when needed, and automatically
 	 * destroys after a set period of inactivity.
 	 * @throws Exception
 	 */
@@ -145,7 +145,7 @@ public class MUIPlugin extends ProgramPlugin {
 				Application.initializeApplication(
 					new GhidraApplicationLayout(), new ApplicationConfiguration());
 			}
-			MUICoreServerPath = Application.getOSFile("muicore_server").getCanonicalPath();
+			MUICoreServerPath = Application.getOSFile("manticore_server").getCanonicalPath();
 		}
 		catch (Exception e) {
 			throw e;
