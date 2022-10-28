@@ -19,8 +19,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import ghidra.app.services.GoToService;
-import muicore.MUICore.Hook;
-import muicore.MUICore.Hook.HookType;
+import manticore_server.ManticoreServerOuterClass.Hook;
+import manticore_server.ManticoreServerOuterClass.Hook.HookType;
 
 public class MUIHookListComponent extends JPanel {
 

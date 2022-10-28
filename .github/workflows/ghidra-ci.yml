@@ -17,14 +17,16 @@ jobs:
   ci:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -35,16 +37,16 @@ jobs:
 
       - name: 'Setup Ghidra'
         run: |
-          wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.1.1_build/ghidra_10.1.1_PUBLIC_20211221.zip --output-document=ghidra.zip
+          wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.1.5_build/ghidra_10.1.5_PUBLIC_20220726.zip --output-document=ghidra.zip
           unzip ghidra.zip
-          echo "GHIDRA_INSTALL_DIR=$(pwd)/ghidra_10.1.1_PUBLIC" >> $GITHUB_ENV
+          echo "GHIDRA_INSTALL_DIR=$(pwd)/ghidra_10.1.5_PUBLIC" >> $GITHUB_ENV
 
       - name: 'Lint MUI'
         run: just --justfile plugins/ghidra/justfile lint
 
       - name: 'Build MUI'
         run: |
-          python3 -m pip install -r server/requirements-dev.txt
+          python3 -m pip install server/manticore/server[dev]
           just --justfile plugins/ghidra/justfile build
 
       - name: Cleanup Gradle Cache

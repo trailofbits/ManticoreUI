@@ -1,16 +1,16 @@
 package mui;
 
-import muicore.MUICore.NativeArguments;
-import muicore.MUICore.ControlStateRequest;
-import muicore.MUICore.ControlStateResponse;
-import muicore.MUICore.MUILogMessage;
-import muicore.MUICore.MUIMessageList;
-import muicore.MUICore.MUIState;
-import muicore.MUICore.MUIStateList;
-import muicore.MUICore.ManticoreInstance;
-import muicore.MUICore.ManticoreRunningStatus;
-import muicore.MUICore.TerminateResponse;
-import muicore.MUICore.ControlStateRequest.StateAction;
+import manticore_server.ManticoreServerOuterClass.NativeArguments;
+import manticore_server.ManticoreServerOuterClass.ControlStateRequest;
+import manticore_server.ManticoreServerOuterClass.ControlStateResponse;
+import manticore_server.ManticoreServerOuterClass.ManticoreLogMessage;
+import manticore_server.ManticoreServerOuterClass.ManticoreMessageList;
+import manticore_server.ManticoreServerOuterClass.ManticoreState;
+import manticore_server.ManticoreServerOuterClass.ManticoreStateList;
+import manticore_server.ManticoreServerOuterClass.ManticoreInstance;
+import manticore_server.ManticoreServerOuterClass.ManticoreRunningStatus;
+import manticore_server.ManticoreServerOuterClass.TerminateResponse;
+import manticore_server.ManticoreServerOuterClass.ControlStateRequest.StateAction;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -37,12 +37,12 @@ public class ManticoreRunner {
 	private JButton stopBtn;
 	private JToggleButton scrollLockBtn;
 
-	private List<MUIState> activeStates;
-	private List<MUIState> waitingStates;
-	private List<MUIState> pausedStates;
-	private List<MUIState> forkedStates;
-	private List<MUIState> erroredStates;
-	private List<MUIState> completeStates;
+	private List<ManticoreState> activeStates;
+	private List<ManticoreState> waitingStates;
+	private List<ManticoreState> pausedStates;
+	private List<ManticoreState> forkedStates;
+	private List<ManticoreState> erroredStates;
+	private List<ManticoreState> completeStates;
 
 	public HashSet<TreePath> stateListExpandedPaths;
 
@@ -55,12 +55,12 @@ public class ManticoreRunner {
 		stopBtn = new JButton();
 		scrollLockBtn = new JToggleButton();
 
-		activeStates = new ArrayList<MUIState>();
-		waitingStates = new ArrayList<MUIState>();
-		pausedStates = new ArrayList<MUIState>();
-		forkedStates = new ArrayList<MUIState>();
-		erroredStates = new ArrayList<MUIState>();
-		completeStates = new ArrayList<MUIState>();
+		activeStates = new ArrayList<ManticoreState>();
+		waitingStates = new ArrayList<ManticoreState>();
+		pausedStates = new ArrayList<ManticoreState>();
+		forkedStates = new ArrayList<ManticoreState>();
+		erroredStates = new ArrayList<ManticoreState>();
+		completeStates = new ArrayList<ManticoreState>();
 
 		stateListExpandedPaths = new HashSet<TreePath>();
 	}
@@ -155,8 +155,8 @@ public class ManticoreRunner {
 	 */
 	public void fetchMessageLogs() {
 
-		StreamObserver<MUIMessageList> messageListObserver =
-			new StreamObserver<MUIMessageList>() {
+		StreamObserver<ManticoreMessageList> messageListObserver =
+			new StreamObserver<ManticoreMessageList>() {
 
 				@Override
 				public void onCompleted() {
@@ -168,8 +168,8 @@ public class ManticoreRunner {
 				}
 
 				@Override
-				public void onNext(MUIMessageList messageList) {
-					for (MUILogMessage msg : messageList.getMessagesList()) {
+				public void onNext(ManticoreMessageList messageList) {
+					for (ManticoreLogMessage msg : messageList.getMessagesList()) {
 						logText.append(msg.getContent() + System.lineSeparator());
 					}
 					if (!scrollLockBtn.isSelected()) {
@@ -200,58 +200,59 @@ public class ManticoreRunner {
 	 */
 	public void fetchStateList() {
 
-		StreamObserver<MUIStateList> stateListObserver = new StreamObserver<MUIStateList>() {
+		StreamObserver<ManticoreStateList> stateListObserver =
+			new StreamObserver<ManticoreStateList>() {
 
-			@Override
-			public void onCompleted() {
-			}
-
-			@Override
-			public void onError(Throwable arg0) {
-				logText.append(arg0.getMessage() + System.lineSeparator());
-			}
-
-			@Override
-			public void onNext(MUIStateList muiStateList) {
-				activeStates = muiStateList.getActiveStatesList();
-				waitingStates = muiStateList.getWaitingStatesList();
-				pausedStates = muiStateList.getPausedStatesList();
-				forkedStates = muiStateList.getForkedStatesList();
-				erroredStates = muiStateList.getErroredStatesList();
-				completeStates = muiStateList.getCompleteStatesList();
-
-				if (MUIPlugin.stateList.runnerDisplayed == ManticoreRunner.this) { // tab could've changed in between fetch and onNext
-					MUIPlugin.stateList.updateShownStates(ManticoreRunner.this);
+				@Override
+				public void onCompleted() {
 				}
 
-			}
+				@Override
+				public void onError(Throwable arg0) {
+					logText.append(arg0.getMessage() + System.lineSeparator());
+				}
 
-		};
+				@Override
+				public void onNext(ManticoreStateList muiStateList) {
+					activeStates = muiStateList.getActiveStatesList();
+					waitingStates = muiStateList.getWaitingStatesList();
+					pausedStates = muiStateList.getPausedStatesList();
+					forkedStates = muiStateList.getForkedStatesList();
+					erroredStates = muiStateList.getErroredStatesList();
+					completeStates = muiStateList.getCompleteStatesList();
+
+					if (MUIPlugin.stateList.runnerDisplayed == ManticoreRunner.this) { // tab could've changed in between fetch and onNext
+						MUIPlugin.stateList.updateShownStates(ManticoreRunner.this);
+					}
+
+				}
+
+			};
 
 		MUIPlugin.asyncMUICoreStub.getStateList(manticoreInstance, stateListObserver);
 	}
 
-	public List<MUIState> getActiveStates() {
+	public List<ManticoreState> getActiveStates() {
 		return activeStates;
 	}
 
-	public List<MUIState> getWaitingStates() {
+	public List<ManticoreState> getWaitingStates() {
 		return waitingStates;
 	}
 
-	public List<MUIState> getPausedStates() {
+	public List<ManticoreState> getPausedStates() {
 		return pausedStates;
 	}
 
-	public List<MUIState> getForkedStates() {
+	public List<ManticoreState> getForkedStates() {
 		return forkedStates;
 	}
 
-	public List<MUIState> getErroredStates() {
+	public List<ManticoreState> getErroredStates() {
 		return erroredStates;
 	}
 
-	public List<MUIState> getCompleteStates() {
+	public List<ManticoreState> getCompleteStates() {
 		return completeStates;
 	}
 

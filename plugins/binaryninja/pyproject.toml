@@ -2,11 +2,6 @@
 line-length = 100
 target-version = ['py38', 'py39']
 include = '\.pyi?$'
-extend-exclude = '''
-/(
-  | manticore
-)/
-'''
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -17,7 +12,6 @@ testpaths = [
 
 # mypy global options:
 [tool.mypy]
-python_version = "3.8"
 check_untyped_defs = true
 warn_unused_configs = true
 ignore_missing_imports = true

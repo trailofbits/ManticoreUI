@@ -22,8 +22,8 @@ import javax.swing.tree.TreePath;
 import docking.WindowPosition;
 import ghidra.framework.plugintool.ComponentProviderAdapter;
 import ghidra.framework.plugintool.PluginTool;
-import muicore.MUICore.MUIState;
-import muicore.MUICore.ControlStateRequest.StateAction;
+import manticore_server.ManticoreServerOuterClass.ManticoreState;
+import manticore_server.ManticoreServerOuterClass.ControlStateRequest.StateAction;
 
 /**
  * Provides the "MUI State List" component used to display the State List of the Manticore instance whose MUI Log tab is currently focused.
@@ -235,10 +235,10 @@ public class MUIStateListProvider extends ComponentProviderAdapter {
 	}
 
 	/**
-	 * @param st MUIState
+	 * @param st ManticoreState
 	 * @return Node that can be added to another parent node for the State List UI.
 	 */
-	private static DefaultMutableTreeNode stateToNode(MUIState st, StateType type) {
+	private static DefaultMutableTreeNode stateToNode(ManticoreState st, StateType type) {
 		return new DefaultMutableTreeNode(new StateUserObject(st.getStateId(), type));
 	}
 
