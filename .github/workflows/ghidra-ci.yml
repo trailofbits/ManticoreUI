@@ -37,9 +37,9 @@ jobs:
 
       - name: 'Setup Ghidra'
         run: |
-          wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.1.1_build/ghidra_10.1.1_PUBLIC_20211221.zip --output-document=ghidra.zip
+          wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.1.5_build/ghidra_10.1.5_PUBLIC_20220726.zip --output-document=ghidra.zip
           unzip ghidra.zip
-          echo "GHIDRA_INSTALL_DIR=$(pwd)/ghidra_10.1.1_PUBLIC" >> $GITHUB_ENV
+          echo "GHIDRA_INSTALL_DIR=$(pwd)/ghidra_10.1.5_PUBLIC" >> $GITHUB_ENV
 
       - name: 'Lint MUI'
         run: just --justfile plugins/ghidra/justfile lint

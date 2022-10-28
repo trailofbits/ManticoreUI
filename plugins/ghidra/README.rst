@@ -39,7 +39,7 @@ If you want to run the build commands manually, please take a look at the `justf
 Installation
 ------------
 
-ManticoreUI (MUI) requires a copy of Ghidra. We are currently developing against the latest release(s) (``10.1.4`` at time of writing).
+ManticoreUI (MUI) requires a copy of Ghidra. We are currently developing against the latest release(s) (``10.1.5`` at time of writing).
 
 Manticore only operates on native binaries within a Linux environment. The Ghidra plugin does not support EVM.
 
