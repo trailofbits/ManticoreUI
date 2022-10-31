@@ -1,3 +1,2 @@
-# This should match the server's Manticore submodule
 manticore[native] @ git+https://github.com/trailofbits/manticore.git@5284b88ccd80e4e4b549fd37e8d23f8d8ecd4e6b
 pygments>=2.7.0,<2.9.0
