@@ -9,7 +9,7 @@ Manticore UI Binary Ninja Plugin
 
 This directory provides a graphical user interface plugin for `Binary Ninja <https://binary.ninja/>`_ to allow users to easily interact with and view progress of the `Manticore symbolic execution engine <https://github.com/trailofbits/manticore>`_ for analysis of smart contracts and native binaries.
 
-❗ATTENTION❗ This project is experimental and may be unstable or unusable for arbitrary use-cases and targets. Please open an issue if you have any difficulties using the existing features. We will consider new feature suggestions on a case-by-case basis. If possible, please open a pull request to improve or fix the project.
+❗ATTENTION❗ This project is experimental and may be unstable or unusable for arbitrary use-cases and targets. Please `open an issue <https://github.com/trailofbits/ManticoreUI/issues/new/choose>`_ if you have any difficulties using the existing features. We will consider new feature suggestions on a case-by-case basis. If possible, please open a pull request to improve or fix the project.
 
 Requirements
 ------------
